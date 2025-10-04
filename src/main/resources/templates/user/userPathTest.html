@@ -1,0 +1,39 @@
+<!-- src/main/resources/templates/user/userPathTest.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${assignedTest.test.name}">Тест</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${assignedTest.test.name}">Тест</h1>
+
+    <!-- Вывод текущего вопроса -->
+    <div class="question-box">
+        <p th:text="${questions[currentIndex].text}">Вопрос</p>
+
+        <form method="post" action="/user/[[${assignedTest.id}]]/answer">
+            <input type="hidden" name="currentIndex" th:value="${currentIndex}">
+            <div class="options">
+                <label th:each="answer, iterStat : ${questions[currentIndex].answers}">
+                    <input type="checkbox" name="answer[{{ iterStat.index }}]" />
+                    <span th:text="${answer.answerText}">Ответ</span>
+                </label>
+            </div>
+
+            <!-- Кнопка "Завершить тестирование", если это последний вопрос -->
+            <div class="buttons">
+                <button type="submit" th:if="${currentIndex + 1 == questions.size()}"
+                        th:text="'Завершить тестирование'"></button>
+                <button type="submit" th:unless="${currentIndex + 1 == questions.size()}"
+                        th:text="'Подтвердить ответ'"></button>
+                <a href="/user/userAssignedTests" class="btn btn-danger">Прервать тестирование</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

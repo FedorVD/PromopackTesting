@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Результаты теста</title>
+</head>
+<body>
+<h1 th:text="'Результаты теста: ' + @{assignedTest.test.name}">Результаты теста</h1>
+
+<p th:text="'Ваш результат: ' + score + '/10'">Результат: 8.5/10</p>
+
+<ul>
+    <li th:each="ua : ${userAnswers}">
+        <h3 th:text="'Вопрос: ' + ua.question.text">Вопрос</h3>
+        <ul>
+            <li th:each="i : ${#numbers.sequence(0, ua.selectedOptions.size() - 1)}">
+                <span th:if="${ua.selectedOptions[i]}">✓ </span>
+                <span th:text="${ua.question.answers[i].text}">Ответ</span>
+                <span th:if="${ua.question.answers[i].isCorrect}" style="color: green;"> (Правильный)</span>
+            </li>
+        </ul>
+    </li>
+</ul>
+</body>
+</html>

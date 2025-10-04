@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Редактирование пользователя</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1>Редактирование пользователя</h1>
+
+<a href="/admin">К административной панели</a><br /><br />
+<a href="/admin/users/users">К списку пользователей</a><br /><br />
+
+<form action="#" th:action="@{/admin/users/{id}/editUser(id=${user.id})}" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+    <input type="hidden" name="id" th:value="${user.id}" />
+
+    <label for="username">Имя пользователя:</label><br />
+    <input type="text" id="username" name="username" th:value="${user.username}" required/><br /><br />
+
+    <label for="password">Пароль (оставьте пустым, если не хотите менять):</label><br />
+    <input type="password" id="password" name="password"/><br /><br />
+
+    <label for="role">Роль:</label><br />
+    <select id="role" name="role" required>
+        <option th:each="roleType : ${roles}"
+                th:text="${roleType.name() == 'ADMIN' ? 'Администратор' : 'Пользователь'}"
+                th:value="${roleType}"
+                th:selected="${user.role == roleType}">
+        </option>
+    </select><br /><br />
+
+    <label for="employeeId">Табельный номер:</label><br />
+    <input type="text" id="employeeId" name="employeeId" th:value="${user.employeeId}" required/><br /><br />
+
+    <label for="name">ФИО:</label><br />
+    <input type="text" id="name" name="name" th:value="${user.name}" required/><br /><br />
+
+    <label for="department">Отдел:</label><br />
+    <input type="text" id="department" name="department" th:value="${user.department}" required/><br /><br />
+
+    <label for="position">Должность:</label><br />
+    <input type="text" id="position" name="position" th:value="${user.position}" required/><br /><br />
+
+    <label for="hireDate">Дата приема на работу:</label><br />
+    <input type="datetime-local" id="hireDate" name="hireDate"
+           th:value="${#temporals.format(user.hireDate, 'yyyy-MM-dd HH:mm')}" required/><br /><br />
+
+    <button type="submit">Сохранить изменения</button>
+</form>
+
+<!-- Сообщения -->
+<div th:if="${message}" style="color: green;">
+    <p th:text="${message}">Сообщение</p>
+</div>
+
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}">Ошибка</p>
+</div>
+</body>
+</html>

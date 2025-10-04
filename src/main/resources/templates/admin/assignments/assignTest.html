@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Назначить тест</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h2>Назначить тест пользователю</h2>
+
+<form action="#" th:action="@{/admin/assignments/assignTest}" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+
+    <label for="testId">Выберите тест:</label><br />
+    <select id="testId" name="testId" required>
+        <option value="">-- Выберите тест --</option>
+        <option th:each="test : ${tests}"
+                th:value="${test.id}"
+                th:text="${test.name}"></option>
+    </select><br /><br />
+
+    <label for="userId">Выберите пользователя:</label><br />
+    <select id="userId" name="userId" required>
+        <option value="">-- Выберите пользователя --</option>
+        <option th:each="user : ${users}"
+                th:value="${user.id}"
+                th:text="${user.name}"></option>
+    </select><br /><br />
+
+    <input type="hidden" name="assigner" th:value="${currentUser}" />
+
+    <button type="submit">Назначить тест</button>
+</form>
+
+<!-- Сообщения -->
+<div th:if="${message}" style="color: green;">
+    <p th:text="${message}">Сообщение</p>
+</div>
+
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}">Ошибка</p>
+</div>
+
+<a href="/admin">Назад к админке</a><br />
+</body>
+</html>

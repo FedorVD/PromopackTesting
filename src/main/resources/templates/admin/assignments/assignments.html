@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Назначенные тесты</title>
+  <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h2>Назначенные тесты</h2>
+
+<!-- Форма фильтрации -->
+<form action="#" th:action="@{/admin/assignments/assignments}" method="get">
+  <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+
+  <label for="testName">Название теста:</label>
+  <input type="number" name="testName" id="testName" th:value="${param.testName}" />
+
+  <label for="userName">Сотрудник:</label>
+  <input type="number" name="userName" id="userName" th:value="${param.userName}" />
+
+  <label for="status">Статус:</label>
+  <select name="status" id="status">
+    <option value="">-- Все статусы --</option>
+    <option value="ASSIGNED" th:selected="${param.status == 'ASSIGNED'}">Назначен</option>
+    <option value="IN_PROGRESS" th:selected="${param.status == 'IN_PROGRESS'}">Начат</option>
+    <option value="COMPLETED" th:selected="${param.status == 'COMPLETED'}">Завершен</option>
+  </select>
+
+  <button type="submit">Фильтровать</button>
+</form>
+
+<br />
+
+<!-- Таблица назначенных тестов -->
+<table border="1">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Тест</th>
+    <th>Кому назначено</th>
+    <th>Статус</th>
+    <th>Дата назначения</th>
+    <th>Кто назначил</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="assignment : ${assignments}">
+    <td th:text="${assignment.id}">ID</td>
+    <td th:text="${assignment.test?.name ?:'Empty'}">Тест</td>
+    <td th:text="${assignment.user?.name ?:'Emmpty'}">Пользователь</td>
+    <td th:text="${assignment.status.name() == 'ASSIGNED' ? 'Назначен' : (assignment.status.name() == 'IN_PROGRESS' ? 'Начат' : 'Завершен')}">Статус</td>
+    <td th:text="${assignment.assignedAt}">Дата</td>
+    <td th:text="${assignment.assignedBy?.username ?: 'Неизвестно'}">Назначил</td>
+    <td>
+      <a th:href="@{/admin/assignments/{id}/assignedTest(id=${assignment.id})}">Просмотр</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<p th:if="${assignments == 'По выбранным параметрам поиска тесты нне найдены'}" style="color: red;">
+  По выбранным параметрам поиска тесты не найдены.
+</p>
+
+<a href="/admin">Назад к админке</a><br />
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Вопросы теста</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1>Вопросы теста: <strong th:text="${test.name}"></strong></h1>
+
+<a href="/admin/tests/tests">Назад к списку тестов</a><br />
+<a href="/admin/tests/id/addQuestion(id=${question.id}})">Добавить вопрос</a><br /><br />
+
+<!-- Таблица вопросов -->
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Текст вопроса</th>
+        <th>Действия</th>
+    </tr>
+    <tr th:each="question : ${questions}">
+        <td th:text="${question.id}"></td>
+        <td th:text="${question.text}"></td>
+        <td>
+            <a th:href="@{/admin/questions/{id}/editQusetion(id=${question.id})}">Редактировать</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

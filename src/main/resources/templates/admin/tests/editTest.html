@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Редактирование теста</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1>Редактирование теста</h1>
+
+<a href="/admin/tests/tests">Назад к списку тестов</a><br /><br />
+
+<form action="#" th:action="@{/admin/tests/__${test.id}__/update}" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+    <input type="hidden" name="id" th:value="${test.id}" />
+
+    <label for="name">Название теста:</label><br />
+    <input type="text" id="name" name="name" th:value="${test.name}" required/><br /><br />
+
+    <button type="submit">Сохранить изменения</button>
+</form>
+
+<!-- Сообщения -->
+<div th:if="${message}" style="color: green;">
+    <p th:text="${message}">Сообщение</p>
+</div>
+
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}">Ошибка</p>
+</div>
+</body>
+</html>

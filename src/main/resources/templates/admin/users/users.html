@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Список пользователей</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1>Управление пользователями</h1>
+
+<a href="/admin">К административной панели</a><br /><br />
+<a href="/admin/users/addUser">Добавить нового пользователя</a><br /><br />
+
+<!-- Форма фильтра -->
+<form method="get" action="/admin/users/users">
+    <label for="search">Поиск по имени/отделу:</label>
+    <input type="text" id="search" name="search" th:value="${search}" />
+
+    <label for="department">Отдел:</label>
+    <input type="text" id="department" name="department" th:value="${department}" />
+
+    <label for="position">Должность:</label>
+    <input type="text" id="position" name="position" th:value="${position}" />
+
+    <button type="submit">Применить</button>
+</form>
+
+<br />
+
+<!-- Таблица пользователей -->
+<table border="1">
+    <tr>
+        <th>Табельный номер</th>
+        <th>Логин</th>
+        <th>ФИО</th>
+        <th>Отдел</th>
+        <th>Должность</th>
+        <th>Дата приема</th>
+        <th>Роль</th>
+        <th>Действия</th>
+    </tr>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.employeeId}"></td>
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.name}"></td>
+        <td th:text="${user.department}"></td>
+        <td th:text="${user.position}"></td>
+        <td th:text="${#temporals.format(user.hireDate, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${user.role.name() == 'ADMIN' ? 'Администратор' : 'Пользователь'}"></td>
+        <td>
+            <a th:href="@{/admin/users/{id}/editUser(id=${user.id})}">Редактировать</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

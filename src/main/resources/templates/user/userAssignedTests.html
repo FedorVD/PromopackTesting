@@ -1,0 +1,50 @@
+<!-- src/main/resources/templates/user/userAssignedTests.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Назначенные тесты</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Назначенные тесты</h1>
+
+    <!-- Сообщение об отсутствии назначенных тестов -->
+<!--    <div th:if="${empty assignments}" class="message info">
+        У вас пока нет назначенных тестов.
+    </div>-->
+
+    <!-- Таблица назначенных тестов -->
+    <table border="1" class="assigned-tests-table">
+        <thead>
+        <tr>
+            <th>Название теста</th>
+            <th>Статус</th>
+            <th>Дата назначения</th>
+            <th>Действие</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="assignment : ${assignments}">
+            <td th:text="${assignment.test.name}">Тест</td>
+            <td th:text="${assignment.status.name() == 'ASSIGNED' ? 'Назначен' : (assignment.status.name() == 'IN_PROGRESS' ? 'Начат' : 'Завершен')}">Статус</td>
+            <td th:text="${assignment.assignedAt}">Дата</td>
+            <td>
+                <a th:href="@{/user/{id}/userPathTest(id=${assignment.id})}" th:text="'Начать тест →'"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:if="${message}" style="color: green;">
+    <p th:text="${message}">Сообщение</p>
+</div>
+
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}">Ошибка</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Просмотр назначенного теста</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h2>Просмотр назначенного теста</h2>
+
+<div th:if="${assignment != null}">
+    <p><strong>ID:</strong> <span th:text="${assignment.id}"></span></p>
+    <p><strong>Тест:</strong> <span th:text="${assignment.test.name}"></span></p>
+    <p><strong>Пользователь:</strong> <span th:text="${assignment.user.name}"></span></p>
+    <p><strong>Статус:</strong> <span th:text="${assignment.status}"></span></p>
+    <p><strong>Дата назначения:</strong> <span th:text="${assignment.getAssignedAt()}"></span></p>
+</div>
+
+<div th:if="${assignment == null}">
+    <p>Тест не найден.</p>
+</div>
+
+<a href="/admin/assignments/assignments">Назад к списку назначенных тестов</a><br />
+<a href="/admin">Назад к админке</a><br />
+</body>
+</html>

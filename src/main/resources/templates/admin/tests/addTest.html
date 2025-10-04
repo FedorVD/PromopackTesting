@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Добавить тест</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1>Добавить тест</h1>
+
+<a href="/admin/tests">Назад к списку тестов</a><br /><br />
+
+<form action="#" th:action="@{/admin/tests/addTest}" method="post">
+    <label for="testName">Название теста:</label><br />
+    <input type="text" id="testName" name="testName" required/><br /><br />
+
+    <button type="submit">Добавить тест</button>
+</form>
+
+<!-- Сообщения -->
+<div th:if="${message}" style="color: green;">
+    <p th:text="${message}">Сообщение</p>
+</div>
+
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}">Ошибка</p>
+</div>
+</body>
+</html>

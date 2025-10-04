@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Просмотр теста</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h2>
+    <!-- Форма для редактирования названия теста -->
+    <form action="#" th:action="@{/admin/tests/__${test.id}__/editTest}" method="post">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+        <input type="text" name="newName" th:value="${test.name}" required/>
+        <button type="submit">Сохранить</button>
+    </form>
+</h2>
+
+<h3>Вопросы:</h3>
+<ul>
+    <li th:each="question : ${test.questions}">
+        <!-- Ссылка на редактирование вопроса -->
+        <a th:href="@{/admin/tests/{id}/editQuestion(id=${question.id})}" th:text="'Редактировать ' + ${question.text}"></a>
+    </li>
+</ul>
+
+<!-- Кнопка для добавления вопроса -->
+<a th:href="@{/admin/tests/id/addQuestion(id=${test.id})}">Добавить вопрос</a><br />
+
+<a href="/admin/tests/tests">Назад к списку тестов</a><br />
+
+<!-- Сообщения -->
+<div th:if="${message}" style="color: green;">
+    <p th:text="${message}">Сообщение</p>
+</div>
+
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}">Ошибка</p>
+</div>
+</body>
+</html>
