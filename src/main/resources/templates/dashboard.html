@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Панель управления</title>
+</head>
+<body>
+<h1>Добро пожаловать, <span th:text="${username}"></span>!</h1>
+
+<nav>
+  <a th:href="@{/}">Главная</a> |
+  <a th:href="@{/dashboard}">Панель управления</a> |
+  <span sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin}">Админка</a> |
+        </span>
+  <form th:action="@{/logout}" method="post" style="display: inline;">
+    <button type="submit">Выйти</button>
+  </form>
+</nav>
+
+<div sec:authorize="hasRole('USER')">
+  <h2>Обычный пользователь</h2>
+  <p>Вы вошли как обычный пользователь.</p>
+</div>
+
+<div sec:authorize="hasRole('ADMIN')">
+  <h2>Администратор</h2>
+  <p>У вас есть права администратора.</p>
+</div>
+</body>
+</html>

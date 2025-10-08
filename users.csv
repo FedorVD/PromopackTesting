@@ -1,0 +1,4 @@
+"id","department","dismissal_date","employee_id","hire_date","name","password","position","role","username"
+"1","Тестовый отдел",NULL,"000000000","2020-01-01 15:55:00","Тестовый администратор","$2a$10$HL1OCtPFRR4M6iWMNl16EeQg4IxQh5U0En7UBpcn3FCyJBvXXe35m","Тестовая должность","ADMIN","admin"
+"2","Тестовый отдел",NULL,"000000001","2020-01-01 15:56:00","Тестовый пользователь","$2a$10$HnMU3nwjAspuQ5dAgFNa/eJysOju5jRdnfRs7zgaQGFEc3clqSsYm","Тестовая должность","USER","user"
+"3","Отдел по персоналу",NULL,"0000001066","2025-07-15 15:58:00","Огорелышева Юлия Николаевна","$2a$10$MMQS98rigJR4.G.PyiaZgOlPoUzn1XQhliRUZ6NSF6KlYI9q6Pl4y","Специалист по обучению персонала","ADMIN","ОгорелышеваЮН"

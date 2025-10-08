@@ -1,0 +1,3 @@
+"id","department","dismissal_date","employee_id","hire_date","name","password","position","role","username"
+"52",NULL,NULL,NULL,NULL,NULL,"$2a$10$MGtq1b4VKdn3PWnwxEfAxOopdc7cupuquPBJAkHLiZswwvFLu9XHq",NULL,"ADMIN","admin"
+"53",NULL,NULL,NULL,NULL,NULL,"$2a$10$YAsN2LgQnEbF2ib8merDuebfKQrEI/WRK0SQ91buMELYltyoEVqe6",NULL,"USER","user"

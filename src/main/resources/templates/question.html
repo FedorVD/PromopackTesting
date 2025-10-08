@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Вопрос</title>
+</head>
+<body>
+<h1>Текущий вопрос:</h1>
+<p th:text="${question.text}">Текст вопроса</p>
+
+<form th:action="@{/answer/submit(assignmentId=${assignmentId}, questionId=${questionId})}" method="post">
+    <input type="hidden" name="assignmentId" th:value="${assignmentId}" />
+    <input type="hidden" name="questionId" th:value="${questionId}" />
+
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+
+    <label for="answer">Ваш ответ:</label><br />
+    <textarea id="answer" name="answer"></textarea><br /><br />
+
+    <button type="submit">Отправить ответ</button>
+</form>
+</body>
+</html>
