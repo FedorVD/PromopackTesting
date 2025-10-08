@@ -14,7 +14,7 @@ public class Answer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "question_id", nullable = false)

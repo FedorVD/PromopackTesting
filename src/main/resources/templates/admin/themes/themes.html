@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Список тем тестов</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div class="container mt-4">
+    <a href="/admin">К административной панели</a><br /><br />
+
+    <h2>Темы тестов</h2>
+
+    <a th:href="@{/admin/themeTest/add}" class="btn btn-primary mb-3">Добавить новую тему</a>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название темы</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="theme : ${themeTests}">
+            <td th:text="${theme.id}">ID</td>
+            <td th:text="${theme.name}">Название темы</td>
+            <td>
+                <!-- Здесь можно добавить кнопки редактирования или удаления -->
+                <a th:href="@{/admin/themeTest/edit/{id}(id=${theme.id})}" class="btn btn-sm btn-secondary">Редактировать</a>
+                <a th:href="@{/admin/themeTest/delete/{id}(id=${theme.id})}" class="btn btn-sm btn-danger">Удалить</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -8,6 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.top.promopacktesting.model.User;
 import org.top.promopacktesting.service.UserService;
 
@@ -35,4 +37,15 @@ public class AdminController {
         model.addAttribute("username", currentUser.getName());
         return "admin/admin";
     }
+
+/*
+    @PostMapping("/admin/logout")
+    public String logout(RedirectAttributes redirectAttributes) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            redirectAttributes.addFlashAttribute("message", "Вы успешно вышли из системы");
+        }
+        return "redirect:/login?logout";
+    }
+*/
 }

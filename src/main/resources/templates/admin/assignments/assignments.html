@@ -36,22 +36,24 @@
 <table border="1">
   <thead>
   <tr>
-    <th>ID</th>
     <th>Тест</th>
     <th>Кому назначено</th>
-    <th>Статус</th>
-    <th>Дата назначения</th>
     <th>Кто назначил</th>
+    <th>Дата назначения</th>
+    <th>Статус</th>
+    <th>Баллы</th>
   </tr>
   </thead>
   <tbody>
   <tr th:each="assignment : ${assignments}">
-    <td th:text="${assignment.id}">ID</td>
     <td th:text="${assignment.test?.name ?:'Empty'}">Тест</td>
     <td th:text="${assignment.user?.name ?:'Emmpty'}">Пользователь</td>
-    <td th:text="${assignment.status.name() == 'ASSIGNED' ? 'Назначен' : (assignment.status.name() == 'IN_PROGRESS' ? 'Начат' : 'Завершен')}">Статус</td>
-    <td th:text="${assignment.assignedAt}">Дата</td>
     <td th:text="${assignment.assignedBy?.username ?: 'Неизвестно'}">Назначил</td>
+    <td th:text="${#temporals.format(assignment.assignedAt, 'dd.MM.yyyy')}">Дата</td>
+    <td th:text="${assignment.status.name() == 'ASSIGNED' ? 'Назначен'
+                  : (assignment.status.name() == 'IN_PROGRESS' ? 'Начат'
+                  : 'Завершен')}">Статус</td>
+    <td th:text="${assignment.status.name() == 'COMPLETED' ? #numbers.formatDecimal(assignment.testScore, 1, 1) : '—'}">—</td>
     <td>
       <a th:href="@{/admin/assignments/{id}/assignedTest(id=${assignment.id})}">Просмотр</a>
     </td>
@@ -59,7 +61,7 @@
   </tbody>
 </table>
 
-<p th:if="${assignments == 'По выбранным параметрам поиска тесты нне найдены'}" style="color: red;">
+<p th:if="${assignments.isEmpty()}" style="color: red;">
   По выбранным параметрам поиска тесты не найдены.
 </p>
 

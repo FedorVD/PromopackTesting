@@ -21,20 +21,20 @@
 
     <div>
         <label>Вариант 1:</label>
-        <input type="text" name="answers[0]" required th:value="${question.answers[0]}"/>
-        <label><input type="checkbox" name="correctAnswers[0]" th:checked="${question.correctAnswers[0]}"/> Правильный ответ</label><br /><br />
+        <input type="text" name="answers[0]" required th:value="${question.answers[0].answerText}"/>
+        <label><input type="checkbox" name="correctAnswers[0]" th:checked="${question.answers[0].isCorrect}"/> Правильный ответ</label><br /><br />
 
         <label>Вариант 2:</label>
-        <input type="text" name="answers[1]" required th:value="${question.answers[1]}"/>
-        <label><input type="checkbox" name="correctAnswers[1]" th:checked="${question.correctAnswers[1]}"/> Правильный ответ</label><br /><br />
+        <input type="text" name="answers[1]" required th:value="${question.answers[1].answerText}"/>
+        <label><input type="checkbox" name="correctAnswers[1]" th:checked="${question.answers[1].isCorrect}"/> Правильный ответ</label><br /><br />
 
         <label>Вариант 3:</label>
-        <input type="text" name="answers[2]" required th:value="${question.answers[2]}"/>
-        <label><input type="checkbox" name="correctAnswers[2]" th:checked="${question.correctAnswers[2]}"/> Правильный ответ</label><br /><br />
+        <input type="text" name="answers[2]" required th:value="${question.answers[2].answerText}"/>
+        <label><input type="checkbox" name="correctAnswers[2]" th:checked="${question.answers[2].isCorrect}"/> Правильный ответ</label><br /><br />
 
         <label>Вариант 4:</label>
-        <input type="text" name="answers[3]" required th:value="${question.answers[3]}"/>
-        <label><input type="checkbox" name="correctAnswers[3]" th:checked="${question.correctAnswers[3]}"/> Правильный ответ</label><br /><br />
+        <input type="text" name="answers[3]" required th:value="${question.answers[3].answerText}"/>
+        <label><input type="checkbox" name="correctAnswers[3]" th:checked="${question.answers[3].isCorrect}"/> Правильный ответ</label><br /><br />
     </div>
 
     <button type="submit">Сохранить изменения</button>

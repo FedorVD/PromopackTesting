@@ -42,6 +42,16 @@ public class AnswerService {
 
     }
 
-    public void addAnswersToQuestion(Question newQuestion, List<Answer> answer){
+    public void deleteAnswerById(Long answerId){
+        if(answerId != null){
+            answerRepository.deleteById(answerId);
+        }
+    }
+
+    public void addAnswersToQuestion(Question newQuestion, List<Answer> answers){
+        for (Answer answer : answers) {
+            answer.setQuestion(newQuestion);
+        }
+        saveAll(answers);
     }
 }

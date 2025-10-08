@@ -1,25 +1,41 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>Результаты теста</title>
+    <meta charset="UTF-8">
+    <title th:text="'Результаты теста: ' + ${assignedTest.test.name}">Результаты</title>
+    <a href="/user" class="btn btn-link">Назад к профилю</a>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<h1 th:text="'Результаты теста: ' + @{assignedTest.test.name}">Результаты теста</h1>
+<div class="container mt-4">
+    <h1 th:text="'Результаты теста: ' + ${assignedTest.test.name}">Результаты теста</h1>
 
-<p th:text="'Ваш результат: ' + score + '/10'">Результат: 8.5/10</p>
+    <p th:if="${score >= 8.0}" style="color: green; font-weight: bold;">
+        Отличный результат! Вы набрали <span th:text="${score}">0</span> из 10.
+    </p>
+    <p th:if="${score >= 5.0 and score < 8.0}" style="color: orange; font-weight: bold;">
+        Хороший результат! Вы набрали <span th:text="${score}">0</span> из 10.
+    </p>
+    <p th:if="${score < 5.0}" style="color: red; font-weight: bold;">
+        Вы набрали <span th:text="${score}">0</span> из 10.
+    </p>
 
-<ul>
-    <li th:each="ua : ${userAnswers}">
-        <h3 th:text="'Вопрос: ' + ua.question.text">Вопрос</h3>
-        <ul>
-            <li th:each="i : ${#numbers.sequence(0, ua.selectedOptions.size() - 1)}">
-                <span th:if="${ua.selectedOptions[i]}">✓ </span>
-                <span th:text="${ua.question.answers[i].text}">Ответ</span>
-                <span th:if="${ua.question.answers[i].isCorrect}" style="color: green;"> (Правильный)</span>
-            </li>
-        </ul>
-    </li>
-</ul>
+    <h2>Ваши ответы:</h2>
+    <ul>
+        <li th:each="userAnswer : ${userAnswers}">
+            <strong th:text="'Вопрос: ' + ${userAnswer.question.text}">Вопрос</strong><br/>
+            <ul>
+                <li th:each="selectedAnswer : ${userAnswer.selectedAnswers}">
+                    <span th:text="'Ответ: ' + ${selectedAnswer.answer.answerText}">Ответ</span>
+                    <span th:if="${selectedAnswer.isCorrect}" style="color: green;">✅</span>
+                    <span th:if="${not selectedAnswer.isCorrect}" style="color: red;">❌</span>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <a href="/user/userAssignedTests" class="btn btn-primary">Вернуться к списку тестов</a>
+</div>
 </body>
 </html>

@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-//@Component
+@Component
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Override
@@ -22,7 +22,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_USER"))) {
             getRedirectStrategy().sendRedirect(request, response, "/user");
         } else {
-            getRedirectStrategy().sendRedirect(request, response, "/home");
+            getRedirectStrategy().sendRedirect(request, response, "/");
         }
     }
 }

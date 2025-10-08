@@ -15,22 +15,36 @@
     <div class="question-box">
         <p th:text="${questions[currentIndex].text}">Вопрос</p>
 
-        <form method="post" action="/user/[[${assignedTest.id}]]/answer">
+        <form method="post" th:action="@{/user/{testId}/answer(testId=${assignedTest.id})}">
             <input type="hidden" name="currentIndex" th:value="${currentIndex}">
             <div class="options">
                 <label th:each="answer, iterStat : ${questions[currentIndex].answers}">
-                    <input type="checkbox" name="answer[{{ iterStat.index }}]" />
+                    <input type="checkbox"
+                           th:name="'answers[' + ${iterStat.index} + ']'"
+                           th:value="${answer.id}"/>
                     <span th:text="${answer.answerText}">Ответ</span>
                 </label>
             </div>
 
-            <!-- Кнопка "Завершить тестирование", если это последний вопрос -->
             <div class="buttons">
-                <button type="submit" th:if="${currentIndex + 1 == questions.size()}"
-                        th:text="'Завершить тестирование'"></button>
-                <button type="submit" th:unless="${currentIndex + 1 == questions.size()}"
-                        th:text="'Подтвердить ответ'"></button>
-                <a href="/user/userAssignedTests" class="btn btn-danger">Прервать тестирование</a>
+                <div class="d-flex flex-column gap-2">
+                    <!-- Кнопка "Подтвердить ответ" -->
+                    <button type="submit"
+                            th:if="${currentIndex + 1 != questions.size()}"
+                            th:text="'Подтвердить ответ'"
+                            class="btn btn-primary w-100">
+                    </button>
+
+                    <!-- Кнопка "Завершить тестирование" -->
+                    <button type="submit"
+                            th:if="${currentIndex + 1 == questions.size()}"
+                            th:text="'Завершить тестирование'"
+                            class="btn btn-success w-100">
+                    </button>
+
+                    <!-- Кнопка "Прервать тестирование" -->
+                    <a href="/user/userAssignedTests" class="btn btn-danger w-100">Прервать тестирование</a>
+                </div>
             </div>
         </form>
     </div>
