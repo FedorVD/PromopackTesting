@@ -1,6 +1,8 @@
 package org.top.promopacktesting.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.top.promopacktesting.model.Test;
 import org.top.promopacktesting.model.ThemeTest;
 import org.top.promopacktesting.repository.ThemeTestRepository;
 
@@ -10,23 +12,25 @@ import java.util.Optional;
 @Service
 public class ThemeTestService {
 
-    private final ThemeTestRepository themeTestRepository;
-    private ThemeTestRepository repository;
-
-    public ThemeTestService(ThemeTestRepository themeTestRepository) {
-        this.themeTestRepository = themeTestRepository;
-    }
+    @Autowired
+    private ThemeTestRepository themeTestRepository;
 
     public List<ThemeTest> getAllThemeTests() {
-        return repository.findAll();
+        return themeTestRepository.findAll();
     }
 
     public Optional<ThemeTest> getThemeTestById(Long id) {
-        return repository.findById(id);
+        return themeTestRepository.findById(id);
     }
 
+/*
+    public Optional <ThemeTest> getThemeTestByTest(Test test) {
+        return themeTestRepository.findByTest(test);
+    }
+*/
+
     public ThemeTest saveThemeTest(ThemeTest themeTest) {
-        return repository.save(themeTest);
+        return themeTestRepository.save(themeTest);
     }
 
     public void deleteThemeTestById(Long themeId) {

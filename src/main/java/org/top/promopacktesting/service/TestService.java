@@ -49,6 +49,10 @@ public class TestService {
         }).orElseThrow(() -> new RuntimeException("Тест не найден"));
     }
 
+    public List<Test> getTestsByThemeId(Long themeTestId) {
+        return testRepository.findByThemeTestId(themeTestId);
+    }
+
 /*    @Transactional
     public Question addQuestionToTest(Long testId, Question question) {
         return testRepository.findById(testId).map(test ->{

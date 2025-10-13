@@ -23,11 +23,24 @@ public interface AssignedTestRepository extends JpaRepository<AssignedTest, Long
     List<AssignedTest> findByTestIdAndStatus(Long testId, TestStatus status);
     List<AssignedTest> findByUserIdAndTestIdAndStatus(Long userId, Long testId, TestStatus status);
     List<AssignedTest> findByTestNameAndUserNameAndStatus(String testName, String userName, AssignedTest.TestStatus status);
-    Optional<AssignedTest> findByUserIdAndTestId(Long userId, Long testId);
+    List<AssignedTest> findByUserIdAndTestId(Long userId, Long testId);
 
     @Query("SELECT at FROM AssignedTest at WHERE at.user.id = :userId AND at.test.isActive = true")
     List<AssignedTest> findActiveAssignedTestsByUserId(@Param("userId") Long userId);
 
     @Query("SELECT COUNT(at) FROM AssignedTest at WHERE at.test.id = :testId AND at.status = 'COMPLETED'")
     Long countCompletedTestsByTestId(@Param("testId") Long tstId);
+
+    @Query("SELECT a FROM AssignedTest a WHERE a.status = 'COMPLETED' AND a.testScore <= :score")
+    List<AssignedTest> findCompletedByScoreLessThan(@Param("score") Double score);
+
+    List<AssignedTest> findByTestName(String testName);
+
+    List<AssignedTest> findByUserName(String userName);
+
+    List<AssignedTest> findByTestNameAndStatus(String testName, TestStatus status);
+
+    List<AssignedTest> findByUserNameAndStatus(String userName, TestStatus status);
+
+    AssignedTest findByTestNameAndUserName(String testName, String userName);
 }

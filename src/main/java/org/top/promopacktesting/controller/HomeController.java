@@ -1,4 +1,4 @@
-package org.top.promopacktesting.config;
+package org.top.promopacktesting.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +13,6 @@ public class HomeController {
 
     @GetMapping("/home")
     public String homePage() {
-        return "rediect:/";
+        return "redirect:/";
     }
 }

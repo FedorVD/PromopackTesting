@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
@@ -29,8 +31,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+        //RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
         http
-                .authorizeHttpRequests(authz -> authz
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/home", "/login","/css/**","/images/**","/js/**","/access-denied").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER")
@@ -45,22 +49,30 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/?logout")
+                        .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
-                .exceptionHandling(exceptions -> exceptions
+                .exceptionHandling(exception -> exception
                         .accessDeniedPage("/access-denied")
-                        .authenticationEntryPoint((HttpServletRequest request,
-                                                   HttpServletResponse response,
-                                                   AuthenticationException authException) -> {
-                    try {
-                        response.sendRedirect("/login");
-                    }catch (IOException e){
-                        e.printStackTrace();
-                    }
-        })
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            if (request.getRequestURI().equals("/logout")) {
+                                try {
+                                    // Используем GET-редирект
+                                    response.sendRedirect("/");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                try {
+                                    // Используем GET-редирект
+                                    response.sendRedirect("/login");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        })
                 );
         return http.build();
     }
@@ -69,11 +81,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-/*
-    @Bean
-    public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-        return new CustomAuthenticationSuccessHandler();
-    }
-*/
 }

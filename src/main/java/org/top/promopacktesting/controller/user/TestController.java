@@ -58,9 +58,7 @@ public class TestController {
         if (testId != null && status != null) {
             assignments = assignmentService.getAssignedTestsByUserIdAndTestIdAndStatus(user.getId(), testId, status);
         } else if (testId != null) {
-            assignedTest = assignmentService.getAssignedTestByUserIdAndTestId(user.getId(), testId).
-                    orElseThrow(() -> new RuntimeException("Тест не найден"));
-            assignments.add(assignedTest);
+            assignments = assignmentService.getAssignedTestsByUserIdAndTestId(user.getId(), testId);
         } else if (status != null) {
             assignments = assignmentService.getAssignedTestsByUserIdAndStatus(user.getId(), status);
         } else {
@@ -88,6 +86,7 @@ public class TestController {
             return "/user/userAssignedTests";
         }
 
+
         int currentIndex = 0;
 
         // Если тест в состоянии IN_PROGRESS — найти первый неотвеченный вопрос
@@ -105,7 +104,10 @@ public class TestController {
                 }
             }
         }
-
+        if (assignedTest.getStatus() == AssignedTest.TestStatus.ASSIGNED) {
+            assignedTest.setStatus(AssignedTest.TestStatus.IN_PROGRESS);
+            assignmentService.updateAssignedTest(assignedTest);
+        }
         model.addAttribute("assignedTest", assignedTest);
         model.addAttribute("questions", questions);
         model.addAttribute("currentIndex", currentIndex); // индекс текущего вопроса

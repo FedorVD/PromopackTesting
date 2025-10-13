@@ -23,4 +23,6 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     List<Test> findByAssignedUser(@Param("userId") Long userId);
 
     Test save(Test test);
+
+    List<Test> findByThemeTestId(Long themeTestId);
 }

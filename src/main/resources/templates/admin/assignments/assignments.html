@@ -7,6 +7,7 @@
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
+<a href="/admin">К административной панели</a><br /><br />
 <h2>Назначенные тесты</h2>
 
 <!-- Форма фильтрации -->
@@ -14,17 +15,35 @@
   <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
 
   <label for="testName">Название теста:</label>
-  <input type="number" name="testName" id="testName" th:value="${param.testName}" />
+  <input type="text" name="testName" id="testName" th:value="${param.testName}" />
 
   <label for="userName">Сотрудник:</label>
-  <input type="number" name="userName" id="userName" th:value="${param.userName}" />
+  <input type="text" name="userName" id="userName" th:value="${param.userName}" />
 
   <label for="status">Статус:</label>
   <select name="status" id="status">
     <option value="">-- Все статусы --</option>
-    <option value="ASSIGNED" th:selected="${param.status == 'ASSIGNED'}">Назначен</option>
-    <option value="IN_PROGRESS" th:selected="${param.status == 'IN_PROGRESS'}">Начат</option>
-    <option value="COMPLETED" th:selected="${param.status == 'COMPLETED'}">Завершен</option>
+    <option value="ASSIGNED"
+            th:selected="${status != null and status == 'ASSIGNED'}">Назначен</option>
+    <option value="IN_PROGRESS"
+            th:selected="${status != null and status == 'IN_PROGRESS'}">Начат</option>
+    <option value="COMPLETED"
+            th:selected="${status != null and status == 'COMPLETED'}">Завершен</option>
+  </select>
+
+  <label for="testScore">Балл ниже:</label>
+  <select name="testScore" id="testScore">
+    <option value="">-- Все баллы --</option>
+    <th:block th:each="i : ${#numbers.sequence(1, 10)}">
+      <option
+              th:value="${i}"
+              th:selected="${param.testScore != null and param.testScore.length > 0
+                          and #strings.isEmpty(param.testScore[0]) == false
+                          and T(java.lang.Double).valueOf(param.testScore[0]) == i}"
+              th:text="'≤ ' + ${i}">"
+              th:text="'≤ ' + ${i}">
+      </option>
+    </th:block>
   </select>
 
   <button type="submit">Фильтровать</button>
@@ -32,39 +51,76 @@
 
 <br />
 
-<!-- Таблица назначенных тестов -->
-<table border="1">
-  <thead>
-  <tr>
-    <th>Тест</th>
-    <th>Кому назначено</th>
-    <th>Кто назначил</th>
-    <th>Дата назначения</th>
-    <th>Статус</th>
-    <th>Баллы</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="assignment : ${assignments}">
-    <td th:text="${assignment.test?.name ?:'Empty'}">Тест</td>
-    <td th:text="${assignment.user?.name ?:'Emmpty'}">Пользователь</td>
-    <td th:text="${assignment.assignedBy?.username ?: 'Неизвестно'}">Назначил</td>
-    <td th:text="${#temporals.format(assignment.assignedAt, 'dd.MM.yyyy')}">Дата</td>
-    <td th:text="${assignment.status.name() == 'ASSIGNED' ? 'Назначен'
-                  : (assignment.status.name() == 'IN_PROGRESS' ? 'Начат'
-                  : 'Завершен')}">Статус</td>
-    <td th:text="${assignment.status.name() == 'COMPLETED' ? #numbers.formatDecimal(assignment.testScore, 1, 1) : '—'}">—</td>
-    <td>
-      <a th:href="@{/admin/assignments/{id}/assignedTest(id=${assignment.id})}">Просмотр</a>
-    </td>
-  </tr>
-  </tbody>
-</table>
+<div class="mt-3">
+  <form action="/admin/assignments/exportToExcel" method="get">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+    <table class="table table-bordered table-striped">
+      <thead>
+      <tr>
+        <th><input type="checkbox" id="selectAll" /></th>
+        <th>Тема теста</th>
+        <th>Тест</th>
+        <th>Кому назначено</th>
+        <th>Кто назначил</th>
+        <th>Дата назначения</th>
+        <th>Статус</th>
+        <th>Результат</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="assignment : ${assignments}">
+        <td><input type="checkbox" name="assignmentsIds" th:value="${assignment?.id}" /></td>
+        <td th:text="${assignment.test?.themeTest.themeName ?:'Empty'}">Тема</td>
+        <td th:text="${assignment.test?.name ?:'Empty'}">Тест</td>
+        <td th:text="${assignment.user?.name ?:'Emmpty'}">Пользователь</td>
+        <td th:text="${assignment.assignedBy?.username ?: 'Неизвестно'}">Назначил</td>
+        <td th:text="${#temporals.format(assignment.assignedAt, 'dd.MM.yyyy')}">Дата</td>
+        <td th:text="${assignment.status.name() == 'ASSIGNED' ? 'Назначен'
+                      : (assignment.status.name() == 'IN_PROGRESS' ? 'Начат'
+                      : 'Завершен')}">Статус</td>
+        <td th:text="${assignment.status.name() == 'COMPLETED' ? #numbers.formatDecimal(assignment.testScore, 1, 1) : '—'}">—</td>
+        <td>
+          <a th:href="@{/admin/assignments/{id}/assignedTest(id=${assignment?.id})}">Просмотр</a>
+        </td>
+      </tr>
+      </tbody>
+    </table><br />
 
-<p th:if="${assignments.isEmpty()}" style="color: red;">
+        <button type="submit" class="btn btn-success">Выгрузить в Excel</button>
+
+  </form>
+</div><br />
+
+<p th:if="${assignments == null or assignments.isEmpty()}" style="color: red;">
   По выбранным параметрам поиска тесты не найдены.
 </p>
 
-<a href="/admin">Назад к админке</a><br />
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('input[name="assignmentsIds"]');
+
+    // Событие при клике на "Выбрать все"
+    selectAll.addEventListener('click', function () {
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+      });
+    });
+
+    // Событие при клике на отдельные чекбоксы (для снятия галочки с "Все", если не все выбраны)
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('click', function () {
+        if (!this.checked) {
+          selectAll.checked = false;
+        } else {
+          // Проверяем, все ли чекбоксы выделены
+          const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+          selectAll.checked = allChecked;
+        }
+      });
+    });
+  });
+</script>
+
 </body>
 </html>

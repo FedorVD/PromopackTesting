@@ -12,7 +12,9 @@
 <p>Вы вошли как: <strong type="text" th:text="${username}">Username</strong></p>
 
 <hr />
+<a href="/admin/themes/themes">Управление темами тестирования</a><br />
 <a href="/admin/tests/tests">Управление тестами</a><br /><br />
+
 <hr />
 
 <hr />
@@ -24,6 +26,9 @@
 <a href="/admin/assignments/assignments">Список назначенных тестов</a><br />
 
 <form method="post" action="/logout">
+    <input type="hidden"
+           th:name="${_csrf.parameterName}"
+           th:value="${_csrf.token}" />
     <button type="submit" class="btn btn-danger">Выйти</button>
 </form>
 

@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
+<a href="/admin">К административной панели</a><br /><br />
 <h2>Назначить тест пользователю</h2>
 
 <form action="#" th:action="@{/admin/assignments/assignTest}" method="post">
@@ -41,7 +42,5 @@
 <div th:if="${error}" style="color: red;">
     <p th:text="${error}">Ошибка</p>
 </div>
-
-<a href="/admin">Назад к админке</a><br />
 </body>
 </html>

@@ -11,7 +11,6 @@ import org.top.promopacktesting.repository.TestRepository;
 import org.top.promopacktesting.repository.UserAnswerRepository;
 import org.top.promopacktesting.repository.UserRepository;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,23 +65,36 @@ public class AssignmentService {
     public Optional<AssignedTest> getAssignedTestById(Long assignmentId) {
         return assignedTestRepository.findById(assignmentId);
     }
-    public Optional<AssignedTest> getAssignedTestByUserIdAndTestId(Long userId, Long testId) {
+    public List<AssignedTest> getAssignedTestsByUserIdAndTestId(Long userId, Long testId) {
         return assignedTestRepository.findByUserIdAndTestId(userId, testId);
     }
 
-    public AssignedTest assignTestToUser(Long testId, Long userId, User assignedBy){
+    public void assignTestToUser(Long testId, Long userId, User assignedBy){
+        System.out.println("=== Метод assignTestToUser был вызван ===");
         Test test = testRepository.findById(testId)
                 .orElseThrow(() -> new RuntimeException("Тест не найден"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
 
-        Optional<AssignedTest> existAssignment = assignedTestRepository.findByUserIdAndTestId(userId, testId);
-        if (existAssignment.isPresent() && existAssignment.get().getStatus() != AssignedTest.TestStatus.COMPLETED) {
-            throw new RuntimeException("Этот тест пользователю уже назначен и не завершен");
+        List<AssignedTest> existAssignment = assignedTestRepository.findByUserIdAndTestId(userId, testId);
+        System.out.println("=== Проверка существующего назначения ===");
+        if (existAssignment.size() > 0) {
+            for (AssignedTest assignedTest : existAssignment) {
+                System.out.println("Найдено существующее назначение:");
+                System.out.println("ID: " + assignedTest.getId());
+                System.out.println("Пользователь ID: " + assignedTest.getUser().getId());
+                System.out.println("Тест ID: " + assignedTest.getTest().getId());
+                System.out.println("Статус: " + assignedTest.getStatus());
+                if (assignedTest != null && assignedTest.getStatus() != AssignedTest.TestStatus.COMPLETED) {
+                    throw new RuntimeException("Этот тест пользователю уже назначен и не завершен");
+                }
+            }
+        } else {
+            System.out.println("Существующее назначение не найдено.");
         }
         AssignedTest assignedTest = new AssignedTest(test, user, assignedBy);
         assignedTest.setStatus(AssignedTest.TestStatus.ASSIGNED);
-        return assignedTestRepository.save(assignedTest);
+        assignedTestRepository.save(assignedTest);
     }
 
     public void startTest(Long assignmentId){
@@ -102,5 +114,29 @@ public class AssignmentService {
 
     public List<AssignedTest> getCompletedTestsByUserId(User user) {
         return assignedTestRepository.findByUserIdAndStatus(user.getId(), AssignedTest.TestStatus.COMPLETED);
+    }
+
+    public List<AssignedTest> getCompletedByTestScoreLessThanEqual(Double score) {
+        return assignedTestRepository.findCompletedByScoreLessThan(score);
+    }
+
+    public List<AssignedTest> getAssignedTestsByTestName(String testName) {
+        return assignedTestRepository.findByTestName(testName);
+    }
+
+    public List<AssignedTest> getAssignedTestsByUserName(String userName) {
+        return assignedTestRepository.findByUserName(userName);
+    }
+
+    public List<AssignedTest> getAssignedTestsByTestNameAndStatus(String testName, AssignedTest.TestStatus status) {
+        return assignedTestRepository.findByTestNameAndStatus(testName, status);
+    }
+
+    public List<AssignedTest> getAssignedTestsByUserNameAndStatus(String userName, AssignedTest.TestStatus status) {
+        return assignedTestRepository.findByUserNameAndStatus(userName, status);
+    }
+
+    public AssignedTest getAssignedTestByTestNameAndUserName(String testName, String userName) {
+        return assignedTestRepository.findByTestNameAndUserName(testName, userName);
     }
 }

@@ -9,14 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.top.promopacktesting.model.Answer;
-import org.top.promopacktesting.model.Question;
-import org.top.promopacktesting.model.Test;
-import org.top.promopacktesting.model.User;
-import org.top.promopacktesting.service.AnswerService;
-import org.top.promopacktesting.service.QuestionService;
-import org.top.promopacktesting.service.TestService;
-import org.top.promopacktesting.service.UserService;
+import org.top.promopacktesting.model.*;
+import org.top.promopacktesting.service.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,26 +32,45 @@ public class TestManagementController {
     @Autowired
     private AnswerService answerService;
 
+    @Autowired
+    private ThemeTestService themeTestService;
+
     @GetMapping("/tests")
     public String showTests(@RequestParam(required = false) String search,
+                            @RequestParam(required = false) Long themeId,
                             Model model) {
-        List<Test> test = testService.getAllTests();
-        model.addAttribute("tests", test);
+        List<Test> tests = new ArrayList<>();
+        if (themeId != null) {
+            tests = testService.getTestsByThemeId(themeId);
+        } else {
+            tests = testService.getAllTests();
+        }
+        model.addAttribute("tests", tests);
         model.addAttribute("search", search);
+        model.addAttribute("selectedThemeId", themeId);
+        model.addAttribute("themes", themeTestService.getAllThemeTests());
         return "/admin/tests/tests";
     }
 
     @GetMapping("/addTest")
     public String showAddTestForm(Model model) {
+        List<ThemeTest> themeTests = themeTestService.getAllThemeTests();
+        if (themeTests.isEmpty()) {
+            model.addAttribute("error", "Нет доступных тем для создания теста");
+            return "/admin/tests/tests";
+        }
         model.addAttribute("test", new Test());
+        model.addAttribute("themeTests", themeTests);
         return "/admin/tests/addTest";
     }
 
     @PostMapping("/addTest")
-    public String addTest(@RequestParam String testName,
+    public String addTest(@RequestParam Long themeId,
+                          @RequestParam String testName,
                           @RequestParam Double passingScore,
                           Model model) {
         try {
+
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String currentUsername = auth.getName();
 
@@ -69,6 +82,7 @@ public class TestManagementController {
             }
             User creator = userOpt.get();
             Test newTest = new Test(testName, creator, passingScore);
+            newTest.setThemeTest(themeTestService.getThemeTestById(themeId).orElseThrow(() -> new RuntimeException("Тема не найдена")));
             testService.createTest(newTest);
             Long testId = newTest.getId();
             return "redirect:/admin/tests/" + testId + "/addQuestion";
@@ -80,11 +94,15 @@ public class TestManagementController {
 
     @GetMapping("/{testId}/edit")
     public String showEditTestForm(@PathVariable Long testId, Model model) {
-        if (testService.getTestById(testId).isEmpty()) {
+        Optional<Test> testOpt = testService.getTestById(testId);
+        if (testOpt.isEmpty()) {
             model.addAttribute("error", "Тест не найден!");
             return "admin/tests/editTest";
         } else {
-            model.addAttribute("test", testService.getTestById(testId).get());
+            Optional<ThemeTest> themeTestOpt = themeTestService.getThemeTestById(testOpt.get().getThemeTest().getId());
+            model.addAttribute("test", testOpt.orElseThrow(() -> new RuntimeException("Тест не найден")));
+            model.addAttribute("themeTests", themeTestService.getAllThemeTests());
+            model.addAttribute("themeTest", themeTestOpt.orElseThrow(() -> new RuntimeException("Тема не найдена")));
             return "admin/tests/editTest";
         }
     }
@@ -165,11 +183,10 @@ public class TestManagementController {
             newQuestion.setText(questionText);
             newQuestion.setTest(test);
             newQuestion.setOrderNum(orderNum);
-
             for (Answer answer : answerList) {
                 answer.setQuestion(newQuestion);
             }
-
+            newQuestion.setAnswers(answerList);
             questionService.saveQuestionWithAnswers(newQuestion);
             model.addAttribute("message", "Вопрос успешно добавлен к тесту!");
 

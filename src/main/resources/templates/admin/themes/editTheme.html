@@ -10,17 +10,25 @@
 <div class="container mt-4">
     <h2>Редактирование темы</h2>
 
-    <form action="#" th:action="@{/admin/themeTest/edit/{id}(id=${themeTest.id})}" method="post">
+    <form action="#" th:action="@{/admin/themes/{id}/editTheme(id=${themeTest.id})}" method="post">
         <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
 
         <div class="mb-3">
-            <label for="name" class="form-label">Название темы:</label>
-            <input type="text" class="form-control" id="name" name="name" th:value="${themeTest.name}" required />
+            <label for="themeName" class="form-label">Название темы:</label>
+            <input type="text" class="form-control" id="themeName" name="themeName" th:value="${themeTest.themeName}" required />
         </div>
 
         <button type="submit" class="btn btn-success">Сохранить</button>
-        <a href="/admin/themeTest/list" class="btn btn-secondary">Отмена</a>
+        <a href="/admin/themes/themes" class="btn btn-secondary">Отмена</a>
     </form>
+
+    <!-- Сообщения -->
+    <div th:if="${message}" style="color: green;">
+        <p th:text="${message}">Сообщение</p>
+    </div>
+
+    <div th:if="${error}" style="color: red;">
+        <p th:text="${error}">Ошибка</p>
 </div>
 </body>
 </html>
