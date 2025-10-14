@@ -11,7 +11,7 @@
 
 <a href="/admin/tests/tests">Назад к списку тестов</a><br /><br />
 
-<form action="#" th:action="@{/admin/tests/{id}/update(id=${test.id})}" method="post">
+<form action="#" th:action="@{/admin/tests/{id}/edit(id=${test.id})}" method="post">
     <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
     <input type="hidden" name="id" th:value="${test.id}" />
 
@@ -29,8 +29,8 @@
 
     <!-- Название теста -->
     <div class="mb-3">
-        <label for="name" class="form-label">Название теста:</label>
-        <input type="text" class="form-control" id="name" name="name" th:value="${test.name}" required />
+        <label for="testName" class="form-label">Название теста:</label>
+        <input type="text" class="form-control" id="testName" name="testName" th:value="${test.name}" required />
     </div>
 
     <!-- Проходной балл -->
@@ -38,6 +38,13 @@
         <label for="passingScore" class="form-label">Проходной балл:</label>
         <input type="number" step="0.1" class="form-control" id="passingScore" name="passingScore"
                th:value="${test.passingScore}" required />
+    </div>
+
+    <!-- Чек-бокс для флага "активен" -->
+    <div class="mb-3 form-check">
+        <label for="isActive" class="form-check-label">Тест активен</label>
+        <input type="checkbox" id="isActive" name="isActive"
+               th:checked="${test.isActive}" class="form-check-input" />
     </div>
 
     <button type="submit">Сохранить изменения</button>

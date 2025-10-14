@@ -64,11 +64,20 @@
         <th>Кто назначил</th>
         <th>Дата назначения</th>
         <th>Статус</th>
+        <th>Дата прохождения</th>
+        <th>Проходной балл</th>
         <th>Результат</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:each="assignment : ${assignments}">
+      <tr th:each="assignment : ${assignments}"
+          th:classappend="${assignment.status.name() == 'COMPLETED'
+                    ? (assignment.testScore != null
+                        && assignment.test.passingScore != null
+                        && assignment.testScore >= assignment.test.passingScore
+                        ? 'table-success'
+                        : 'table-danger')
+                    : ''}">
         <td><input type="checkbox" name="assignmentsIds" th:value="${assignment?.id}" /></td>
         <td th:text="${assignment.test?.themeTest.themeName ?:'Empty'}">Тема</td>
         <td th:text="${assignment.test?.name ?:'Empty'}">Тест</td>
@@ -78,10 +87,18 @@
         <td th:text="${assignment.status.name() == 'ASSIGNED' ? 'Назначен'
                       : (assignment.status.name() == 'IN_PROGRESS' ? 'Начат'
                       : 'Завершен')}">Статус</td>
-        <td th:text="${assignment.status.name() == 'COMPLETED' ? #numbers.formatDecimal(assignment.testScore, 1, 1) : '—'}">—</td>
+        <td th:if="${assignment.status.name() == 'COMPLETED'}"
+            th:text="${#temporals.format(assignment.completedAt, 'dd.MM.yyyy')}">Дата прохождения</td>
         <td>
+            <span th:if="${assignment.status.name() == 'COMPLETED'}"
+                  th:text="${assignment.test.passingScore}">Проходной балл</span></td>
+        <td>
+            <span th:if="${assignment.status.name() == 'COMPLETED'}"
+                  th:class="${assignment.testScore >= assignment.test.passingScore} ? 'text-success' : 'text-danger'"
+                  th:text="${#numbers.formatDecimal(assignment.testScore, 1, 1)}">—</span>
+<!--        </td>
           <a th:href="@{/admin/assignments/{id}/assignedTest(id=${assignment?.id})}">Просмотр</a>
-        </td>
+        </td> -->
       </tr>
       </tbody>
     </table><br />

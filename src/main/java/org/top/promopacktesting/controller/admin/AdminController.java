@@ -13,7 +13,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.top.promopacktesting.model.User;
 import org.top.promopacktesting.service.UserService;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @Controller
@@ -37,15 +36,4 @@ public class AdminController {
         model.addAttribute("username", currentUser.getName());
         return "admin/admin";
     }
-
-/*
-    @PostMapping("/admin/logout")
-    public String logout(RedirectAttributes redirectAttributes) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            redirectAttributes.addFlashAttribute("message", "Вы успешно вышли из системы");
-        }
-        return "redirect:/login?logout";
-    }
-*/
 }

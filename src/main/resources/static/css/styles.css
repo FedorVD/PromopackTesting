@@ -224,3 +224,43 @@ a:hover {
     background-color: #28a745;
     color: white;
 }
+
+.text-success {
+    color: green;
+}
+
+.text-danger {
+    color: red;
+}
+
+.badge {
+    padding: 0.5em 0.75em;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.table-success {
+    background-color: #d4edda;
+}
+
+.table-danger {
+    background-color: #f8d7da;
+}
+
+.table-completed {
+    background-color: #f0f0f0; /* Серый фон */
+}
+
+.form-check-input {
+    margin-top: 5px;
+}

@@ -29,11 +29,6 @@ public class UserAnswer {
     @OneToMany(mappedBy = "userAnswer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<UserSelectedAnswer> selectedAnswers = new ArrayList<>();
 
-/*    @ElementCollection
-    @CollectionTable(name = "user_answer_options", joinColumns = @JoinColumn(name = "user_answer_id"))
-    @Column(name = "is_selected")
-    private List<Boolean> selectedOptions;*/
-
     @Column(name = "answered_at")
     private LocalDateTime answeredAt;
 

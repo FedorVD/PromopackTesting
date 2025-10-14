@@ -2,7 +2,6 @@ package org.top.promopacktesting.controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,15 +10,14 @@ import org.top.promopacktesting.model.*;
 import org.top.promopacktesting.service.*;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/user")
 public class TestController {
 
-    @Autowired
-    private TestService testService;
+/*    @Autowired
+    private TestService testService;*/
 
     @Autowired
     private AssignmentService assignmentService;
@@ -139,7 +137,6 @@ public class TestController {
                 return "/user/userPathTest";
             }
 
-            // Получаем ID выбранных ответов
             List<Long> selectedAnswerIds = new ArrayList<>();
             for (int i = 0; i < answers.size(); i++) {
                 if (requestParam.containsKey("answers[" + i + "]")) {
@@ -147,7 +144,6 @@ public class TestController {
                 }
             }
 
-            // Создаем UserAnswer и связываем его с выбранными ответами
             UserAnswer userAnswer = new UserAnswer();
             userAnswer.setAssignedTest(assignedTest);
             userAnswer.setQuestion(currentQuestion);
@@ -172,7 +168,7 @@ public class TestController {
                 model.addAttribute("error", "Ошибка при сохранении ответа: " + e.getMessage());
                 return "/user/userPathTest";
             }
-            // Обновляем модель
+
             Map<String, List<Boolean>> userAnswers = (Map<String, List<Boolean>>) model.getAttribute("answers");
             if (userAnswers == null) {
                 userAnswers = new HashMap<>();
@@ -196,7 +192,6 @@ public class TestController {
                 model.addAttribute("completed", true);
                 model.addAttribute("assignedTest", assignedTest);
                 model.addAttribute("userAnswers", userAnswers);
-                //model.addAttribute("selectedOptions", selectedOptions);
                 return "redirect:/user/" + id + "/result";
             }
             return "/user/userPathTest";

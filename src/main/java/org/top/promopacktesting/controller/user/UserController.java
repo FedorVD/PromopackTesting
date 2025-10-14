@@ -7,16 +7,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.top.promopacktesting.model.User;
 import org.top.promopacktesting.service.UserService;
 
 import java.util.Optional;
 
 @Controller
-//@RequestMapping("/user")
+
 @PreAuthorize("hasRole('USER')")
 public class UserController {
 

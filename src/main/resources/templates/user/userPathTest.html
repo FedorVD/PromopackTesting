@@ -11,6 +11,9 @@
 <div class="container">
     <h1 th:text="${assignedTest.test.name}">Тест</h1>
 
+    <!-- Отображение заголовка: "Вопрос номер X из Y" -->
+    <h3 th:text="'Вопрос номер ' + (${currentIndex} + 1) + ' из ' + ${questions.size()}">Вопрос номер ... из ...</h3>
+
     <!-- Вывод текущего вопроса -->
     <div class="question-box">
         <p th:text="${questions[currentIndex].text}">Вопрос</p>

@@ -114,6 +114,10 @@ public class AssignmentManagementController {
         if (assignments.isEmpty()) {
             model.addAttribute("message", "По выбранным параметрам поиска тесты не найдены");
         } else {
+            for (AssignedTest a : assignments) {
+                System.out.println(a.getTestScore() + " " + a.getTestScore().getClass().getSimpleName());
+                System.out.println(a.getTest().getPassingScore() + " " + a.getTest().getPassingScore().getClass().getSimpleName());
+            }
             model.addAttribute("assignments", assignments);
         }
         if (status != null) {

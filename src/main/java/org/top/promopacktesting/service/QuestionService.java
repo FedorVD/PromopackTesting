@@ -55,14 +55,6 @@ public class QuestionService {
             Question question = questionOpt.get();
             question.setText(updatedQuestion.getText());
             question.setAnswers(updatedQuestion.getAnswers());
-/*
-            question.setOrderNum(updatedQuestion.getOrderNum());
-            question.setTest(updatedQuestion.getTest());
-            answerRepository.deleteByQuestionId(id);
-            for (Answer answer : updatedQuestion.getAnswers()) {
-                answer.setQuestion(question);
-            }
-*/
             questionRepository.save(question);
         }
     }

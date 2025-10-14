@@ -15,5 +15,4 @@ public interface ThemeTestRepository extends JpaRepository<ThemeTest, Long> {
     List<ThemeTest> findAll();
     Optional<ThemeTest> findThemeTestByThemeName(String themeName);
 
-    //Optional<ThemeTest> findByTest(Test test);
 }

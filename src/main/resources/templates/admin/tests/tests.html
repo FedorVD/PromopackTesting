@@ -25,6 +25,13 @@
                     th:text="${theme.themeName}"></option>
         </select>
 
+        <label for="statusFilter">Статус:</label>
+        <select id="statusFilter" name="status" class="form-control mb-3">
+            <option value="">-- Все статусы --</option>
+            <option value="active" th:selected="${selectedStatus == true}">Активные</option>
+            <option value="inactive" th:selected="${selectedStatus == false}">Неактивные</option>
+        </select>
+
         <label for="search">Поиск по названию:</label>
         <input type="text" id="search" name="search" class="form-control mb-3"
                th:value="${search}" placeholder="Введите название..." />
@@ -61,9 +68,8 @@
                 <span th:unless="${test.isActive}" class="badge bg-danger">Неактивный</span>
             </td>
             <td>
-                <a th:href="@{/admin/tests/{id}/viewTest(id=${test.id})}" class="btn btn-sm btn-info">Просмотр</a>
+                <a th:href="@{/admin/tests/{id}/viewTest(id=${test.id})}" class="btn btn-sm btn-info">Вопросы</a>
                 <a th:href="@{/admin/tests/{id}/edit(id=${test.id})}" class="btn btn-sm btn-secondary">Редактировать</a>
-                <a th:href="@{/admin/tests/{id}/addQuestion(id=${test.id})}" class="btn btn-sm btn-warning">Добавить вопрос</a>
             </td>
         </tr>
         </tbody>

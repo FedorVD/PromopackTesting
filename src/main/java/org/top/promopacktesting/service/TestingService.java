@@ -18,8 +18,6 @@ import org.top.promopacktesting.repository.UserAnswerRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -53,7 +51,6 @@ public class TestingService {
 
         userAnswer.setAssignedTest(assignedTest);
         userAnswer.setQuestion(question);
-        //userAnswer.setSelectedOptions(selectedAnswers);
         userAnswer.setAnsweredAt(LocalDateTime.now());
 
         return userAnswerRepository.save(userAnswer);
@@ -67,7 +64,6 @@ public class TestingService {
 
         assignedTest.setTestScore(score);
         assignedTest.setCompletedAt(LocalDateTime.now());
-        //assignedTest.setStatus(AssignedTest.TestStatus.COMPLETED);
 
         return assignedTestRepository.save(assignedTest).getTestScore();
     }

@@ -13,10 +13,12 @@ import java.util.Optional;
 @Repository
 public interface TestRepository extends JpaRepository<Test, Long> {
     List<Test> findByIsActiveTrue();
+    List<Test> findByIsActiveFalse();
     List<Test> findAll();
     List<Test> findByCreatedBy(User user);
+    List<Test> findByNameContainingIgnoreCase(String name);
     Optional<Test> findById(Long id);
-    //Optional<Test> findByIdAndIsActiveTrue(Long id);
+
 
     @Query("SELECT t FROM Test t WHERE t.isActive = true AND t.id IN " +
             "(SELECT at.test.id FROM AssignedTest at WHERE at.user.id = :userId)")
@@ -25,4 +27,6 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     Test save(Test test);
 
     List<Test> findByThemeTestId(Long themeTestId);
+
+
 }

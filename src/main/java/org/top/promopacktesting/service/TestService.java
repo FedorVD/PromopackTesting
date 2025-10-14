@@ -33,6 +33,10 @@ public class TestService {
         return testRepository.findByIsActiveTrue();
     }
 
+    public List<Test> getAllInactiveTests() {
+        return testRepository.findByIsActiveFalse();
+    }
+
     public Optional<Test> getTestById(Long id) {
         return testRepository.findById(id);
     }
@@ -41,8 +45,8 @@ public class TestService {
         testRepository.save(test);
     }
 
-    public void updateTest(Long id, Test testDetails) {
-        testRepository.findById(id).map(test -> {
+    public void updateTest(Test testDetails) {
+        testRepository.findById(testDetails.getId()).map(test -> {
             test.setName(testDetails.getName());
             test.setIsActive(testDetails.getIsActive());
             return testRepository.save(test);
@@ -53,11 +57,7 @@ public class TestService {
         return testRepository.findByThemeTestId(themeTestId);
     }
 
-/*    @Transactional
-    public Question addQuestionToTest(Long testId, Question question) {
-        return testRepository.findById(testId).map(test ->{
-            question.setTest(test);
-            return questionRepository.save(question);
-        }).orElseThrow(() -> new RuntimeException("Тест не найден"));
-    }*/
+    public List<Test> findByNameContainingIgnoreCase(String name) {
+        return testRepository.findByNameContainingIgnoreCase(name);
+    }
 }

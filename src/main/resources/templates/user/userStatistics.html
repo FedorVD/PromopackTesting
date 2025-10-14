@@ -8,25 +8,28 @@
 </head>
 <body>
 <div class="container mt-4">
-    <h2>Статистика прохождения тестов</h2>
-
-    <!-- Ссылка на возврат -->
     <a href="/user" class="btn btn-link mb-3">← Вернуться к профилю</a>
-
-    <!-- Таблица с пройденными тестами -->
+    <h2>Статистика прохождения тестов</h2>
     <table class="table table-bordered table-striped">
         <thead>
         <tr>
             <th>Название теста</th>
             <th>Дата прохождения</th>
-            <th>Балл</th>
+            <th>Результат</th>
+            <th>Проходной балл</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="test : ${completedTests}">
+        <tr th:each="test : ${completedTests}"
+            th:classappend="${test.testScore != null
+                        && test.test.passingScore != null
+                        && test.testScore >= test.test.passingScore
+                        ? 'table-success'
+                        : 'table-danger'}">
             <td th:text="${test.test.name}">Тест</td>
             <td th:text="${#temporals.format(test.completedAt, 'dd.MM.yyyy')}">--.--.----</td>
             <td th:text="${test.testScore != null ? #numbers.formatDecimal(test.testScore, 1, 1) : '—'}">—</td>
+            <td th:text="${test.test.passingScore}">—</td>
         </tr>
         </tbody>
     </table>

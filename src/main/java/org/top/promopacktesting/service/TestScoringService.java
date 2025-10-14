@@ -1,7 +1,5 @@
 package org.top.promopacktesting.service;
 
-import aj.org.objectweb.asm.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.top.promopacktesting.model.*;
@@ -83,23 +81,6 @@ public class TestScoringService {
             return 0.0;
         }
 
-/*
-        int totalCorrect = 0;
-        int correctCount = 0;
-        for (int i = 0; i < answers.size(); i++) {
-            Answer answer = answers.get(i);
-            boolean isSelected = selectedOptions.get(i);
-            if (answer.getIsCorrect()) {
-                totalCorrect++;
-                if (isSelected) {
-                    correctCount++;
-                }
-            }else if (isSelected){
-                return 0.0;
-            }
-        }
-            return (double)correctCount/totalCorrect;
-*/
         return 1.0;
     }
 }

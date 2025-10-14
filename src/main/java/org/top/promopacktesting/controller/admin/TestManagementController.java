@@ -38,10 +38,26 @@ public class TestManagementController {
     @GetMapping("/tests")
     public String showTests(@RequestParam(required = false) String search,
                             @RequestParam(required = false) Long themeId,
+                            @RequestParam(required = false) String status,
                             Model model) {
         List<Test> tests = new ArrayList<>();
+
         if (themeId != null) {
             tests = testService.getTestsByThemeId(themeId);
+        } else if (status != null && !status.isEmpty()) {
+            if ("active".equals(status)) {
+                tests = testService.getAllActiveTests();
+                model.addAttribute("selectedStatus", true);
+            } else if ("inactive".equals(status)) {
+                tests = testService.getAllInactiveTests();
+                model.addAttribute("selectedStatus", false);
+            }
+        } else if (search != null) {
+            if (search.isEmpty()) {
+                tests = testService.getAllTests();
+            } else {
+                tests = testService.findByNameContainingIgnoreCase(search);
+            }
         } else {
             tests = testService.getAllTests();
         }
@@ -109,10 +125,18 @@ public class TestManagementController {
 
     @PostMapping("/{testId}/edit")
     public String editTest(@PathVariable Long testId,
+                           HttpServletRequest request,
+                           @RequestParam Long themeId,
+                           @RequestParam Map<String, String> requestParams,
                            @RequestParam String testName,
-                           @RequestParam Boolean isActive,
+
                            Model model) {
         try{
+            System.out.println("=== Полученные параметры ===");
+            request.getParameterMap().forEach((key, values) -> {
+                System.out.println(key + " = " + Arrays.toString(values));
+            });
+
             Optional<Test> testOpt = testService.getTestById(testId);
             if (testOpt.isEmpty()){
                 model.addAttribute("error", "Тест не найден!");
@@ -120,8 +144,10 @@ public class TestManagementController {
             } else {
                 Test test = testOpt.get();
                 test.setName(testName);
+                test.setThemeTest(themeTestService.getThemeTestById(themeId).orElseThrow(() -> new RuntimeException("Тема не найдена")));
+                Boolean isActive = requestParams.containsKey("isActive");
                 test.setIsActive(isActive);
-                testService.updateTest(testId, test);
+                testService.updateTest(test);
                 model.addAttribute("message", "Тест успешно обновлен!");
             }
         }catch (Exception e){
@@ -205,7 +231,6 @@ public class TestManagementController {
     public String showEditQuestionForm(@PathVariable Long questionId, Model model) {
         Question question = questionService.getQuestionById(questionId).orElseThrow(()-> new RuntimeException("Вопрос не найден"));
         model.addAttribute("question", question);
-        //model.addAttribute("answers", question.getAnswers());
         return "admin/tests/editQuestion";
     }
 
@@ -227,7 +252,7 @@ public class TestManagementController {
             if (existingAnswers.isEmpty()) {
                 existingAnswers = new ArrayList<>();
             }
-            //List<Answer> answerList = new ArrayList<>();
+
             int i = 0;
             while (requestParams.containsKey("answers[" + i + "]")) {
                 String answerText = requestParams.get("answers[" + i + "]");
@@ -243,28 +268,8 @@ public class TestManagementController {
                     newAnswer.setIsCorrect(isCorrect);
                     existingAnswers.add(newAnswer);
                 }
-/*
-                Answer answer = new Answer();
-                String paramKey =  "correctAnswers[" + i + "]";
-                Boolean isCorrect = requestParams.containsKey(paramKey);
-                answer.setAnswerText(requestParams.get("answers[" + i + "]"));
-                answer.setIsCorrect(isCorrect);
-                answerList.add(answer);
-*/
                 i++;
             }
-
-           /* Optional<Question> questionOpt = questionService.getQuestionById(questionId);
-            if (questionOpt.isEmpty()) {
-                model.addAttribute("error", "Вопрос не найден!");
-                return "admin/tests/editQuestion";
-            }
-            question = questionOpt.get();
-            question.setText(questionText);
-
-            for (Answer answer : answerList) {
-                answer.setQuestion(question);
-            }*/
 
             if (i < existingAnswers.size()) {
                 for (int j = i; j < existingAnswers.size(); j++) {
