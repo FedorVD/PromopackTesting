@@ -14,37 +14,45 @@
 <form action="#" th:action="@{/admin/assignments/assignments}" method="get">
   <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
 
-  <label for="testName">Название теста:</label>
-  <input type="text" name="testName" id="testName" th:value="${param.testName}" />
+  <div class="form-group">
+    <label for="testName">Название теста:</label>
+    <input class="form-control mb-3" type="text" name="testName" id="testName" th:value="${param.testName}" />
+  </div>
 
-  <label for="userName">Сотрудник:</label>
-  <input type="text" name="userName" id="userName" th:value="${param.userName}" />
+  <div class="form-group">
+    <label for="userName">Сотрудник:</label>
+    <input class="form-control mb-3" type="text" name="userName" id="userName" th:value="${param.userName}" />
+  </div>
 
+  <div class="form-group">
   <label for="status">Статус:</label>
-  <select name="status" id="status">
-    <option value="">-- Все статусы --</option>
-    <option value="ASSIGNED"
-            th:selected="${status != null and status == 'ASSIGNED'}">Назначен</option>
-    <option value="IN_PROGRESS"
-            th:selected="${status != null and status == 'IN_PROGRESS'}">Начат</option>
-    <option value="COMPLETED"
-            th:selected="${status != null and status == 'COMPLETED'}">Завершен</option>
-  </select>
+    <select class="form-control mb-3" name="status" id="status">
+      <option value="">-- Все статусы --</option>
+      <option value="ASSIGNED"
+              th:selected="${status != null and status == 'ASSIGNED'}">Назначен</option>
+      <option value="IN_PROGRESS"
+              th:selected="${status != null and status == 'IN_PROGRESS'}">Начат</option>
+      <option value="COMPLETED"
+              th:selected="${status != null and status == 'COMPLETED'}">Завершен</option>
+    </select>
+  </div>
 
-  <label for="testScore">Балл ниже:</label>
-  <select name="testScore" id="testScore">
-    <option value="">-- Все баллы --</option>
-    <th:block th:each="i : ${#numbers.sequence(1, 10)}">
-      <option
-              th:value="${i}"
-              th:selected="${param.testScore != null and param.testScore.length > 0
-                          and #strings.isEmpty(param.testScore[0]) == false
-                          and T(java.lang.Double).valueOf(param.testScore[0]) == i}"
-              th:text="'≤ ' + ${i}">"
-              th:text="'≤ ' + ${i}">
-      </option>
-    </th:block>
-  </select>
+  <div class="form-group">
+    <label for="testScore">Балл ниже:</label>
+    <select class="form-control mb-3" name="testScore" id="testScore">
+      <option value="">-- Все баллы --</option>
+      <th:block th:each="i : ${#numbers.sequence(1, 10)}">
+        <option
+                th:value="${i}"
+                th:selected="${param.testScore != null and param.testScore.length > 0
+                            and #strings.isEmpty(param.testScore[0]) == false
+                            and T(java.lang.Double).valueOf(param.testScore[0]) == i}"
+                th:text="'≤ ' + ${i}">"
+                th:text="'≤ ' + ${i}">
+        </option>
+      </th:block>
+    </select>
+  </div>
 
   <button type="submit">Фильтровать</button>
 </form>
@@ -96,9 +104,7 @@
             <span th:if="${assignment.status.name() == 'COMPLETED'}"
                   th:class="${assignment.testScore >= assignment.test.passingScore} ? 'text-success' : 'text-danger'"
                   th:text="${#numbers.formatDecimal(assignment.testScore, 1, 1)}">—</span>
-<!--        </td>
-          <a th:href="@{/admin/assignments/{id}/assignedTest(id=${assignment?.id})}">Просмотр</a>
-        </td> -->
+
       </tr>
       </tbody>
     </table><br />
@@ -117,20 +123,17 @@
     const selectAll = document.getElementById('selectAll');
     const checkboxes = document.querySelectorAll('input[name="assignmentsIds"]');
 
-    // Событие при клике на "Выбрать все"
     selectAll.addEventListener('click', function () {
       checkboxes.forEach(checkbox => {
         checkbox.checked = this.checked;
       });
     });
 
-    // Событие при клике на отдельные чекбоксы (для снятия галочки с "Все", если не все выбраны)
     checkboxes.forEach(checkbox => {
       checkbox.addEventListener('click', function () {
         if (!this.checked) {
           selectAll.checked = false;
         } else {
-          // Проверяем, все ли чекбоксы выделены
           const allChecked = Array.from(checkboxes).every(cb => cb.checked);
           selectAll.checked = allChecked;
         }

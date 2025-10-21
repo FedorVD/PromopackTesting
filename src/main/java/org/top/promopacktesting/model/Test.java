@@ -26,9 +26,6 @@ public class Test {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "passing_score", nullable = false)
-    private Double passingScore;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "created_by")
     private User createdBy;
@@ -36,6 +33,9 @@ public class Test {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="theme_test")
     private ThemeTest themeTest;
+
+    @Column(name = "passing_score", nullable = false)
+    private Double passingScore;
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();

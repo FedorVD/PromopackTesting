@@ -1,0 +1,29 @@
+<!-- src/main/resources/templates/admin/users/upload.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Загрузка сотрудников</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+</head>
+<body>
+<h1>Загрузка сотрудников из Excel</h1>
+
+<form method="post" action="/admin/users/upload" enctype="multipart/form-data">
+  <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+  <input type="file" name="file" accept=".xlsx,.xls" required />
+  <button type="submit">Загрузить</button>
+</form>
+
+<div th:if="${message}" style="color: green;">
+  <p th:text="${message}">Сообщение</p>
+</div>
+
+<div th:if="${error}" style="color: red;">
+  <p th:text="${error}">Ошибка</p>
+</div>
+
+<a href="/admin/users/users">Назад к списку пользователей</a>
+</body>
+</html>

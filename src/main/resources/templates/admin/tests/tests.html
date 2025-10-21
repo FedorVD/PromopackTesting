@@ -12,29 +12,34 @@
     <a href="/admin">К административной панели</a><br /><br />
     <h2>Список тестов</h2>
 
-    <!-- Форма фильтрации -->
     <form action="#" th:action="@{/admin/tests/tests}" method="get">
         <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
 
-        <label for="themeFilter">Фильтр по теме:</label>
-        <select id="themeFilter" name="themeId" class="form-control mb-3">
-            <option value="">-- Все темы --</option>
-            <option th:each="theme : ${themes}"
-                    th:value="${theme.id}"
-                    th:selected="${theme.id == selectedThemeId}"
-                    th:text="${theme.themeName}"></option>
-        </select>
+        <div class="form-group">
+            <label for="themeFilter">Фильтр по теме:</label>
+            <select id="themeFilter" name="themeId" class="form-control mb-3">
+                <option value="">-- Все темы --</option>
+                <option th:each="theme : ${themes}"
+                        th:value="${theme.id}"
+                        th:selected="${theme.id == selectedThemeId}"
+                        th:text="${theme.themeName}"></option>
+            </select>
+        </div>
 
-        <label for="statusFilter">Статус:</label>
-        <select id="statusFilter" name="status" class="form-control mb-3">
-            <option value="">-- Все статусы --</option>
-            <option value="active" th:selected="${selectedStatus == true}">Активные</option>
-            <option value="inactive" th:selected="${selectedStatus == false}">Неактивные</option>
-        </select>
+        <div class="form-group">
+            <label for="statusFilter">Статус:</label>
+            <select id="statusFilter" name="status" class="form-control mb-3">
+                <option value="">-- Все статусы --</option>
+                <option value="active" th:selected="${selectedStatus == true}">Активные</option>
+                <option value="inactive" th:selected="${selectedStatus == false}">Неактивные</option>
+            </select>
+        </div>
 
-        <label for="search">Поиск по названию:</label>
-        <input type="text" id="search" name="search" class="form-control mb-3"
-               th:value="${search}" placeholder="Введите название..." />
+        <div class="form-group">
+            <label for="search">Поиск по названию:</label>
+            <input type="text" id="search" name="search" class="form-control mb-3"
+                   th:value="${search}" placeholder="Введите название..." />
+        </div>
 
         <button type="submit" class="btn btn-primary">Применить фильтр</button>
         <a href="/admin/tests/tests" class="btn btn-secondary">Сбросить</a>
@@ -42,7 +47,6 @@
 
     <br />
 
-    <!-- Таблица тестов -->
     <table class="table table-bordered table-striped">
         <thead>
         <tr>
@@ -62,7 +66,7 @@
             <td th:text="${test.themeTest?.themeName ?: 'Не задана'}">Тема</td>
             <td th:text="${test.name}">Название теста</td>
             <td th:text="${test.createdBy?.username ?: 'Неизвестно'}">Создатель</td>
-            <td th:text="${#temporals.format(test.createdAt, 'dd.MM.yyyy HH:mm')}">Дата создания</td>
+            <td th:text="${#temporals.format(test.createdAt, 'dd.MM.yyyy')}">Дата создания</td>
             <td>
                 <span th:if="${test.isActive}" class="badge bg-success">Активный</span>
                 <span th:unless="${test.isActive}" class="badge bg-danger">Неактивный</span>

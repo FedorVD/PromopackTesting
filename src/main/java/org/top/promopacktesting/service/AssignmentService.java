@@ -70,20 +70,14 @@ public class AssignmentService {
     }
 
     public void assignTestToUser(Long testId, Long userId, User assignedBy){
-        System.out.println("=== Метод assignTestToUser был вызван ===");
         Test test = testRepository.findById(testId)
                 .orElseThrow(() -> new RuntimeException("Тест не найден"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
         List<AssignedTest> existAssignment = assignedTestRepository.findByUserIdAndTestId(userId, testId);
-        System.out.println("=== Проверка существующего назначения ===");
+
         if (!existAssignment.isEmpty()) {
             for (AssignedTest assignedTest : existAssignment) {
-                System.out.println("Найдено существующее назначение:");
-                System.out.println("ID: " + assignedTest.getId());
-                System.out.println("Пользователь ID: " + assignedTest.getUser().getId());
-                System.out.println("Тест ID: " + assignedTest.getTest().getId());
-                System.out.println("Статус: " + assignedTest.getStatus());
                 if (assignedTest.getStatus() != AssignedTest.TestStatus.COMPLETED) {
                     throw new RuntimeException("Этот тест пользователю уже назначен и не завершен");
                 }
@@ -137,5 +131,11 @@ public class AssignmentService {
 
     public AssignedTest getAssignedTestByTestNameAndUserName(String testName, String userName) {
         return assignedTestRepository.findByTestNameAndUserName(testName, userName);
+    }
+
+    public void assignTestToUsers(Long testId, List<Long> userIds, User assigner) {
+        for (Long userId : userIds) {
+            assignTestToUser(testId, userId, assigner);
+        }
     }
 }

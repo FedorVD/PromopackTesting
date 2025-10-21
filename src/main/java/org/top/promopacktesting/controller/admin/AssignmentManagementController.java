@@ -38,28 +38,54 @@ public class AssignmentManagementController {
     private TestService testService;
 
     @GetMapping("/assignTest")
-    public String showAssignTestForm(Model model) {
-        model.addAttribute("users", userService.getAllActiveUsers());
-        model.addAttribute("tests", testService.getAllActiveTests());
-        model.addAttribute("assignments",assignmentService.getAssignedTests());
+    public String showAssignTestForm(@RequestParam(required = false) String department,
+                                     @RequestParam(required = false) String position,
+                                     Model model) {
+
+        List <User> users = new ArrayList<>();
+        if (department != null && position != null) {
+            users = userService.searchUsersByDepartmentAndPosition(department, position);
+        } else if (department != null) {
+            users = userService.searchUsersByDepartment(department);
+        } else if (position != null) {
+            users = userService.searchUsersByPosition(position);
+        } else {
+            users = userService.getAllActiveUsers();
+        }
+
+        List<Test> tests = testService.getAllActiveTests();
+
+        model.addAttribute("users", users);
+        model.addAttribute("tests", tests);
+        model.addAttribute("department", department);
+        model.addAttribute("position", position);
+        model.addAttribute("currentUser", SecurityContextHolder.getContext().getAuthentication().getName());
+        //model.addAttribute("assignments",assignmentService.getAssignedTests());
         return "admin/assignments/assignTest";
     }
 
     @PostMapping("/assignTest")
     public String assignTestToUser(@RequestParam Long testId,
-                                   @RequestParam Long userId,
+                                   @RequestParam List<Long> userIds,
                                    Model model) {
-        try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String currentUsername = auth.getName();
-            User assigner = userService.getUserByUsername(currentUsername).get();
-            assignmentService.assignTestToUser(testId, userId, assigner);
-            List<User> users = userService.getAllActiveUsers();
-            List<Test> tests = testService.getAllActiveTests();
-            model.addAttribute("message", "Тест успешно назначен пользователю: " + userService.getUserById(userId).get().getName());
-        } catch (Exception e) {
-            model.addAttribute("error", "Ошибка при назначении теста: " + e.getMessage());
+
+        if (userIds.isEmpty()) {
+            model.addAttribute("message", "Не выбраны сотрудники для назначения теста");
+            return "admin/assignments/assignTest";
         }
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = auth.getName();
+        User assigner = userService.getUserByUsername(currentUsername).orElseThrow(()-> new RuntimeException("Пользователь не найден"));
+
+
+        try {
+            assignmentService.assignTestToUsers(testId, userIds, assigner);
+            model.addAttribute("message", "Тест успешно назначен " + userIds.size() + " сотрудникам");
+        } catch (Exception e) {
+            model.addAttribute("message", "Ошибка при назначении теста: " + e.getMessage());
+        }
+
         return "redirect:/admin/assignments/assignments";
     }
 

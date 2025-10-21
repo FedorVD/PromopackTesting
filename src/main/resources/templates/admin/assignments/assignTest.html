@@ -10,31 +10,62 @@
 <a href="/admin">К административной панели</a><br /><br />
 <h2>Назначить тест пользователю</h2>
 
+<form method="get" action="/admin/assignments/assignTest">
+    <div class="form-group">
+        <label for="department">Подразделение:</label>
+        <input class="form-control mb-3" type="text" id="department"
+               name="department" th:value="${department}" />
+    </div>
+
+    <div class="form-group">
+        <label for="position">Должность:</label>
+        <input class="form-control mb-3" type="text" id="position"
+               name="position" th:value="${position}" />
+    </div>
+
+    <button type="submit">Применить фильтр</button>
+</form>
+
 <form action="#" th:action="@{/admin/assignments/assignTest}" method="post">
     <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
 
-    <label for="testId">Выберите тест:</label><br />
-    <select id="testId" name="testId" required>
-        <option value="">-- Выберите тест --</option>
-        <option th:each="test : ${tests}"
-                th:value="${test.id}"
-                th:text="${test.name}"></option>
-    </select><br /><br />
-
-    <label for="userId">Выберите пользователя:</label><br />
-    <select id="userId" name="userId" required>
-        <option value="">-- Выберите пользователя --</option>
-        <option th:each="user : ${users}"
-                th:value="${user.id}"
-                th:text="${user.name}"></option>
-    </select><br /><br />
+    <div class="form-group">
+        <label for="testId">Выберите тест:</label><br />
+        <select id="testId" name="testId" required class="form-control mb-3">
+            <option value="">-- Выберите тест --</option>
+            <option th:each="test : ${tests}"
+                    th:value="${test.id}"
+                    th:text="${test.name}"></option>
+        </select><br />
+    </div> <br />
 
     <input type="hidden" name="assigner" th:value="${currentUser}" />
 
     <button type="submit">Назначить тест</button>
+
+    <button type="button" onclick="selectAll()">Выбрать всех</button>
+    <button type="button" onclick="deselectAll()">Снять выбор</button>
+
+    <table border="1" style="margin-top: 10px;">
+        <tr>
+            <th><input type="checkbox" onclick="toggleSelectAll(this)" /></th>
+            <th>Табельный номер</th>
+            <th>ФИО</th>
+            <th>Отдел</th>
+            <th>Должность</th>
+        </tr>
+        <tr th:each="user : ${users}">
+            <td>
+                <input type="checkbox" name="userIds" th:value="${user.id}" />
+            </td>
+            <td th:text="${user.employeeId}"></td>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.department}"></td>
+            <td th:text="${user.position}"></td>
+        </tr>
+    </table>
 </form>
 
-<!-- Сообщения -->
 <div th:if="${message}" style="color: green;">
     <p th:text="${message}">Сообщение</p>
 </div>
@@ -42,5 +73,19 @@
 <div th:if="${error}" style="color: red;">
     <p th:text="${error}">Ошибка</p>
 </div>
+
+<script>
+    function selectAll() {
+        document.querySelectorAll("input[name='userIds']").forEach(cb => cb.checked = true);
+    }
+
+    function deselectAll() {
+        document.querySelectorAll("input[name='userIds']").forEach(cb => cb.checked = false);
+    }
+
+    function toggleSelectAll(checkbox) {
+        document.querySelectorAll("input[name='userIds']").forEach(cb => cb.checked = checkbox.checked);
+    }
+</script>
 </body>
 </html>

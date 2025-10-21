@@ -264,3 +264,39 @@ a:hover {
 .form-check-input {
     margin-top: 5px;
 }
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #444;
+}
+
+.form-group select,
+.form-group input[type="text"],
+.form-control {
+    width: 100%;
+    box-sizing: border-box; /* Чтобы padding не увеличивал ширину */
+}
+
+select.form-control,
+input.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+select.form-control:focus,
+input.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}

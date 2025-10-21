@@ -33,6 +33,5 @@ public class UserController {
         User currentUser = userOpt.get();
         model.addAttribute("username", currentUser.getName());
         return "user/user";
-
     }
 }

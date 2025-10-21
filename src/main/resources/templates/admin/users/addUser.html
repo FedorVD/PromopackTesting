@@ -40,7 +40,6 @@
   <label for="hireDate">Дата приема на работу:</label><br />
   <input type="datetime-local" id="hireDate" name="hireDate" required/><br /><br />
 
-  <!-- CSRF токен -->
   <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
 
   <button type="submit">Добавить пользователя</button>

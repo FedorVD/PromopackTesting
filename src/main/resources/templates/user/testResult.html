@@ -11,15 +11,13 @@
 <div class="container mt-4">
     <h1 th:text="'Результаты теста: ' + ${assignedTest.test.name}">Результаты теста</h1>
 
-    <p th:if="${score >= 8.0}" style="color: green; font-weight: bold;">
-        Отличный результат! Вы набрали <span th:text="${score}">0</span> из 10.
+    <p th:if="${score >= assignedTest.test.passingScore}" style="color: green; font-weight: bold;">
+        Тест пройден! Вы набрали <span th:text="${score}">0</span> из 10.
     </p>
-    <p th:if="${score >= 5.0 and score < 8.0}" style="color: orange; font-weight: bold;">
-        Хороший результат! Вы набрали <span th:text="${score}">0</span> из 10.
+    <p th:if="${score < assignedTest.test.passingScore}" style="color: red; font-weight: bold;">
+        Тест не пройден! Вы набрали <span th:text="${score}">0</span> из 10.
     </p>
-    <p th:if="${score < 5.0}" style="color: red; font-weight: bold;">
-        Вы набрали <span th:text="${score}">0</span> из 10.
-    </p>
+
 
     <h2>Ваши ответы:</h2>
     <ul>

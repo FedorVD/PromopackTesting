@@ -8,7 +8,6 @@
 </head>
 <body>
 <h2>
-    <!-- Форма для редактирования названия теста -->
     <form action="#" th:action="@{/admin/tests/__${test.id}__/editTest}" method="post">
         <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
         <input type="text" name="newName" th:value="${test.name}" required/>
@@ -24,12 +23,10 @@
     </li>
 </ul>
 
-<!-- Кнопка для добавления вопроса -->
 <a th:href="@{/admin/tests/{id}/addQuestion(id=${test.id})}">Добавить вопрос</a><br />
 
 <a href="/admin/tests/tests">Назад к списку тестов</a><br />
 
-<!-- Сообщения -->
 <div th:if="${message}" style="color: green;">
     <p th:text="${message}">Сообщение</p>
 </div>

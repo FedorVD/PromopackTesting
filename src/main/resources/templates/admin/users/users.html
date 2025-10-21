@@ -17,7 +17,7 @@
     <label for="search">Поиск по имени/отделу:</label>
     <input type="text" id="search" name="search" th:value="${search}" />
 
-    <label for="department">Отдел:</label>
+    <label for="department">Подразделение:</label>
     <input type="text" id="department" name="department" th:value="${department}" />
 
     <label for="position">Должность:</label>
@@ -26,16 +26,27 @@
     <button type="submit">Применить</button>
 </form>
 
+<!-- Кнопка загрузки из Excel -->
+<a href="/admin/users/upload">Загрузить сотрудников из Excel</a><br /><br />
+
 <br />
 
 <!-- Таблица пользователей -->
-<table border="1">
+<table>
     <tr>
         <th>Табельный номер</th>
         <th>Логин</th>
         <th>ФИО</th>
-        <th>Отдел</th>
-        <th>Должность</th>
+        <th>
+            <a href="?sortField=department&sortDirection=asc"
+               th:classappend="${sortField == 'department' && sortDirection == 'asc' ? 'active' : ''}">
+                Подразделение ▲</a>
+            <a href="?sortField=department&sortDirection=desc">▼</a>
+        </th>
+        <th>
+            <a href="?sortField=position&sortDirection=asc">Должность ▲</a>
+            <a href="?sortField=position&sortDirection=desc">▼</a>
+        </th>
         <th>Дата приема</th>
         <th>Роль</th>
         <th>Действия</th>
@@ -46,7 +57,7 @@
         <td th:text="${user.name}"></td>
         <td th:text="${user.department}"></td>
         <td th:text="${user.position}"></td>
-        <td th:text="${#temporals.format(user.hireDate, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${#temporals.format(user.hireDate, 'dd.MM.yyyy')}"></td>
         <td th:text="${user.role.name() == 'ADMIN' ? 'Администратор' : 'Пользователь'}"></td>
         <td>
             <a th:href="@{/admin/users/{id}/editUser(id=${user.id})}">Редактировать</a>
