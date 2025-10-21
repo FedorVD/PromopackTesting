@@ -11,6 +11,23 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+    <profiles>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <groupId>org.top</groupId>
     <artifactId>PromopackTesting</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -122,13 +139,7 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.top</groupId>
-            <artifactId>PromopackTesting</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        -->
+
     </dependencies>
 
     <build>
