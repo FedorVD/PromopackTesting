@@ -33,9 +33,6 @@ public class TestingService {
     private QuestionRepository questionRepository;
 
     @Autowired
-    private TestScoringService testScoringService;
-
-    @Autowired
     private QuestionService questionService;
 
     @Autowired
@@ -60,7 +57,7 @@ public class TestingService {
         AssignedTest assignedTest = assignedTestRepository.findById(assignmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Назначение не найдено"));
 
-        Double score = testScoringService.calculateScore(assignmentId);
+        Double score = assignmentService.calculateScore(assignmentId);
 
         assignedTest.setTestScore(score);
         assignedTest.setCompletedAt(LocalDateTime.now());
@@ -77,7 +74,7 @@ public class TestingService {
         AssignedTest assignedTest = assignmentService.getAssignedTestById(id)
                 .orElseThrow(() -> new RuntimeException("Тест не найден"));
 
-        Double score = testScoringService.calculateScore(id);
+        Double score = assignmentService.calculateScore(id);
         List<UserAnswer> userAnswers = userAnswerRepository.findByAssignedTestId(id);
 
         model.addAttribute("assignedTest", assignedTest);

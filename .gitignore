@@ -1,4 +1,7 @@
 HELP.md
+promopacktesting.bat
+propertiesfordevelopment
+propertiesforprod
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

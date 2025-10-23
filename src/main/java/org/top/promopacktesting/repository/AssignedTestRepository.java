@@ -25,6 +25,9 @@ public interface AssignedTestRepository extends JpaRepository<AssignedTest, Long
     List<AssignedTest> findByTestNameAndUserNameAndStatus(String testName, String userName, AssignedTest.TestStatus status);
     List<AssignedTest> findByUserIdAndTestId(Long userId, Long testId);
 
+    @Query("SELECT at FROM AssignedTest at WHERE at.user.id = :userId AND at.status != 'COMPLETED'")
+    List<AssignedTest> findNotCompletedByUserId(Long userId);
+
     @Query("SELECT at FROM AssignedTest at WHERE at.user.id = :userId AND at.test.isActive = true")
     List<AssignedTest> findActiveAssignedTestsByUserId(@Param("userId") Long userId);
 

@@ -13,6 +13,9 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
     List<Answer> findByQuestionId(Long questionId);
 
+    @Query("SELECT a FROM Answer a WHERE a.question.id = :questionId AND a.isCorrect = true")
+    List<Answer> findCorrectByQuestionId(Long questionId);
+
     @Modifying
     @Query("DELETE FROM Answer a WHERE a.question.id = :questionId")
     void deleteByQuestionId (@Param("questionId") Long questionId);

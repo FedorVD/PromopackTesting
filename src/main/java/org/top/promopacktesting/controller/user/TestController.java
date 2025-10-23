@@ -16,9 +16,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/user")
 public class TestController {
 
-/*    @Autowired
-    private TestService testService;*/
-
     @Autowired
     private AssignmentService assignmentService;
 
@@ -33,14 +30,9 @@ public class TestController {
 
     @Autowired
     private AnswerService answerService;
-    @Autowired
-    private TestScoringService testScoringService;
 
     @GetMapping("/userAssignedTests")
-    public String showMyTests(@PathVariable(required = false) Long testId,
-                              @PathVariable(required = false) AssignedTest.TestStatus status,
-                              //@AuthenticationPrincipal User user,
-                              Model model) {
+    public String showMyTests(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = auth.getName();
         Optional<User> userOpt = userService.getUserByUsername(currentUsername);
@@ -51,17 +43,8 @@ public class TestController {
         }
 
         User user = userOpt.get();
-        List<AssignedTest> assignments = new ArrayList<>();
-        AssignedTest assignedTest = null;
-        if (testId != null && status != null) {
-            assignments = assignmentService.getAssignedTestsByUserIdAndTestIdAndStatus(user.getId(), testId, status);
-        } else if (testId != null) {
-            assignments = assignmentService.getAssignedTestsByUserIdAndTestId(user.getId(), testId);
-        } else if (status != null) {
-            assignments = assignmentService.getAssignedTestsByUserIdAndStatus(user.getId(), status);
-        } else {
-            assignments = assignmentService.getAssignedTestsByUserId(user.getId());
-        }
+        List<AssignedTest> assignments = assignmentService.getNotCompletedAssignedTestsByUserId(user.getId());
+
         model.addAttribute("assignments", assignments);
         if (assignments.isEmpty()) {
             model.addAttribute("error", "Вам тесты не назначались");
@@ -216,7 +199,7 @@ public class TestController {
             List<UserAnswer> userAnswers = testingService.getUserAnswersByAssignedTestId(id);
             System.out.println("UserAnswers size: " + userAnswers.size());
 
-            Double score = testScoringService.calculateScore(assignedTest.getId());
+            Double score = assignmentService.calculateScore(assignedTest.getId());
             Double formattedScore = Math.round(score * 10.0) / 10.0;
             System.out.println("Рассчитанный балл: " + score);
 

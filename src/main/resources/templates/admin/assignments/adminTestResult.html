@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Результаты теста</title>
+  <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <style>
+    .correct { color: green; }
+    .incorrect { color: red; }
+  </style>
+</head>
+<body>
+<h1 th:text="'Результаты теста: ' + ${assignedTest.test.name}">Результаты теста</h1>
+
+<p><strong>Пользователь:</strong> <span th:text="${assignedTest.user.name}"></span></p>
+<p><strong>Результат:</strong> <span th:text="${assignedTest.testScore}"></span> баллов</p>
+
+<a th:href="@{/admin/assignments/{id}/exportResults(id=${assignedTest.id})}"
+   class="btn btn-success">
+  <i class="fas fa-file-excel"></i> Выгрузить в Excel
+</a>
+
+<h2>Вопросы и ответы:</h2>
+
+<table border="1" class="table table-bordered">
+  <thead>
+  <tr>
+    <th>Вопрос</th>
+    <th>Ответы пользователя</th>
+    <th>Правильные ответы</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="qwa : ${questions}">
+    <td> <span th:text="${qwa.question.text}"></span>
+      <span th:if="${qwa.isCorrect}" style="color: green;">✅</span>
+      <span th:if="${!qwa.isCorrect}" style="color: red;">❌</span>
+    </td>
+    <td>
+      <ul>
+        <!-- Ответы, которые выбрал пользователь -->
+        <li th:each="selected : ${qwa.userAnswer.selectedAnswers}"
+            th:class="${selected.isCorrect ? 'correct' : 'incorrect'}">
+          <span th:text="${selected.answer.answerText}"></span>
+        </li>
+      </ul>
+    </td>
+    <td>
+      <ul>
+        <!-- Все правильные ответы -->
+        <li th:each="answer : ${qwa.correctAnswers}" class="correct">
+          <span th:text="${answer.answerText}"></span>
+        </li>
+      </ul>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<a href="/admin/assignments/assignments" class="btn btn-secondary">Назад к списку</a>
+</body>
+</html>

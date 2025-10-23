@@ -19,8 +19,13 @@
     <label for="username">Имя пользователя:</label><br />
     <input type="text" id="username" name="username" th:value="${user.username}" required/><br /><br />
 
-    <label for="password">Пароль (оставьте пустым, если не хотите менять):</label><br />
-    <input type="password" id="password" name="password"/><br /><br />
+    <div>
+        <label for="password">Пароль (оставьте пустым, если не хотите менять):</label><br />
+        <input type="password" id="password" name="password" />
+        <button type="button" id="togglePassword" class="btn btn-sm btn-secondary">
+            Показать
+        </button><br /><br />
+    </div>
 
     <label for="role">Роль:</label><br />
     <select id="role" name="role" required>
@@ -37,17 +42,21 @@
     <label for="name">ФИО:</label><br />
     <input type="text" id="name" name="name" th:value="${user.name}" required/><br /><br />
 
-    <label for="department">Отдел:</label><br />
-    <input type="text" id="department" name="department" th:value="${user.department}" required/><br /><br />
+    <label for="departmentEdit">Отдел:</label><br />
+    <input type="text" id="departmentEdit" name="departmentEdit" th:value="${user.department}" required/><br /><br />
 
-    <label for="position">Должность:</label><br />
-    <input type="text" id="position" name="position" th:value="${user.position}" required/><br /><br />
+    <label for="positionEdit">Должность:</label><br />
+    <input type="text" id="positionEdit" name="positionEdit" th:value="${user.position}" required/><br /><br />
 
     <label for="hireDate">Дата приема на работу:</label><br />
     <input type="datetime-local" id="hireDate" name="hireDate"
            th:value="${#temporals.format(user.hireDate, 'yyyy-MM-dd HH:mm')}" required/><br /><br />
 
     <button type="submit">Сохранить изменения</button>
+
+    <input type="hidden" name="search" th:value="${search}" />
+    <input type="hidden" name="department" th:value="${department}" />
+    <input type="hidden" name="position" th:value="${position}" />
 </form>
 
 <!-- Сообщения -->
@@ -58,5 +67,15 @@
 <div th:if="${error}" style="color: red;">
     <p th:text="${error}">Ошибка</p>
 </div>
+
+<script>
+    document.getElementById("togglePassword").addEventListener("click", function () {
+        const passwordInput = document.getElementById("password");
+        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+        passwordInput.setAttribute("type", type);
+        this.textContent = type === "password" ? "Показать" : "Скрыть";
+    });
+</script>
+
 </body>
 </html>

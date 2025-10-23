@@ -75,6 +75,7 @@
         <th>Дата прохождения</th>
         <th>Проходной балл</th>
         <th>Результат</th>
+        <th>Просмотр</th>
       </tr>
       </thead>
       <tbody>
@@ -104,7 +105,14 @@
             <span th:if="${assignment.status.name() == 'COMPLETED'}"
                   th:class="${assignment.testScore >= assignment.test.passingScore} ? 'text-success' : 'text-danger'"
                   th:text="${#numbers.formatDecimal(assignment.testScore, 1, 1)}">—</span>
-
+        </td>
+        <td>
+        <span th:if="${assignment.status.name() == 'COMPLETED'}">
+            <a th:href="@{/admin/assignments/{id}/results(id=${assignment.id})}" class="btn btn-sm btn-primary">
+                Результаты
+            </a>
+        </span>
+        </td>
       </tr>
       </tbody>
     </table><br />
@@ -142,5 +150,8 @@
   });
 </script>
 
+<div th:if="${error}" class="alert alert-danger" role="alert" style="color: red">
+  <span th:text="${error}"></span>
+</div>
 </body>
 </html>

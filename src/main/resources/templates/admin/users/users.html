@@ -60,7 +60,7 @@
         <td th:text="${#temporals.format(user.hireDate, 'dd.MM.yyyy')}"></td>
         <td th:text="${user.role.name() == 'ADMIN' ? 'Администратор' : 'Пользователь'}"></td>
         <td>
-            <a th:href="@{/admin/users/{id}/editUser(id=${user.id})}">Редактировать</a>
+            <a th:href="@{/admin/users/{id}/editUser(id=${user.id}, search=${search}, department=${department}, position=${position})}">Редактировать</a>
         </td>
     </tr>
 </table>

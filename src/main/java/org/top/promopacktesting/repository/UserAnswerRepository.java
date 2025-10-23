@@ -14,8 +14,7 @@ public interface UserAnswerRepository extends JpaRepository<UserAnswer, Long> {
 
     List<UserAnswer> findByAssignedTest(AssignedTest assignedTest);
     List<UserAnswer> findByAssignedTestId(Long assignedTestId);
+    List<UserAnswer> findByQuestion(Question question);
 
     Optional<UserAnswer> findByAssignedTestAndQuestion(AssignedTest assignedTest, Question question);
-
-
 }

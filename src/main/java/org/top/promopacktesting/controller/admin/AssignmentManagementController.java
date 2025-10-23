@@ -8,10 +8,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 import org.thymeleaf.util.StringUtils;
-import org.top.promopacktesting.model.AssignedTest;
-import org.top.promopacktesting.model.Test;
-import org.top.promopacktesting.model.User;
+import org.top.promopacktesting.model.*;
 import org.top.promopacktesting.service.AssignmentService;
 import org.top.promopacktesting.service.TestService;
 import org.top.promopacktesting.service.UserService;
@@ -21,6 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Controller
@@ -91,7 +92,7 @@ public class AssignmentManagementController {
 
     @GetMapping("/{assignmentId}/assignedTest")
     public String showAssignedTestForm(@PathVariable Long assignmentId, Model model) {
-        AssignedTest assignedTest = assignmentService.getAssignedTestById(assignmentId).get();
+        AssignedTest assignedTest = assignmentService.getAssignedTestById(assignmentId).orElseThrow(()-> new RuntimeException("Назначенный тест не найден"));
         if (assignedTest == null) {
             model.addAttribute("error", "Назанченные тесты не найдены");
         }else {
@@ -137,14 +138,10 @@ public class AssignmentManagementController {
                     .toList();
         }
 
+        model.addAttribute("assignments", assignments);
+
         if (assignments.isEmpty()) {
             model.addAttribute("message", "По выбранным параметрам поиска тесты не найдены");
-        } else {
-            for (AssignedTest a : assignments) {
-                System.out.println(a.getTestScore() + " " + a.getTestScore().getClass().getSimpleName());
-                System.out.println(a.getTest().getPassingScore() + " " + a.getTest().getPassingScore().getClass().getSimpleName());
-            }
-            model.addAttribute("assignments", assignments);
         }
         if (status != null) {
             model.addAttribute("status", status.name());
@@ -162,11 +159,20 @@ public class AssignmentManagementController {
     }
 
     @GetMapping("/exportToExcel")
-    public void exportToExcel(HttpServletResponse response,
-                              @RequestParam List<Long> assignmentsIds) throws IOException {
+    public RedirectView exportToExcel(HttpServletResponse response,
+                                      @RequestParam(required = false) List<Long> assignmentsIds,
+                                      RedirectAttributes redirectAttrs) throws IOException {
         List<AssignedTest> assignments = new ArrayList<>();
+        if (assignmentsIds == null || assignmentsIds.isEmpty()) {
+            redirectAttrs.addFlashAttribute("error", "Тесты для экспорта не выбраны");
+            return new RedirectView("/admin/assignments/assignments");
+        }
         for (Long id : assignmentsIds) {
             assignments.add(assignmentService.getAssignedTestById(id).orElseThrow(() -> new RuntimeException("Тест не найден")));
+        }
+        if (assignments.size() == 0) {
+            redirectAttrs.addFlashAttribute("error", "Нет назначенных тестов для экспорта");
+            return new RedirectView("/admin/assignments/assignments");
         }
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Назначенные тесты");
@@ -198,6 +204,86 @@ public class AssignmentManagementController {
         }
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=Assignments.xlsx");
+        workbook.write(response.getOutputStream());
+        workbook.close();
+        return null;
+    }
+
+    @GetMapping("/{id}/results")
+    public String showTestResults(@PathVariable Long id, Model model) {
+        Optional<AssignedTest> optionalAssignedTest = assignmentService.getAssignedTestById(id);
+        if (optionalAssignedTest.isEmpty()) {
+            model.addAttribute("error", "Назначенный тест не найден");
+            return "admin/assignments/assignments";
+        }
+
+        AssignedTest assignedTest = optionalAssignedTest.get();
+        List<QuestionWithAnswer> questionsWithAnswers = assignmentService.getQuestionsWithUserAndCorrectAnswers(id);
+
+        model.addAttribute("assignedTest", assignedTest);
+        model.addAttribute("questions", questionsWithAnswers);
+        return "admin/assignments/adminTestResult";
+    }
+
+    @GetMapping("/{id}/exportResults")
+    public void exportTestResultsToExcel(@PathVariable Long id, HttpServletResponse response) throws IOException {
+        Optional<AssignedTest> optionalAssignedTest = assignmentService.getAssignedTestById(id);
+        if (optionalAssignedTest.isEmpty()) {
+            throw new RuntimeException("Назначенный тест не найден");
+        }
+
+        AssignedTest assignedTest = optionalAssignedTest.get();
+        List<QuestionWithAnswer> questionsWithAnswers = assignmentService.getQuestionsWithUserAndCorrectAnswers(id);
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Результаты теста");
+
+        Row userDataRow = sheet.createRow(0);
+        userDataRow.createCell(0).setCellValue("Тест:");
+        userDataRow.createCell(1).setCellValue(assignedTest.getTest().getName());
+        userDataRow = sheet.createRow(1);
+        userDataRow.createCell(0).setCellValue("Назначен:");
+        userDataRow.createCell(1).setCellValue(assignedTest.getUser().getName());
+        userDataRow = sheet.createRow(2);
+        userDataRow.createCell(0).setCellValue("Дата назначения:");
+        userDataRow.createCell(1).setCellValue(assignedTest.getAssignedAt().toString());
+        Row headerRow = sheet.createRow(3);
+        String[] headers = {
+                "Вопрос", "Пользователь прав", "Ответы пользователя", "Правильные ответы"
+        };
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+        }
+
+        int rowNum = 4;
+        for (QuestionWithAnswer qwa : questionsWithAnswers) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(qwa.getQuestion().getText());
+            row.createCell(1).setCellValue(qwa.isCorrect() ? "✅" : "❌");
+
+            StringBuilder userAnswers = new StringBuilder();
+            for (UserSelectedAnswer selected : qwa.getUserAnswer().getSelectedAnswers()) {
+                if (userAnswers.length() > 0){
+                    userAnswers.append("\n");
+                }
+                userAnswers.append(selected.getAnswer().getAnswerText());
+            }
+            row.createCell(2).setCellValue(userAnswers.toString());
+
+            StringBuilder correctAnswers = new StringBuilder();
+            for (Answer answer : qwa.getCorrectAnswers()) {
+                if (correctAnswers.length() > 0){
+                    correctAnswers.append("\n");
+                }
+                correctAnswers.append(answer.getAnswerText());
+            }
+            row.createCell(3).setCellValue(correctAnswers.toString());
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=results_" + id + ".xlsx");
+
         workbook.write(response.getOutputStream());
         workbook.close();
     }

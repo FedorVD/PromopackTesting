@@ -9,11 +9,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
 import org.top.promopacktesting.model.User;
 import org.top.promopacktesting.service.UserService;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -37,9 +41,21 @@ public class UserManagementController {
                             @RequestParam(required = false) String sortField,
                             @RequestParam(required = false) String sortDirection) {
         List<User> users;
-        if (search != null || department != null || position != null) {
+        if (search != null && department != null && position != null) {
             users = userService.searchUsers(search, department, position);
-        } else {
+        } else if (search != null && department != null) {
+            users = userService.searchUsersByNameAndDepartment(search, department);
+        }else if (search != null && position != null) {
+            users = userService.searchUsersByNameAndPosition(search, position);
+        }else if (department != null && position != null) {
+            users = userService.searchUsersByDepartmentAndPosition(department, position);
+        }else if (search != null) {
+            users = userService.searchUsersByName(search);
+        }else if (department != null) {
+            users = userService.searchUsersByDepartment(department);
+        }else if (position != null) {
+            users = userService.searchUsersByPosition(position);
+        }else{
             users = userService.getAllActiveUsers();
         }
 
@@ -99,8 +115,15 @@ public class UserManagementController {
     }
 
     @GetMapping("/{id}/editUser")
-    public String showEditUserForm(@PathVariable Long id, Model model) {
+    public String showEditUserForm(@PathVariable Long id,
+                                   @RequestParam(required = false) String search,
+                                   @RequestParam(required = false) String department,
+                                   @RequestParam(required = false) String position,
+                                   Model model) {
         Optional<User> userOpt = userService.getUserById(id);
+        model.addAttribute("search", search);
+        model.addAttribute("department", department);
+        model.addAttribute("position", position);
         if (userOpt.isEmpty()) {
             model.addAttribute("error", "Пользователь не найден");
             return "admin/users/editUser";
@@ -112,15 +135,18 @@ public class UserManagementController {
     }
 
     @PostMapping("/{id}/editUser")
-    public String editUser(@PathVariable Long id,
+    public RedirectView editUser(@PathVariable Long id,
                            @RequestParam String username,
                            @RequestParam(required = false) String password,
                            @RequestParam User.Role role,
                            @RequestParam String employeeId,
                            @RequestParam String name,
-                           @RequestParam String department,
-                           @RequestParam String position,
+                           @RequestParam String departmentEdit,
+                           @RequestParam String positionEdit,
                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hireDate,
+                           @RequestParam(required = false) String search,
+                           @RequestParam(required = false) String department,
+                           @RequestParam(required = false) String position,
                            Model model) {
 
         User user;
@@ -128,7 +154,7 @@ public class UserManagementController {
             Optional<User> userOpt = userService.getUserById(id);
             if (userOpt.isEmpty()) {
                 model.addAttribute("error", "Пользователь не найден.");
-                return "admin/users/editUser";
+                return new RedirectView("admin/users/editUser");
             }
 
             user = userOpt.get();
@@ -141,19 +167,36 @@ public class UserManagementController {
             user.setRole(role);
             user.setEmployeeId(employeeId);
             user.setName(name);
-            user.setDepartment(department);
-            user.setPosition(position);
+            user.setDepartment(departmentEdit);
+            user.setPosition(positionEdit);
             user.setHireDate(hireDate);
 
             userService.updateUser(user);
             model.addAttribute("message", "Пользователь успешно обновлён!");
-            return "redirect:/admin/users/users";
+            StringBuilder redirectUrl = new StringBuilder("/admin/users/users");
+            List<String> params = new ArrayList<>();
+            if (search != null && !search.isEmpty()) {
+                params.add("search=" + URLEncoder.encode(search, StandardCharsets.UTF_8));
+            }
+            if (department != null && !department.isEmpty()) {
+                params.add("department=" + URLEncoder.encode(department, StandardCharsets.UTF_8));
+            }
+            if (position != null && !position.isEmpty()) {
+                params.add("position=" + URLEncoder.encode(position, StandardCharsets.UTF_8));
+            }
+
+            // Если есть параметры, добавляем ? перед первым
+            if (!params.isEmpty()) {
+                redirectUrl.append("?").append(String.join("&", params));
+            }
+
+            return new RedirectView(redirectUrl.toString());
         } catch (Exception e) {
             model.addAttribute("error", "Ошибка при обновлении пользователя: " + e.getMessage());
         }
 
         model.addAttribute("user", userService.getUserById(id).orElse(null));
-        return "admin/users/editUser";
+        return new RedirectView("admin/users/editUser");
     }
 
     @GetMapping("/upload")

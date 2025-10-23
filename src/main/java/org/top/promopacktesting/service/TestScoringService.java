@@ -27,6 +27,7 @@ public class TestScoringService {
 
 
     public Double calculateScore(Long assignmentId) {
+
         List<UserAnswer> userAnswers = userAnswerRepository.findByAssignedTestId(assignmentId);
         AssignedTest assignedTest = assignedTestRepository.findById(assignmentId)
                 .orElseThrow(() -> new RuntimeException("Назначенный тест не найден"));

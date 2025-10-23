@@ -102,6 +102,14 @@ public class UserService implements UserDetailsService {
         return userRepository.findByNameContainingIgnoreCaseAndDepartmentContainingIgnoreCaseAndPositionContainingIgnoreCase(name, department, position);
     }
 
+    public List<User> searchUsersByNameAndDepartment(String name, String department) {
+        return userRepository.findByNameContainingIgnoreCaseAndDepartmentContainingIgnoreCase(name, department);
+    }
+
+    public List<User> searchUsersByNameAndPosition(String name, String position) {
+        return userRepository.findByNameContainingIgnoreCaseAndPositionContainingIgnoreCase(name, position);
+    }
+
     public List<User> searchUsersByDepartment(String department) {
         return userRepository.findByDepartmentContainingIgnoreCase(department);
     }
@@ -159,5 +167,9 @@ public class UserService implements UserDetailsService {
 
     public Optional<User> getUserByEmployeeId(String employeeId) {
         return userRepository.findByEmployeeId(employeeId);
+    }
+
+    public List<User> searchUsersByName(String search) {
+        return userRepository.findByNameContainingIgnoreCase(search);
     }
 }
