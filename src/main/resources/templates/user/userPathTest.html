@@ -18,6 +18,11 @@
     <div class="question-box">
         <p th:text="${questions[currentIndex].text}">Вопрос</p>
 
+        <div th:if="${questions[currentIndex].imagePath != null}">
+            <img th:src="@{${questions[currentIndex].imagePath}}" alt="Изображение к вопросу" style="max-width: 400px; max-height: 300px;" />
+        </div>
+
+
         <form method="post" th:action="@{/user/{testId}/answer(testId=${assignedTest.id})}">
             <input type="hidden" name="currentIndex" th:value="${currentIndex}">
             <div class="options">

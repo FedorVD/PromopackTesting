@@ -25,6 +25,11 @@ public class Question {
     @Column(name = "text", nullable = false)
     private String text;
 
+    @Column(length = 500)
+    private String imagePath;
+
+    public static final long MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
+
     @Column(name = "order_num")
     private Integer orderNum;
 

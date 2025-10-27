@@ -16,8 +16,15 @@
     <input type="hidden" name="id" th:value="${question.id}" />
     <input type="hidden" name="testId" th:value="${question.test.id}" />
 
-    <label for="questionText">Текст вопроса:</label><br />
-    <textarea id="questionText" name="questionText" required th:text="${question.text}"></textarea><br /><br />
+    <div>
+        <label for="questionText">Текст вопроса:</label><br />
+        <textarea id="questionText" name="questionText" required th:text="${question.text}"></textarea><br /><br />
+    </div>
+
+    <div th:if="${question.imagePath != null}">
+        <p>Текущее изображение:</p>
+        <img th:src="@{${question.imagePath}}" width="200" height="200" /><br /><br />
+    </div>
 
     <div>
         <label>Вариант 1:</label>

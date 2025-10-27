@@ -2,6 +2,11 @@ package org.top.promopacktesting.controller.admin;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,9 +14,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.top.promopacktesting.model.*;
 import org.top.promopacktesting.service.*;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +44,9 @@ public class TestManagementController {
 
     @Autowired
     private ThemeTestService themeTestService;
+
+    @Autowired
+    private ImageService imageService;
 
     @GetMapping("/tests")
     public String showTests(@RequestParam(required = false) String search,
@@ -170,6 +183,7 @@ public class TestManagementController {
     public String showAddQuestionForm(@PathVariable Long testId, Model model) {
         Test test = testService.getTestById(testId)
                 .orElseThrow(() -> new RuntimeException("Тест не найден"));
+        model.addAttribute("question", new Question());
         model.addAttribute("test", test);
         return "/admin/tests/addQuestion";
     }
@@ -180,27 +194,15 @@ public class TestManagementController {
                               @RequestParam String questionText,
                               @RequestParam Map<String, String> requestParams,
                               @RequestParam String action,
+                              @RequestParam("image") MultipartFile image,
                               Model model) {
         try {
             Test test = testService.getTestById(testId)
                     .orElseThrow(() -> new RuntimeException("Тест не найден"));
 
-            System.out.println("=== Полученные параметры ===");
-            request.getParameterMap().forEach((key, values) -> {
-                System.out.println(key + " = " + Arrays.toString(values));
-            });
-
-            List<Answer> answerList = new ArrayList<>();
-            int i = 0;
-            while (requestParams.containsKey("answers[" + i + "]")) {
-                Answer answer = new Answer();
-                String paramKey =  "correctAnswers[" + i + "]";
-                Boolean isCorrect = requestParams.containsKey(paramKey);
-                answer.setAnswerText(requestParams.get("answers[" + i + "]"));
-                answer.setIsCorrect(isCorrect);
-                answerList.add(answer);
-                i++;
-                answer.setAnswerNum(i);
+            String imagePath = null;
+            if (image != null && !image.isEmpty()) {
+                imagePath = imageService.saveImage(image);
             }
 
             Integer orderNum = questionService.getMaxOrderNum(test) + 1;
@@ -209,27 +211,47 @@ public class TestManagementController {
             newQuestion.setText(questionText);
             newQuestion.setTest(test);
             newQuestion.setOrderNum(orderNum);
+            newQuestion.setImagePath(imagePath);
+
+            List<Answer> answerList = new ArrayList<>();
+            int i = 0;
+            while (requestParams.containsKey("answers[" + i + "]")) {
+                Answer answer = new Answer();
+                String paramKey = "correctAnswers[" + i + "]";
+                Boolean isCorrect = requestParams.containsKey(paramKey);
+                answer.setAnswerText(requestParams.get("answers[" + i + "]"));
+                answer.setIsCorrect(isCorrect);
+                answerList.add(answer);
+                i++;
+                answer.setAnswerNum(i);
+            }
+
             for (Answer answer : answerList) {
                 answer.setQuestion(newQuestion);
             }
+
             newQuestion.setAnswers(answerList);
             questionService.saveQuestionWithAnswers(newQuestion);
             model.addAttribute("message", "Вопрос успешно добавлен к тесту!");
+            model.addAttribute("test", testService.getTestById(testId));
 
             if ("finish".equals(action)) {
                 return "redirect:/admin/tests/" + testId + "/viewTest";
             } else {
                 return "redirect:/admin/tests/" + testId + "/addQuestion";
             }
+        } catch (IOException e) {
+            model.addAttribute("error", "Ошибка при сохранении изображения: " + e.getMessage());
         } catch (Exception e) {
             model.addAttribute("error", "Ошибка при добавлении вопроса: " + e.getMessage());
         }
-        return "admin/tests/addQuestion";
+        return "redirect:/admin/tests/" + testId + "/addQuestion";
     }
 
     @GetMapping("/{questionId}/editQuestion")
     public String showEditQuestionForm(@PathVariable Long questionId, Model model) {
-        Question question = questionService.getQuestionById(questionId).orElseThrow(()-> new RuntimeException("Вопрос не найден"));
+        Question question = questionService.getQuestionById(questionId)
+                .orElseThrow(()-> new RuntimeException("Вопрос не найден"));
         model.addAttribute("question", question);
         return "admin/tests/editQuestion";
     }
@@ -248,6 +270,7 @@ public class TestManagementController {
             question = questionOpt.get();
             String questionText = requestParams.get("questionText");
             question.setText(questionText);
+
             List<Answer> existingAnswers = question.getAnswers();
             if (existingAnswers.isEmpty()) {
                 existingAnswers = new ArrayList<>();
@@ -288,5 +311,52 @@ public class TestManagementController {
             model.addAttribute("error", "Ошибка при обновлении вопроса: " + e.getMessage());
         }
         return "admin/tests/editQuestion";
+    }
+
+    @PostMapping("/saveQuestion")
+    public String saveQuestion(@RequestParam String text,
+                               @RequestParam("image") MultipartFile image,
+                               Model model) {
+
+        try {
+            String imagePath = imageService.saveImage(image);
+
+            Question question = new Question();
+            question.setText(text);
+            question.setImagePath(imagePath);
+
+            questionService.updateQuestion(question.getId(), question);
+            model.addAttribute("message", "Вопрос успешно сохранён");
+
+        } catch (IOException e) {
+            model.addAttribute("error", "Ошибка при сохранении изображения");
+        }
+
+        return "admin/questions/addQuestion";
+    }
+
+    public class ImageController {
+
+        @Value("${app.image.upload-dir}")
+        private String uploadDir;
+
+        @GetMapping("/question/{filename:.+}")
+        public ResponseEntity<Resource> serveImage(@PathVariable String filename) {
+            Path filePath = Paths.get(uploadDir).resolve(filename);
+            Resource resource;
+            try {
+                resource = new UrlResource(filePath.toUri());
+            } catch (MalformedURLException e) {
+                return ResponseEntity.notFound().build();
+            }
+
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }
     }
 }
