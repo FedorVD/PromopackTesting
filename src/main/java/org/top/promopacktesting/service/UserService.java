@@ -6,6 +6,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -171,5 +173,17 @@ public class UserService implements UserDetailsService {
 
     public List<User> searchUsersByName(String search) {
         return userRepository.findByNameContainingIgnoreCase(search);
+    }
+
+    public String getCurrentUsername(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = auth.getName();
+        Optional<User> userOpt = getUserByUsername(currentUsername);
+
+        if (userOpt.isEmpty()) {
+            return "Пользователь не найден";
+        }
+        User currentUser = userOpt.get();
+        return currentUser.getName();
     }
 }

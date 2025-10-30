@@ -7,9 +7,9 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<h1>Редактирование пользователя</h1>
+<div th:replace="~{admin/_fragments :: layout(title='Редактирование пользователя', username=${username}, message=${message}, error=${error})}">
+</div><br />
 
-<a href="/admin">К административной панели</a><br /><br />
 <a href="/admin/users/users">К списку пользователей</a><br /><br />
 
 <form action="#" th:action="@{/admin/users/{id}/editUser(id=${user.id})}" method="post">
@@ -76,6 +76,6 @@
         this.textContent = type === "password" ? "Показать" : "Скрыть";
     });
 </script>
-
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

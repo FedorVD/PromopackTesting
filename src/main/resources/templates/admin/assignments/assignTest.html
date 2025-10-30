@@ -7,8 +7,9 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<a href="/admin">К административной панели</a><br /><br />
-<h2>Назначить тест пользователю</h2>
+
+<div th:replace="admin/_fragments :: layout(title='Назначить тест пользователю', username=${username}, message=${message}, error=${error})">
+</div> <br/>
 
 <form method="get" action="/admin/assignments/assignTest">
     <div class="form-group">
@@ -87,5 +88,6 @@
         document.querySelectorAll("input[name='userIds']").forEach(cb => cb.checked = checkbox.checked);
     }
 </script>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

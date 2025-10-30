@@ -7,7 +7,11 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<h1>Вопросы теста: <strong th:text="${test.name}"></strong></h1>
+
+<div th:replace="admin/_fragments :: layout(title='Вопросы теста', username=${username}, message=${message}, error=${error})">
+</div> <br/>
+
+<h1> <strong th:text="${test.name}"></strong></h1>
 
 <a href="/admin/tests/tests">Назад к списку тестов</a><br />
 <a href="/admin/tests/id/addQuestion(id=${question.id}})">Добавить вопрос</a><br /><br />
@@ -26,5 +30,6 @@
         </td>
     </tr>
 </table>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

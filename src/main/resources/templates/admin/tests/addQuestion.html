@@ -7,9 +7,11 @@
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<a href="/admin/tests/tests">Назад к списку тестов</a><br /><br />
 
-<h2>Добавить вопрос к тесту: <span th:text="${test.name}">Название теста</span></h2>
+<div th:replace="admin/_fragments :: layout(title='Добавление вопроса к тесту', username=${username}, message=${message}, error=${error})">
+</div> <br/>
+
+<h2> <span th:text="${test.name}">Название теста</span></h2>
 
 <form action="#" th:action="@{/admin/tests/{id}/addQuestion(id=${test.id})}"
       method="post" enctype="multipart/form-data">
@@ -55,5 +57,6 @@
 <div th:if="${error}" style="color: red;">
   <p th:text="${error}">Ошибка</p>
 </div>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

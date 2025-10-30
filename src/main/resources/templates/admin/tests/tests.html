@@ -8,8 +8,10 @@
 </head>
 <body>
 
+<div th:replace="admin/_fragments :: layout(title='Управление тестами', username=${username}, message=${message}, error=${error})">
+</div> <br/>
+
 <div class="container mt-4">
-    <a href="/admin">К административной панели</a><br /><br />
     <h2>Список тестов</h2>
 
     <form action="#" th:action="@{/admin/tests/tests}" method="get">
@@ -83,6 +85,6 @@
 </div>
 
 <br />
-
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

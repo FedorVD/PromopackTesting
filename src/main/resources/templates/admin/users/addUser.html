@@ -7,9 +7,10 @@
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<h1>Добавить нового пользователя</h1>
 
-<a href="/admin">К административной панели</a><br /><br />
+<div th:replace="~{admin/_fragments :: layout(title='Добавить нового пользователя', username=${username}, message=${message}, error=${error})}">
+</div><br />
+
 <a href="/admin/users/users">К списку пользователей</a><br /><br />
 
 <form action="/admin/users/addUser" method="post">
@@ -53,5 +54,6 @@
 <div th:if="${error}" style="color: red;">
   <p th:text="${error}">Ошибка</p>
 </div>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

@@ -21,6 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -42,7 +43,7 @@ public class AssignmentManagementController {
     public String showAssignTestForm(@RequestParam(required = false) String department,
                                      @RequestParam(required = false) String position,
                                      Model model) {
-
+        sendCurrentUsername(model);
         List <User> users = new ArrayList<>();
         if (department != null && position != null) {
             users = userService.searchUsersByDepartmentAndPosition(department, position);
@@ -92,6 +93,7 @@ public class AssignmentManagementController {
 
     @GetMapping("/{assignmentId}/assignedTest")
     public String showAssignedTestForm(@PathVariable Long assignmentId, Model model) {
+        sendCurrentUsername(model);
         AssignedTest assignedTest = assignmentService.getAssignedTestById(assignmentId).orElseThrow(()-> new RuntimeException("Назначенный тест не найден"));
         if (assignedTest == null) {
             model.addAttribute("error", "Назанченные тесты не найдены");
@@ -107,6 +109,7 @@ public class AssignmentManagementController {
                                     @RequestParam (required = false) AssignedTest.TestStatus status,
                                     @RequestParam (required = false) Double testScore,
                                     Model model) {
+        sendCurrentUsername(model);
         List<AssignedTest> assignments = new ArrayList<>();
         AssignedTest assignedTest;
         if (!StringUtils.isEmpty(testName) && !StringUtils.isEmpty(userName) && status != null) {
@@ -162,6 +165,7 @@ public class AssignmentManagementController {
     public RedirectView exportToExcel(HttpServletResponse response,
                                       @RequestParam(required = false) List<Long> assignmentsIds,
                                       RedirectAttributes redirectAttrs) throws IOException {
+
         List<AssignedTest> assignments = new ArrayList<>();
         if (assignmentsIds == null || assignmentsIds.isEmpty()) {
             redirectAttrs.addFlashAttribute("error", "Тесты для экспорта не выбраны");
@@ -211,6 +215,7 @@ public class AssignmentManagementController {
 
     @GetMapping("/{id}/results")
     public String showTestResults(@PathVariable Long id, Model model) {
+        sendCurrentUsername(model);
         Optional<AssignedTest> optionalAssignedTest = assignmentService.getAssignedTestById(id);
         if (optionalAssignedTest.isEmpty()) {
             model.addAttribute("error", "Назначенный тест не найден");
@@ -286,5 +291,14 @@ public class AssignmentManagementController {
 
         workbook.write(response.getOutputStream());
         workbook.close();
+    }
+
+    public void sendCurrentUsername(Model model) {
+        if (Objects.equals(userService.getCurrentUsername(), "Пользователь не найден")){
+            model.addAttribute("error", "Пользователь не найден");
+            model.addAttribute("username", "Ошибка входа");
+        } else {
+            model.addAttribute("username", userService.getCurrentUsername());
+        }
     }
 }

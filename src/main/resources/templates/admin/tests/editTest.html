@@ -7,7 +7,9 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<h1>Редактирование теста</h1>
+
+<div th:replace="admin/_fragments :: layout(title='Редактирование теста', username=${username}, message=${message}, error=${error})">
+</div> <br/>
 
 <a href="/admin/tests/tests">Назад к списку тестов</a><br /><br />
 
@@ -53,5 +55,6 @@
 <div th:if="${error}" style="color: red;">
     <p th:text="${error}">Ошибка</p>
 </div>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

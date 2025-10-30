@@ -8,9 +8,9 @@
 </head>
 <body>
 <div class="container mt-4">
-  <a href="/admin">К административной панели</a><br /><br />
 
-  <h2>Добавить новую тему</h2>
+  <div th:replace="~{admin/_fragments :: layout(title='Добавить новую тему', username=${username}, message=${message}, error=${error})}">
+  </div><br />
 
   <form action="#" th:action="@{/admin/themes/addTheme}" method="post">
     <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
@@ -24,5 +24,6 @@
     <a href="/admin/themes/themes" class="btn btn-secondary">Отмена</a>
   </form>
 </div>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

@@ -7,9 +7,11 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<div class="container mt-4">
-    <h2>Редактирование темы</h2>
 
+<div th:replace="~{admin/_fragments :: layout(title='Редактирование темы', username=${username}, message=${message}, error=${error})}">
+</div><br/>
+
+<div class="container mt-4">
     <form action="#" th:action="@{/admin/themes/{id}/editTheme(id=${themeTest.id})}" method="post">
         <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
 
@@ -29,6 +31,8 @@
 
     <div th:if="${error}" style="color: red;">
         <p th:text="${error}">Ошибка</p>
+    </div>
 </div>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

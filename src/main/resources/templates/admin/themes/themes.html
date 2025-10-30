@@ -7,10 +7,11 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<div class="container mt-4">
-    <a href="/admin">К административной панели</a><br /><br />
 
-    <h2>Темы тестов</h2>
+<div th:replace="~{admin/_fragments :: layout(title='Темы тестов', username=${username}, message=${message}, error=${error})}">
+</div><br />
+
+<div class="container mt-4">
 
     <a th:href="@{/admin/themes/addTheme}" class="btn btn-primary mb-3">Добавить новую тему</a>
 
@@ -31,5 +32,6 @@
         </tbody>
     </table>
 </div>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

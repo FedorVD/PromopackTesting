@@ -34,9 +34,22 @@ public class ImageService {
             Files.createDirectories(uploadPath);
         }
 
+        String originalFilename = file.getOriginalFilename();
+        String extension = "";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
         String fileName = UUID.randomUUID().toString() + "."
                 + StringUtils.getFilenameExtension(file.getOriginalFilename());
         Path filePath = uploadPath.resolve(fileName);
+
+        int counter = 0;
+        while (Files.exists(filePath)) {
+            fileName = UUID.randomUUID().toString() + "_" + counter + extension;
+            filePath = uploadPath.resolve(fileName);
+            counter++;
+        }
 
         Files.copy(file.getInputStream(), filePath);
         String fullImagePath = baseUrl + fileName;

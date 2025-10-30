@@ -7,10 +7,10 @@
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<a href="/admin">К административной панели</a><br /><br />
-<h2>Назначенные тесты</h2>
+<div th:replace="admin/_fragments :: layout(title='Назначенные тесты', username=${username}, message=${message}, error=${error})">
+</div> <br/>
 
-<!-- Форма фильтрации -->
+
 <form action="#" th:action="@{/admin/assignments/assignments}" method="get">
   <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
 
@@ -153,5 +153,6 @@
 <div th:if="${error}" class="alert alert-danger" role="alert" style="color: red">
   <span th:text="${error}"></span>
 </div>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

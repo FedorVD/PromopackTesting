@@ -7,6 +7,10 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
+
+<div th:replace="admin/_fragments :: layout(title='Список вопросов к тесту', username=${username}, message=${message}, error=${error})">
+</div> <br/>
+
 <h2>
     <form action="#" th:action="@{/admin/tests/__${test.id}__/editTest}" method="post">
         <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
@@ -34,5 +38,6 @@
 <div th:if="${error}" style="color: red;">
     <p th:text="${error}">Ошибка</p>
 </div>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

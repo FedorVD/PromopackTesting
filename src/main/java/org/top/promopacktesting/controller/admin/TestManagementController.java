@@ -20,6 +20,7 @@ import org.top.promopacktesting.service.*;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -48,11 +49,18 @@ public class TestManagementController {
     @Autowired
     private ImageService imageService;
 
+    @Value("${app.image.upload-dir}")
+    private String uploadDir;
+
+    @Value("${app.image.base-url}")
+    private String baseUrl;
+
     @GetMapping("/tests")
     public String showTests(@RequestParam(required = false) String search,
                             @RequestParam(required = false) Long themeId,
                             @RequestParam(required = false) String status,
                             Model model) {
+        sendCurrentUsername(model);
         List<Test> tests = new ArrayList<>();
 
         if (themeId != null) {
@@ -83,6 +91,7 @@ public class TestManagementController {
 
     @GetMapping("/addTest")
     public String showAddTestForm(Model model) {
+        sendCurrentUsername(model);
         List<ThemeTest> themeTests = themeTestService.getAllThemeTests();
         if (themeTests.isEmpty()) {
             model.addAttribute("error", "Нет доступных тем для создания теста");
@@ -123,6 +132,7 @@ public class TestManagementController {
 
     @GetMapping("/{testId}/edit")
     public String showEditTestForm(@PathVariable Long testId, Model model) {
+        sendCurrentUsername(model);
         Optional<Test> testOpt = testService.getTestById(testId);
         if (testOpt.isEmpty()) {
             model.addAttribute("error", "Тест не найден!");
@@ -172,6 +182,7 @@ public class TestManagementController {
 
     @GetMapping("/{testId}/viewTest")
     public String viewTest(@PathVariable Long testId, Model model) {
+        sendCurrentUsername(model);
         Test test = testService.getTestById(testId)
                 .orElseThrow(() -> new RuntimeException("Тест не найден"));
 
@@ -181,6 +192,7 @@ public class TestManagementController {
 
     @GetMapping("/{testId}/addQuestion")
     public String showAddQuestionForm(@PathVariable Long testId, Model model) {
+        sendCurrentUsername(model);
         Test test = testService.getTestById(testId)
                 .orElseThrow(() -> new RuntimeException("Тест не найден"));
         model.addAttribute("question", new Question());
@@ -250,6 +262,7 @@ public class TestManagementController {
 
     @GetMapping("/{questionId}/editQuestion")
     public String showEditQuestionForm(@PathVariable Long questionId, Model model) {
+        sendCurrentUsername(model);
         Question question = questionService.getQuestionById(questionId)
                 .orElseThrow(()-> new RuntimeException("Вопрос не найден"));
         model.addAttribute("question", question);
@@ -259,6 +272,7 @@ public class TestManagementController {
     @PostMapping("/{questionId}/editQuestion")
     public String editQuestion(@PathVariable Long questionId,
                                @RequestParam Map<String, String> requestParams,
+                               @RequestParam("image") MultipartFile image,
                                Model model) {
         Question question;
         try {
@@ -303,6 +317,26 @@ public class TestManagementController {
             }
 
             question.setAnswers(existingAnswers);
+
+
+
+            if (!image.isEmpty()) {
+
+                String oldImagePath = question.getImagePath();
+
+
+                if (oldImagePath != null && !oldImagePath.isEmpty()) {
+                    Path oldFilePath = Paths.get(uploadDir).resolve(oldImagePath.replace(baseUrl, ""));
+                    try {
+                        Files.deleteIfExists(oldFilePath);
+                    } catch (IOException e) {
+                        System.err.println("Не удалось удалить старое изображение: " + e.getMessage());
+                    }
+                }
+                String newImagePath = imageService.saveImage(image);
+                question.setImagePath(newImagePath);
+            }
+
             questionService.updateQuestion(question.getId(), question);
             model.addAttribute("message", "Вопрос успешно обновлен!");
             model.addAttribute("question", question);
@@ -335,28 +369,12 @@ public class TestManagementController {
         return "admin/questions/addQuestion";
     }
 
-    public class ImageController {
-
-        @Value("${app.image.upload-dir}")
-        private String uploadDir;
-
-        @GetMapping("/question/{filename:.+}")
-        public ResponseEntity<Resource> serveImage(@PathVariable String filename) {
-            Path filePath = Paths.get(uploadDir).resolve(filename);
-            Resource resource;
-            try {
-                resource = new UrlResource(filePath.toUri());
-            } catch (MalformedURLException e) {
-                return ResponseEntity.notFound().build();
-            }
-
-            if (resource.exists() && resource.isReadable()) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.IMAGE_JPEG)
-                        .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+    public void sendCurrentUsername(Model model) {
+        if (Objects.equals(userService.getCurrentUsername(), "Пользователь не найден")){
+            model.addAttribute("error", "Пользователь не найден");
+            model.addAttribute("username", "Ошибка входа");
+        } else {
+            model.addAttribute("username", userService.getCurrentUsername());
         }
     }
 }

@@ -7,9 +7,10 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<h1>Управление пользователями</h1>
 
-<a href="/admin">К административной панели</a><br /><br />
+<div th:replace="~{admin/_fragments :: layout(title='Управление пользователями', username=${username}, message=${message}, error=${error})}">
+</div><br />
+
 <a href="/admin/users/addUser">Добавить нового пользователя</a><br /><br />
 
 <!-- Форма фильтра -->
@@ -64,5 +65,6 @@
         </td>
     </tr>
 </table>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

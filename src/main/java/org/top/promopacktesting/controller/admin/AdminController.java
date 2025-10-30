@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.top.promopacktesting.model.User;
 import org.top.promopacktesting.service.UserService;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -24,7 +25,7 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String adminPanel(Model model){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+/*        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = auth.getName();
         Optional<User> userOpt = userService.getUserByUsername(currentUsername);
 
@@ -32,8 +33,13 @@ public class AdminController {
             model.addAttribute("error", "Пользователь не найден");
             return "/admin/admnin";
         }
-        User currentUser = userOpt.get();
-        model.addAttribute("username", currentUser.getName());
+        User currentUser = userOpt.get();*/
+        if (Objects.equals(userService.getCurrentUsername(), "Пользователь не найден")){
+            model.addAttribute("error", "Пользователь не найден");
+            model.addAttribute("username", "Ошибка входа");
+        } else {
+            model.addAttribute("username", userService.getCurrentUsername());
+        }
         return "admin/admin";
     }
 }

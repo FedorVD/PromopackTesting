@@ -17,10 +17,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin/users")
@@ -40,6 +37,7 @@ public class UserManagementController {
                             @RequestParam(required = false) String position,
                             @RequestParam(required = false) String sortField,
                             @RequestParam(required = false) String sortDirection) {
+        sendCurrentUsername(model);
         List<User> users;
         if (search != null && department != null && position != null) {
             users = userService.searchUsers(search, department, position);
@@ -87,6 +85,7 @@ public class UserManagementController {
 
     @GetMapping("/addUser")
     public String showAddUserForm(Model model) {
+        sendCurrentUsername(model);
         model.addAttribute("roles", Arrays.asList(User.Role.values()));
         return "admin/users/addUser";
     }
@@ -120,6 +119,7 @@ public class UserManagementController {
                                    @RequestParam(required = false) String department,
                                    @RequestParam(required = false) String position,
                                    Model model) {
+        sendCurrentUsername(model);
         Optional<User> userOpt = userService.getUserById(id);
         model.addAttribute("search", search);
         model.addAttribute("department", department);
@@ -201,6 +201,7 @@ public class UserManagementController {
 
     @GetMapping("/upload")
     public String showUploadForm(Model model) {
+        sendCurrentUsername(model);
         return "admin/users/upload";
     }
 
@@ -241,6 +242,15 @@ public class UserManagementController {
                 model.addAttribute("error", "Ошибка при обработке файла: " + e.getMessage());
                 return "error";
             }
+        }
+    }
+
+    public void sendCurrentUsername(Model model) {
+        if (Objects.equals(userService.getCurrentUsername(), "Пользователь не найден")){
+            model.addAttribute("error", "Пользователь не найден");
+            model.addAttribute("username", "Ошибка входа");
+        } else {
+            model.addAttribute("username", userService.getCurrentUsername());
         }
     }
 }

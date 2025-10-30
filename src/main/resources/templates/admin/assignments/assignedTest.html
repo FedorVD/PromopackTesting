@@ -7,7 +7,9 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<h2>Просмотр назначенного теста</h2>
+
+<div th:replace="admin/_fragments :: layout(title='Просмотр назначенного теста', username=${username}, message=${message}, error=${error})">
+</div> <br/>
 
 <div th:if="${assignment != null}">
     <p><strong>ID:</strong> <span th:text="${assignment.id}"></span></p>
@@ -22,6 +24,6 @@
 </div>
 
 <a href="/admin/assignments/assignments">Назад к списку назначенных тестов</a><br />
-<a href="/admin">Назад к админке</a><br />
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

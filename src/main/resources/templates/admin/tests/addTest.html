@@ -7,9 +7,10 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<h1>Добавить тест</h1>
 
-<a href="/admin">К административной панели</a><br /><br />
+<div th:replace="admin/_fragments :: layout(title='Добавление нового теста', username=${username}, message=${message}, error=${error})">
+</div> <br/>
+
 <a href="/admin/tests/tests">Назад к списку тестов</a><br /><br />
 
 <form action="#" th:action="@{/admin/tests/addTest}" method="post">
@@ -46,5 +47,6 @@
 <div th:if="${error}" style="color: red;">
     <p th:text="${error}">Ошибка</p>
 </div>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>

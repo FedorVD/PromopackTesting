@@ -8,7 +8,9 @@
   <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
 </head>
 <body>
-<h1>Загрузка сотрудников из Excel</h1>
+
+<div th:replace="~{admin/_fragments :: layout(title='Загрузка сотрудников из Excel', username=${username}, message=${message}, error=${error})}">
+</div><br/>
 
 <form method="post" action="/admin/users/upload" enctype="multipart/form-data">
   <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
@@ -25,5 +27,6 @@
 </div>
 
 <a href="/admin/users/users">Назад к списку пользователей</a>
+<script src="/js/logout.js" defer></script>
 </body>
 </html>
