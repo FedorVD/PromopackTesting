@@ -26,7 +26,7 @@ public class TestScoringService {
     private QuestionRepository questionRepository;
 
 
-    public Double calculateScore(Long assignmentId) {
+/*    public Double calculateScore(Long assignmentId) {
 
         List<UserAnswer> userAnswers = userAnswerRepository.findByAssignedTestId(assignmentId);
         AssignedTest assignedTest = assignedTestRepository.findById(assignmentId)
@@ -50,7 +50,7 @@ public class TestScoringService {
         }
         assignedTestRepository.save(assignedTest);
         return score;
-    }
+    }*/
 
     public double calculateQuestionPoints(UserAnswer userAnswer) {
         Question question = userAnswer.getQuestion();

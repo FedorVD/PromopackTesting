@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log('Найден .logout-link'); // Проверка наличия элемента
         logoutLink.addEventListener('click', function () {
             console.log('Функция logout() вызвана');
-            alert('Выход из системы...');
             document.getElementById('logout-form').submit();
         });
     } else {

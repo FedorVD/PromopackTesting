@@ -13,49 +13,58 @@
 
 <a th:href="@{/admin/tests/{id}/viewTest(id=${question.test.id})}">Назад к списку вопросов</a><br /><br />
 
-<form action="#"
-      th:action="@{/admin/tests/{id}/editQuestion(id=${question.id})}"
-      method="post"
-      enctype="multipart/form-data">
-    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-    <input type="hidden" name="id" th:value="${question.id}" />
-    <input type="hidden" name="testId" th:value="${question.test.id}" />
+<div class="form-question-container" style="display: flex; gap: 30px; width: 100%;">
+    <form action="#"
+          th:action="@{/admin/tests/{id}/editQuestion(id=${question.id})}"
+          method="post"
+          enctype="multipart/form-data"
+          class="form-left"
+          style="flex: 1; min-width: 300px; max-width: 70%;">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+        <input type="hidden" name="id" th:value="${question.id}" />
+        <input type="hidden" name="testId" th:value="${question.test.id}" />
 
-    <div>
-        <label for="questionText">Текст вопроса:</label><br />
-        <textarea id="questionText" name="questionText" required th:text="${question.text}"></textarea><br /><br />
+        <div>
+            <label for="questionText">Текст вопроса:</label><br />
+            <textarea id="questionText" name="questionText" required th:text="${question.text}"></textarea><br /><br />
+        </div>
+
+        <div>
+            <label for="image">Новое изображение:</label><br/>
+            <input type="file" id="image" name="image" accept="image/*"/>
+        </div>
+
+        <div>
+            <label>Вариант 1:</label>
+            <input type="text" name="answers[0]" required th:value="${question.answers[0].answerText}"/>
+            <label><input type="checkbox" name="correctAnswers[0]" th:checked="${question.answers[0].isCorrect}"/> Правильный ответ</label><br /><br />
+
+            <label>Вариант 2:</label>
+            <input type="text" name="answers[1]" required th:value="${question.answers[1].answerText}"/>
+            <label><input type="checkbox" name="correctAnswers[1]" th:checked="${question.answers[1].isCorrect}"/> Правильный ответ</label><br /><br />
+
+            <label>Вариант 3:</label>
+            <input type="text" name="answers[2]" required th:value="${question.answers[2].answerText}"/>
+            <label><input type="checkbox" name="correctAnswers[2]" th:checked="${question.answers[2].isCorrect}"/> Правильный ответ</label><br /><br />
+
+            <label>Вариант 4:</label>
+            <input type="text" name="answers[3]" required th:value="${question.answers[3].answerText}"/>
+            <label><input type="checkbox" name="correctAnswers[3]" th:checked="${question.answers[3].isCorrect}"/> Правильный ответ</label><br /><br />
+        </div>
+
+        <button type="submit">Сохранить изменения</button>
+    </form>
+    <div class="form-right" style="flex: 0 0 600px;">
+        <!-- Превью текущего изображения -->
+        <div class="image-preview" id="imagePreviewContainer" th:if="${question.imagePath != null}">
+            <img th:src="@{${question.imagePath}}" id="imagePreview" class="zoom-on-hover" />
+        </div>
+        <!-- Превью загружаемого изображения -->
+        <div class="image-preview" id="newImagePreviewContainer" style="display: none;">
+            <img id="newImagePreview" class="zoom-on-hover" />
+        </div>
     </div>
-
-    <div th:if="${question.imagePath != null}">
-        <p>Текущее изображение:</p>
-        <img th:src="@{${question.imagePath}}" width="200" height="200" /><br /><br />
-    </div>
-
-    <div>
-        <label for="image">Новое изображение:</label><br/>
-        <input type="file" id="image" name="image" accept="image/*"/>
-    </div>
-
-    <div>
-        <label>Вариант 1:</label>
-        <input type="text" name="answers[0]" required th:value="${question.answers[0].answerText}"/>
-        <label><input type="checkbox" name="correctAnswers[0]" th:checked="${question.answers[0].isCorrect}"/> Правильный ответ</label><br /><br />
-
-        <label>Вариант 2:</label>
-        <input type="text" name="answers[1]" required th:value="${question.answers[1].answerText}"/>
-        <label><input type="checkbox" name="correctAnswers[1]" th:checked="${question.answers[1].isCorrect}"/> Правильный ответ</label><br /><br />
-
-        <label>Вариант 3:</label>
-        <input type="text" name="answers[2]" required th:value="${question.answers[2].answerText}"/>
-        <label><input type="checkbox" name="correctAnswers[2]" th:checked="${question.answers[2].isCorrect}"/> Правильный ответ</label><br /><br />
-
-        <label>Вариант 4:</label>
-        <input type="text" name="answers[3]" required th:value="${question.answers[3].answerText}"/>
-        <label><input type="checkbox" name="correctAnswers[3]" th:checked="${question.answers[3].isCorrect}"/> Правильный ответ</label><br /><br />
-    </div>
-
-    <button type="submit">Сохранить изменения</button>
-</form>
+</div>
 
 <div th:if="${message}" style="color: green;">
     <p th:text="${message}">Сообщение</p>
@@ -65,5 +74,32 @@
     <p th:text="${error}">Ошибка</p>
 </div>
 <script src="/js/logout.js" defer></script>
+
+<script>
+    document.getElementById('image').addEventListener('change', function () {
+        const file = this.files[0];
+        const currentImageContainer = document.getElementById('imagePreviewContainer');
+        const newImageContainer = document.getElementById('newImagePreviewContainer');
+
+        // Скрываем текущее изображение
+        if (currentImageContainer) {
+            currentImageContainer.style.display = 'none';
+        }
+
+        // Если загружено новое изображение
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.getElementById('newImagePreview');
+                img.src = e.target.result;
+                newImageContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            newImageContainer.style.display = 'none';
+        }
+    });
+</script>
+
 </body>
 </html>

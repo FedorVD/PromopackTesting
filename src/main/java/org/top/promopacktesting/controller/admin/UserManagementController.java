@@ -61,14 +61,14 @@ public class UserManagementController {
             switch (sortField) {
                 case "department":
                     if ("asc".equals(sortDirection)) {
-                        users.sort((u1, u2) -> u1.getDepartment().compareTo(u2.getDepartment()));
+                        users.sort(Comparator.comparing(User::getDepartment));
                     } else if ("desc".equals(sortDirection)) {
                         users.sort((u1, u2) -> u2.getDepartment().compareTo(u1.getDepartment()));
                     }
                     break;
                 case "position":
                     if ("asc".equals(sortDirection)) {
-                        users.sort((u1, u2) -> u1.getPosition().compareTo(u2.getPosition()));
+                        users.sort(Comparator.comparing(User::getPosition));
                     } else if ("desc".equals(sortDirection)) {
                         users.sort((u1, u2) -> u2.getPosition().compareTo(u1.getPosition()));
                     }

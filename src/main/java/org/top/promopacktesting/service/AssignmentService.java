@@ -32,8 +32,6 @@ public class AssignmentService {
     @Autowired
     private AnswerRepository answerRepository;
 
-/*    @Autowired
-    private TestScoringService testScoringService;*/
 
     public List<AssignedTest> getAssignedTests() {
         return assignedTestRepository.findAll();

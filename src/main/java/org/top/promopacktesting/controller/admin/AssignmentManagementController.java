@@ -44,7 +44,7 @@ public class AssignmentManagementController {
                                      @RequestParam(required = false) String position,
                                      Model model) {
         sendCurrentUsername(model);
-        List <User> users = new ArrayList<>();
+        List <User> users;
         if (department != null && position != null) {
             users = userService.searchUsersByDepartmentAndPosition(department, position);
         } else if (department != null) {
@@ -62,7 +62,6 @@ public class AssignmentManagementController {
         model.addAttribute("department", department);
         model.addAttribute("position", position);
         model.addAttribute("currentUser", SecurityContextHolder.getContext().getAuthentication().getName());
-        //model.addAttribute("assignments",assignmentService.getAssignedTests());
         return "admin/assignments/assignTest";
     }
 

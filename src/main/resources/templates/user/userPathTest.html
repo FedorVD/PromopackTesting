@@ -19,7 +19,13 @@
         <p th:text="${questions[currentIndex].text}">Вопрос</p>
 
         <div th:if="${questions[currentIndex].imagePath != null}">
-            <img th:src="@{${questions[currentIndex].imagePath}}" alt="Изображение к вопросу" style="max-width: 400px; max-height: 300px;" />
+            <a th:href="@{${questions[currentIndex].imagePath}}" target="_blank" rel="noopener noreferrer">
+                <img
+                        th:src="@{${questions[currentIndex].imagePath}}"
+                        alt="Изображение к вопросу"
+                        class="zoom-on-hover test-image"
+                        style="max-width: 400px; max-height: 300px; cursor: pointer;" />
+            </a>
         </div>
 
 

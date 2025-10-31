@@ -13,9 +13,6 @@ import java.util.Optional;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
-    List<Question> findByTestOrderByOrderNumAsc(Test test);
-    List<Question> findByTestIdOrderByOrderNumAsc(Long testId);
-
     Optional<Question> findById(Long questionId);
 
     @Query("SELECT q FROM Question q WHERE q.test.id = :testId ORDER BY q.orderNum ASC")

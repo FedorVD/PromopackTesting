@@ -17,8 +17,6 @@ import java.util.Optional;
 @Transactional
 public class QuestionService {
 
-    @Autowired
-    private TestRepository testRepository;
 
     @Autowired
     private QuestionRepository questionRepository;

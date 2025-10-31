@@ -346,3 +346,53 @@ input.form-control:focus {
 .logout-link:hover {
     text-decoration: underline;
 }
+
+.zoom-on-hover {
+    transition: transform 0.3s ease;
+    cursor: zoom-in;
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+.zoom-on-hover:hover {
+    transform: scale(2);
+    z-index: 10;
+    position: relative;
+}
+
+.image-preview {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+.form-question-container {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.form-left {
+    flex: 1 1 calc(100% - 600px);
+    max-width: 100%;
+    min-width: 200px;
+}
+
+.form-right {
+    flex: 0 0 600px; /* Ширина правой колонки — 600px */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.test-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    cursor: pointer;
+}

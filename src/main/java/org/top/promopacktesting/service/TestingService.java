@@ -1,7 +1,5 @@
 package org.top.promopacktesting.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.top.promopacktesting.model.AssignedTest;
 import org.top.promopacktesting.model.Question;
-import org.top.promopacktesting.model.User;
 import org.top.promopacktesting.model.UserAnswer;
 import org.top.promopacktesting.repository.AssignedTestRepository;
 import org.top.promopacktesting.repository.QuestionRepository;
@@ -32,13 +29,11 @@ public class TestingService {
     @Autowired
     private QuestionRepository questionRepository;
 
-    @Autowired
-    private QuestionService questionService;
 
     @Autowired
     private AssignmentService assignmentService;
 
-    public UserAnswer saveUserAnswer(Long assignmentId, Long questionId, List<Boolean>selectedAnswers){
+/*    public UserAnswer saveUserAnswer(Long assignmentId, Long questionId, List<Boolean>selectedAnswers){
         AssignedTest assignedTest = assignedTestRepository.findById(assignmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Назначение не найдено"));
         Question question = questionRepository.findById(questionId)
@@ -51,9 +46,9 @@ public class TestingService {
         userAnswer.setAnsweredAt(LocalDateTime.now());
 
         return userAnswerRepository.save(userAnswer);
-    }
+    }*/
 
-    public Double completeTest(Long assignmentId){
+/*    public Double completeTest(Long assignmentId){
         AssignedTest assignedTest = assignedTestRepository.findById(assignmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Назначение не найдено"));
 
@@ -63,7 +58,7 @@ public class TestingService {
         assignedTest.setCompletedAt(LocalDateTime.now());
 
         return assignedTestRepository.save(assignedTest).getTestScore();
-    }
+    }*/
 
     public void saveUserAnswer (UserAnswer userAnswer){
             userAnswerRepository.save(userAnswer);

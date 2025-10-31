@@ -13,42 +13,54 @@
 
 <h2> <span th:text="${test.name}">Название теста</span></h2>
 
-<form action="#" th:action="@{/admin/tests/{id}/addQuestion(id=${test.id})}"
-      method="post" enctype="multipart/form-data">
-  <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-  <input type="hidden" name="testId" th:value="${test.id}" />
+<div class="form-question-container" style="display: flex; gap: 30px;">
+  <form action="#"
+        th:action="@{/admin/tests/{id}/addQuestion(id=${test.id})}"
+        method="post"
+        enctype="multipart/form-data"
+        class="form-left"
+        style="flex: 1; min-width: 300px; max-width: 70%;">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+    <input type="hidden" name="testId" th:value="${test.id}" />
 
-  <div>
-    <label for="questionText">Текст вопроса:</label><br />
-    <textarea id="questionText" name="questionText" required></textarea><br /><br />
+    <div>
+      <label for="questionText">Текст вопроса:</label><br />
+      <textarea id="questionText" name="questionText" required></textarea><br /><br />
+    </div>
+
+    <div>
+      <label for="image">Изображение:</label><br/>
+      <input type="file" id="image" name="image" accept="image/*"/>
+    </div>
+
+    <div>
+      <label for="answers0">Вариант 1:</label>
+      <input type="text" id="answers0" name="answers[0]" required/>
+      <label><input type="checkbox" name="correctAnswers[0]"/> Правильный ответ</label><br />
+
+      <label for="answers1">Вариант 2:</label>
+      <input type="text" id="answers1" name="answers[1]" required/>
+      <label><input type="checkbox" name="correctAnswers[1]"/> Правильный ответ</label><br />
+
+      <label for="answers2">Вариант 3:</label>
+      <input type="text" id="answers2" name="answers[2]" required/>
+      <label><input type="checkbox" name="correctAnswers[2]"/> Правильный ответ</label><br />
+
+      <label for="answers3">Вариант 4:</label>
+      <input type="text" id="answers3" name="answers[3]" required/>
+      <label><input type="checkbox" name="correctAnswers[3]"/> Правильный ответ</label><br />
+    </div>
+
+    <button type="submit" name="action" value="addAnother">Добавить ещё один вопрос</button>
+    <button type="submit" name="action" value="finish">Закончить добавление вопросов</button>
+  </form>
+
+  <div class="form-right" style="flex: 0 0 600px;">
+    <div class="image-preview" id="imagePreviewContainer">
+      <img id="imagePreview" class="zoom-on-hover" />
+    </div>
   </div>
-
-  <div>
-    <label for="image">Изображение:</label><br/>
-    <input type="file" id="image" name="image" accept="image/*"/>
-  </div>
-
-  <div>
-    <label for="answers0">Вариант 1:</label>
-    <input type="text" id="answers0" name="answers[0]" required/>
-    <label><input type="checkbox" name="correctAnswers[0]"/> Правильный ответ</label><br />
-
-    <label for="answers1">Вариант 2:</label>
-    <input type="text" id="answers1" name="answers[1]" required/>
-    <label><input type="checkbox" name="correctAnswers[1]"/> Правильный ответ</label><br />
-
-    <label for="answers2">Вариант 3:</label>
-    <input type="text" id="answers2" name="answers[2]" required/>
-    <label><input type="checkbox" name="correctAnswers[2]"/> Правильный ответ</label><br />
-
-    <label for="answers3">Вариант 4:</label>
-    <input type="text" id="answers3" name="answers[3]" required/>
-    <label><input type="checkbox" name="correctAnswers[3]"/> Правильный ответ</label><br />
-  </div>
-
-  <button type="submit" name="action" value="addAnother">Добавить ещё один вопрос</button>
-  <button type="submit" name="action" value="finish">Закончить добавление вопросов</button>
-</form>
+</div>
 
 <div th:if="${message}" style="color: green;">
   <p th:text="${message}">Сообщение</p>
@@ -58,5 +70,21 @@
   <p th:text="${error}">Ошибка</p>
 </div>
 <script src="/js/logout.js" defer></script>
+
+
+<script>
+  document.getElementById('image').addEventListener('change', function () {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = document.getElementById('imagePreview');
+        img.src = e.target.result;
+        document.getElementById('imagePreviewContainer').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+</script>
 </body>
 </html>

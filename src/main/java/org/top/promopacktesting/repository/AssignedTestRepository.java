@@ -2,16 +2,12 @@ package org.top.promopacktesting.repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.top.promopacktesting.model.AssignedTest.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.top.promopacktesting.model.AssignedTest;
 import org.top.promopacktesting.model.AssignedTest.TestStatus;
-import org.top.promopacktesting.model.Test;
-import org.top.promopacktesting.model.User;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface AssignedTestRepository extends JpaRepository<AssignedTest, Long> {
