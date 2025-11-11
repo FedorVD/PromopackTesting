@@ -16,13 +16,27 @@
 <!-- Форма фильтра -->
 <form method="get" action="/admin/users/users">
     <label for="search">Поиск по имени/отделу:</label>
-    <input type="text" id="search" name="search" th:value="${search}" />
+    <input type="text" id="search" name="search" class="form-control mb-3" th:value="${search}" />
 
-    <label for="department">Подразделение:</label>
-    <input type="text" id="department" name="department" th:value="${department}" />
+    <label for="departmentId">Подразделение:</label>
+    <select id="departmentId" name="departmentId" class="form-control mb-3">
+        <option value="">Все</option>
+        <option th:each="dept : ${departments}"
+                th:value="${dept.id}"
+                th:selected="${dept.id == departmentId}"
+                th:text="${dept.departmentName}">
+        </option>
+    </select>
 
-    <label for="position">Должность:</label>
-    <input type="text" id="position" name="position" th:value="${position}" />
+    <label for="positionId">Должность:</label>
+    <select id="positionId" name="positionId" class="form-control mb-3">
+        <option value="">Все</option>
+        <option th:each="pos : ${positions}"
+                th:value="${pos.id}"
+                th:selected="${pos.id == positionId}"
+                th:text="${pos.positionName}">
+        </option>
+    </select>
 
     <button type="submit">Применить</button>
 </form>
@@ -56,12 +70,12 @@
         <td th:text="${user.employeeId}"></td>
         <td th:text="${user.username}"></td>
         <td th:text="${user.name}"></td>
-        <td th:text="${user.department}"></td>
-        <td th:text="${user.position}"></td>
+        <td th:text="${user.department.departmentName}"></td>
+        <td th:text="${user.position.positionName}"></td>
         <td th:text="${#temporals.format(user.hireDate, 'dd.MM.yyyy')}"></td>
         <td th:text="${user.role.name() == 'ADMIN' ? 'Администратор' : 'Пользователь'}"></td>
         <td>
-            <a th:href="@{/admin/users/{id}/editUser(id=${user.id}, search=${search}, department=${department}, position=${position})}">Редактировать</a>
+            <a th:href="@{/admin/users/{id}/editUser(id=${user.id}, search=${search}, departmentId=${departmentId}, positionId=${positionId})}">Редактировать</a>
         </td>
     </tr>
 </table>

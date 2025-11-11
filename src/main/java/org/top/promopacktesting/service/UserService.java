@@ -13,8 +13,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.top.promopacktesting.model.Department;
+import org.top.promopacktesting.model.Position;
 import org.top.promopacktesting.model.User;
+import org.top.promopacktesting.repository.DepartmentRepository;
+import org.top.promopacktesting.repository.PositionRepository;
 import org.top.promopacktesting.repository.UserRepository;
 
 import java.io.IOException;
@@ -22,10 +25,8 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +36,12 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private PositionRepository positionRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -73,6 +80,26 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
+    public List<User> searchUsersByDepartmentId(Long departmentId) {
+        return userRepository.findByDepartmentId(departmentId);
+    }
+
+    public List<User> searchUsersByPositionId(Long positionId) {
+        return userRepository.findByPositionId(positionId);
+    }
+
+    public List<User> searchUsersByDepartmentIdAndPositionId(Long departmentId, Long positionId) {
+        return userRepository.findByDepartmentIdAndPositionId(departmentId, positionId);
+    }
+
+    public List<User> searchUsersByNameAndDepartmentId(String search, Long departmentId) {
+        return userRepository.findByNameContainingIgnoreCaseAndDepartmentId(search, departmentId);
+    }
+
+    public List<User> searchUsersByNameAndPositionId(String search, Long positionId) {
+        return userRepository.findByNameContainingIgnoreCaseAndPositionId(search, positionId);
+    }
+
     List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -81,7 +108,11 @@ public class UserService implements UserDetailsService {
         return userRepository.findByDismissalDateIsNull();
     }
 
-    List<User> searchUsers(String keyword) {
+    List<User> searchUsersByUserName(String userName) {
+        return userRepository.findByNameContainingIgnoreCase(userName);
+    }
+
+/*    List<User> searchUsers(String keyword) {
         List<User> users = userRepository.findByNameContainingIgnoreCase(keyword);
         List<User> temp = userRepository.findByDepartmentContainingIgnoreCase(keyword);
         for (User user : temp) {
@@ -89,40 +120,54 @@ public class UserService implements UserDetailsService {
                 users.add(user);
             }
         }
-        temp = userRepository.findByDepartmentContainingIgnoreCase(keyword);
+        temp = userRepository.findByPositionContainingIgnoreCase(keyword);
         for (User user : temp) {
-            if (!users.contains(user)) {}
+            if (!users.contains(user)) {
+                users.add(user);
+            }
         }
         return users;
+    }*/
+
+/*    public List<User>searchUsers(String name, String department, String position) {
+        return userRepository.findByNameContainingIgnoreCaseAndDepartmentContainingIgnoreCaseAndPositionContainingIgnoreCase(name, department, position);
+    }*/
+
+    public List<User> searchUsers(String name, Long departmentId, Long positionId) {
+        if (departmentId!= null && positionId != null) {
+            return userRepository.findByNameContainingIgnoreCaseAndDepartmentIdAndPositionId(name, departmentId, positionId);
+        }else if (departmentId != null) {
+            return userRepository.findByNameContainingIgnoreCaseAndDepartmentId(name, departmentId);
+        }else if (positionId != null) {
+            return userRepository.findByNameContainingIgnoreCaseAndPositionId(name, positionId);
+        } else {
+            return userRepository.findByNameContainingIgnoreCase(name);
+        }
     }
 
     void resetPassword(User user, String newPassword) {
         user.setPassword(passwordEncoder.encode(newPassword));
     }
 
-    public List<User>searchUsers(String name, String department, String position) {
-        return userRepository.findByNameContainingIgnoreCaseAndDepartmentContainingIgnoreCaseAndPositionContainingIgnoreCase(name, department, position);
-    }
-
-    public List<User> searchUsersByNameAndDepartment(String name, String department) {
+/*    public List<User> searchUsersByNameAndDepartment(String name, String department) {
         return userRepository.findByNameContainingIgnoreCaseAndDepartmentContainingIgnoreCase(name, department);
-    }
+    }*/
 
-    public List<User> searchUsersByNameAndPosition(String name, String position) {
+/*    public List<User> searchUsersByNameAndPosition(String name, String position) {
         return userRepository.findByNameContainingIgnoreCaseAndPositionContainingIgnoreCase(name, position);
-    }
+    }*/
 
-    public List<User> searchUsersByDepartment(String department) {
+/*    public List<User> searchUsersByDepartment(String department) {
         return userRepository.findByDepartmentContainingIgnoreCase(department);
-    }
+    }*/
 
-    public List<User> searchUsersByPosition(String position) {
+/*    public List<User> searchUsersByPosition(String position) {
         return userRepository.findByPositionContainingIgnoreCase(position);
-    }
+    }*/
 
-    public List<User> searchUsersByDepartmentAndPosition(String department, String position) {
+/*    public List<User> searchUsersByDepartmentAndPosition(String department, String position) {
         return userRepository.findByDepartmentContainingIgnoreCaseAndPositionContainingIgnoreCase(department, position);
-    }
+    }*/
 
     public List<User> uploadUsersFromExcel(InputStream inputStream) throws IOException {
         List <User> users = new ArrayList<>();
@@ -131,21 +176,29 @@ public class UserService implements UserDetailsService {
 
             for (Row row : sheet) {
                 if (row == null || isRowEmpty(row)) { continue; }
+                    String employeeId = row.getCell(0).getStringCellValue();
+                    String name = row.getCell(1).getStringCellValue();
+                    String departmentName = row.getCell(2).getStringCellValue();
+                    String positionName = row.getCell(3).getStringCellValue();
+                    Department department = departmentRepository.findByDepartmentName(departmentName)
+                            .orElseGet(() -> departmentRepository.save(new Department(departmentName)));
+
+                    Position position = positionRepository.findByPositionName(positionName)
+                            .orElseGet(() -> positionRepository.save(new Position(positionName)));
                     User user = new User();
-                    user.setEmployeeId(row.getCell(0).getStringCellValue());
-                    user.setName(row.getCell(1).getStringCellValue());
-                    user.setDepartment(row.getCell(2).getStringCellValue());
-                    user.setPosition(row.getCell(3).getStringCellValue());
+                    user.setEmployeeId(employeeId);
+                    user.setName(name);
+                    user.setDepartment(department);
+                    user.setPosition(position);
                     user.setPassword(defaultPassword);
                     user.setRole(User.Role.USER);
                     if (row.getCell(4) != null) {
                         user.setHireDate(getDateFromExcel(row.getCell(4).getStringCellValue()));
                     }
                     if (row.getCell(5) != null) {
-                        user.setHireDate(getDateFromExcel(row.getCell(5).getStringCellValue()));
+                        user.setDismissalDate(getDateFromExcel(row.getCell(5).getStringCellValue()));
                     }
                     users.add(user);
-
             }
         }
         return users;
@@ -160,7 +213,7 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    LocalDateTime getDateFromExcel(String dateStr) {
+    private LocalDateTime getDateFromExcel(String dateStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         LocalDate localDate = LocalDate.parse(dateStr, formatter);
         LocalDateTime localDateTime = LocalDateTime.of(localDate, LocalTime.MIDNIGHT);
@@ -179,11 +232,12 @@ public class UserService implements UserDetailsService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = auth.getName();
         Optional<User> userOpt = getUserByUsername(currentUsername);
+        return userOpt.map(User::getUsername).orElse("Пользователь не найден");
 
-        if (userOpt.isEmpty()) {
+/*        if (userOpt.isEmpty()) {
             return "Пользователь не найден";
         }
         User currentUser = userOpt.get();
-        return currentUser.getName();
+        return currentUser.getName();*/
     }
 }

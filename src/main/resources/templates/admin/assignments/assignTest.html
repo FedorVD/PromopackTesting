@@ -13,15 +13,27 @@
 
 <form method="get" action="/admin/assignments/assignTest">
     <div class="form-group">
-        <label for="department">Подразделение:</label>
-        <input class="form-control mb-3" type="text" id="department"
-               name="department" th:value="${department}" />
+        <label for="departmentId">Подразделение:</label>
+        <select id="departmentId" name="departmentId" class="form-control mb-3">
+            <option value="">Все</option>
+            <option th:each="dept : ${departments}"
+                    th:value="${dept.id}"
+                    th:text="${dept.departmentName}"
+                    th:selected="${dept.id == departmentId}">
+            </option>
+        </select>
     </div>
 
     <div class="form-group">
-        <label for="position">Должность:</label>
-        <input class="form-control mb-3" type="text" id="position"
-               name="position" th:value="${position}" />
+        <label for="positionId">Должность:</label>
+        <select id="positionId" name="positionId" class="form-control mb-3">
+            <option value="">Все</option>
+            <option th:each="pos : ${positions}"
+                    th:value="${pos.id}"
+                    th:text="${pos.title}"
+                    th:selected="${pos.id == positionId}">
+            </option>
+        </select>
     </div>
 
     <button type="submit">Применить фильтр</button>

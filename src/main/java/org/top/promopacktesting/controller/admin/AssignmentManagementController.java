@@ -12,9 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import org.thymeleaf.util.StringUtils;
 import org.top.promopacktesting.model.*;
-import org.top.promopacktesting.service.AssignmentService;
-import org.top.promopacktesting.service.TestService;
-import org.top.promopacktesting.service.UserService;
+import org.top.promopacktesting.service.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -39,18 +37,24 @@ public class AssignmentManagementController {
     @Autowired
     private TestService testService;
 
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private PositionService positionService;
+
     @GetMapping("/assignTest")
-    public String showAssignTestForm(@RequestParam(required = false) String department,
-                                     @RequestParam(required = false) String position,
+    public String showAssignTestForm(@RequestParam(required = false) Long departmentId,
+                                     @RequestParam(required = false) Long positionId,
                                      Model model) {
         sendCurrentUsername(model);
         List <User> users;
-        if (department != null && position != null) {
-            users = userService.searchUsersByDepartmentAndPosition(department, position);
-        } else if (department != null) {
-            users = userService.searchUsersByDepartment(department);
-        } else if (position != null) {
-            users = userService.searchUsersByPosition(position);
+        if (departmentId != null && positionId != null) {
+            users = userService.searchUsersByDepartmentIdAndPositionId(departmentId, positionId);
+        } else if (departmentId != null) {
+            users = userService.searchUsersByDepartmentId(departmentId);
+        } else if (positionId != null) {
+            users = userService.searchUsersByPositionId(positionId);
         } else {
             users = userService.getAllActiveUsers();
         }
@@ -59,8 +63,10 @@ public class AssignmentManagementController {
 
         model.addAttribute("users", users);
         model.addAttribute("tests", tests);
-        model.addAttribute("department", department);
-        model.addAttribute("position", position);
+        model.addAttribute("departments", departmentService.findAllDepartments());
+        model.addAttribute("positions", positionService.findAllPositions());
+        model.addAttribute("departmentId", departmentId);
+        model.addAttribute("positionId", positionId);
         model.addAttribute("currentUser", SecurityContextHolder.getContext().getAuthentication().getName());
         return "admin/assignments/assignTest";
     }

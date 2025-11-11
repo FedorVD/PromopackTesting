@@ -10,7 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
+import org.top.promopacktesting.model.Department;
+import org.top.promopacktesting.model.Position;
 import org.top.promopacktesting.model.User;
+import org.top.promopacktesting.repository.DepartmentRepository;
+import org.top.promopacktesting.repository.PositionRepository;
+import org.top.promopacktesting.service.DepartmentService;
+import org.top.promopacktesting.service.PositionService;
 import org.top.promopacktesting.service.UserService;
 
 import java.io.IOException;
@@ -30,56 +36,63 @@ public class UserManagementController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private PositionService positionService;
+
     @GetMapping("/users")
     public String showUsers(Model model,
                             @RequestParam(required = false) String search,
-                            @RequestParam(required = false) String department,
-                            @RequestParam(required = false) String position,
+                            @RequestParam(required = false) Long departmentId,
+                            @RequestParam(required = false) Long positionId,
                             @RequestParam(required = false) String sortField,
                             @RequestParam(required = false) String sortDirection) {
         sendCurrentUsername(model);
         List<User> users;
-        if (search != null && department != null && position != null) {
-            users = userService.searchUsers(search, department, position);
-        } else if (search != null && department != null) {
-            users = userService.searchUsersByNameAndDepartment(search, department);
-        }else if (search != null && position != null) {
-            users = userService.searchUsersByNameAndPosition(search, position);
-        }else if (department != null && position != null) {
-            users = userService.searchUsersByDepartmentAndPosition(department, position);
+        if (search != null && departmentId != null && positionId != null) {
+            users = userService.searchUsers(search, departmentId, positionId);
+        } else if (search != null && departmentId != null) {
+            users = userService.searchUsersByNameAndDepartmentId(search, departmentId);
+        }else if (search != null && positionId != null) {
+            users = userService.searchUsersByNameAndPositionId(search, positionId);
+        }else if (departmentId != null && positionId != null) {
+            users = userService.searchUsersByDepartmentIdAndPositionId(departmentId, positionId);
         }else if (search != null) {
             users = userService.searchUsersByName(search);
-        }else if (department != null) {
-            users = userService.searchUsersByDepartment(department);
-        }else if (position != null) {
-            users = userService.searchUsersByPosition(position);
+        }else if (departmentId != null) {
+            users = userService.searchUsersByDepartmentId(departmentId);
+        }else if (positionId != null) {
+            users = userService.searchUsersByPositionId(positionId);
         }else{
             users = userService.getAllActiveUsers();
         }
 
         if (sortField != null && !sortField.isEmpty()) {
-            switch (sortField) {
-                case "department":
-                    if ("asc".equals(sortDirection)) {
-                        users.sort(Comparator.comparing(User::getDepartment));
-                    } else if ("desc".equals(sortDirection)) {
-                        users.sort((u1, u2) -> u2.getDepartment().compareTo(u1.getDepartment()));
-                    }
-                    break;
-                case "position":
-                    if ("asc".equals(sortDirection)) {
-                        users.sort(Comparator.comparing(User::getPosition));
-                    } else if ("desc".equals(sortDirection)) {
-                        users.sort((u1, u2) -> u2.getPosition().compareTo(u1.getPosition()));
-                    }
-                    break;
+            Comparator<User> comparator = switch (sortField) {
+                case "department" -> Comparator.comparing(
+                        u -> u.getDepartment() != null ? String.valueOf(u.getDepartment().getDepartmentName()) : "",
+                        String.CASE_INSENSITIVE_ORDER
+                );
+                case "position" -> Comparator.comparing(
+                        u -> u.getPosition() != null ? String.valueOf(u.getPosition().getPositionName()) : "",
+                        String.CASE_INSENSITIVE_ORDER);
+                default -> Comparator.comparing(User::getUsername);
+            };
+            if ("desc".equals(sortDirection)) {
+                comparator = comparator.reversed();
             }
+            users.sort(comparator);
         }
+
 
         model.addAttribute("users", users);
         model.addAttribute("search", search);
-        model.addAttribute("department", department);
-        model.addAttribute("position", position);
+        model.addAttribute("departments", departmentService.findAllDepartments());
+        model.addAttribute("positions", positionService.findAllPositions());
+        model.addAttribute("departmentId", departmentId);
+        model.addAttribute("positionId", positionId);
         return "admin/users/users";
     }
 
@@ -87,6 +100,8 @@ public class UserManagementController {
     public String showAddUserForm(Model model) {
         sendCurrentUsername(model);
         model.addAttribute("roles", Arrays.asList(User.Role.values()));
+        model.addAttribute("departments", departmentService.findAllDepartments());
+        model.addAttribute("positions", positionService.findAllPositions());
         return "admin/users/addUser";
     }
 
@@ -96,11 +111,13 @@ public class UserManagementController {
                           @RequestParam User.Role role,
                           @RequestParam String employeeId,
                           @RequestParam String name,
-                          @RequestParam String department,
-                          @RequestParam String position,
+                          @RequestParam Long departmentId,
+                          @RequestParam Long positionId,
                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hireDate,
                           Model model) {
         try {
+            Department department = departmentService.findByDepartmentId(departmentId).orElse(null);
+            Position position = positionService.findByPositionId(positionId).orElse(null);
             String encodedPassword = passwordEncoder.encode(password);
             User newUser = new User(username, encodedPassword, role,
                     employeeId, name, department, position, hireDate);
@@ -116,19 +133,21 @@ public class UserManagementController {
     @GetMapping("/{id}/editUser")
     public String showEditUserForm(@PathVariable Long id,
                                    @RequestParam(required = false) String search,
-                                   @RequestParam(required = false) String department,
-                                   @RequestParam(required = false) String position,
+                                   @RequestParam(required = false) Long departmentId,
+                                   @RequestParam(required = false) Long positionId,
                                    Model model) {
         sendCurrentUsername(model);
         Optional<User> userOpt = userService.getUserById(id);
-        model.addAttribute("search", search);
-        model.addAttribute("department", department);
-        model.addAttribute("position", position);
         if (userOpt.isEmpty()) {
             model.addAttribute("error", "Пользователь не найден");
             return "admin/users/editUser";
         }
         User user = userOpt.get();
+        model.addAttribute("search", search);
+        model.addAttribute("departments", departmentService.findAllDepartments());
+        model.addAttribute("positions", positionService.findAllPositions());
+        model.addAttribute("departmentId", departmentId);
+        model.addAttribute("positionId", positionId);
         model.addAttribute("user", user);
         model.addAttribute("roles", Arrays.asList(User.Role.values()));
         return "admin/users/editUser";
@@ -141,16 +160,20 @@ public class UserManagementController {
                            @RequestParam User.Role role,
                            @RequestParam String employeeId,
                            @RequestParam String name,
-                           @RequestParam String departmentEdit,
-                           @RequestParam String positionEdit,
+                           @RequestParam Long departmentEditId,
+                           @RequestParam Long positionEditId,
                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hireDate,
                            @RequestParam(required = false) String search,
-                           @RequestParam(required = false) String department,
-                           @RequestParam(required = false) String position,
+                           @RequestParam(required = false) Long departmentId,
+                           @RequestParam(required = false) Long positionId,
                            Model model) {
 
         User user;
         try {
+            Department departmentEdit = departmentService.findByDepartmentId(departmentEditId).orElse(null);
+            Position positionEdit = positionService.findByPositionId(positionEditId).orElse(null);
+            Department department = departmentService.findByDepartmentId(departmentId).orElse(null);
+            Position position = positionService.findByPositionId(positionId).orElse(null);
             Optional<User> userOpt = userService.getUserById(id);
             if (userOpt.isEmpty()) {
                 model.addAttribute("error", "Пользователь не найден.");
@@ -178,11 +201,11 @@ public class UserManagementController {
             if (search != null && !search.isEmpty()) {
                 params.add("search=" + URLEncoder.encode(search, StandardCharsets.UTF_8));
             }
-            if (department != null && !department.isEmpty()) {
-                params.add("department=" + URLEncoder.encode(department, StandardCharsets.UTF_8));
+            if (department != null) {
+                params.add("departmentId=" + departmentId);
             }
-            if (position != null && !position.isEmpty()) {
-                params.add("position=" + URLEncoder.encode(position, StandardCharsets.UTF_8));
+            if (position != null) {
+                params.add("positionId=" + positionId);
             }
 
             // Если есть параметры, добавляем ? перед первым
@@ -202,6 +225,8 @@ public class UserManagementController {
     @GetMapping("/upload")
     public String showUploadForm(Model model) {
         sendCurrentUsername(model);
+        model.addAttribute("departments", departmentService.findAllDepartments());
+        model.addAttribute("positions", positionService.findAllPositions());
         return "admin/users/upload";
     }
 
@@ -216,7 +241,7 @@ public class UserManagementController {
                 List<User> uploadedUsers = userService.uploadUsersFromExcel(file.getInputStream());
                 for (User user : uploadedUsers) {
                     Optional<User> existingUserOpt = userService.getUserByEmployeeId(user.getEmployeeId());
-                    if (existingUserOpt.isPresent()) {
+                    if (existingUserOpt.isPresent()) { // Если пользователь уже существует, обновляем его данные
                         User existingUser = existingUserOpt.get();
                         existingUser.setUsername(user.getUsername());
                         existingUser.setName(user.getName());
@@ -229,7 +254,7 @@ public class UserManagementController {
                             existingUser.setDismissalDate(user.getDismissalDate());
                         }
                         userService.updateUser(existingUser);
-                    }else{
+                    }else{ // Если пользователя не существует, добавляем его
                         userService.registerUser(user);
                     }
                 }

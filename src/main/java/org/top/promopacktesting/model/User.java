@@ -34,11 +34,13 @@ public class User {
     @Column(name="name")
     private String name;
 
-    @Column(name="department")
-    private String department;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="department_id", nullable=false)
+    private Department department;
 
-    @Column(name="position")
-    private String position;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="position_id", nullable=false)
+    private Position position;
 
     @Column(name="hire_date")
     private LocalDateTime hireDate;
@@ -46,7 +48,7 @@ public class User {
     @Column(name="dismissal_date")
     private LocalDateTime dismissalDate;
 
-    public User(String employeeId, String name, String department, String position, LocalDateTime hireDate) {
+    public User(String employeeId, String name, Department department, Position position, LocalDateTime hireDate) {
         this.employeeId = employeeId;
         this.name = name;
         this.department = department;
@@ -55,8 +57,8 @@ public class User {
     }
 
     public User(String username, String password, Role role,
-                String employeeId, String name, String department,
-                String position, LocalDateTime hireDate) {
+                String employeeId, String name, Department department,
+                Position position, LocalDateTime hireDate) {
         this.username = username;
         this.password = password;
         this.role = role;

@@ -22,8 +22,8 @@ public class ThemeTestService {
         return themeTestRepository.findById(id);
     }
 
-    public ThemeTest saveThemeTest(ThemeTest themeTest) {
-        return themeTestRepository.save(themeTest);
+    public void saveThemeTest(ThemeTest themeTest) {
+        themeTestRepository.save(themeTest);
     }
 
     public void deleteThemeTestById(Long themeId) {

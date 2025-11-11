@@ -7,13 +7,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.top.promopacktesting.model.AssignedTest;
-import org.top.promopacktesting.model.Question;
 import org.top.promopacktesting.model.UserAnswer;
 import org.top.promopacktesting.repository.AssignedTestRepository;
 import org.top.promopacktesting.repository.QuestionRepository;
 import org.top.promopacktesting.repository.UserAnswerRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,36 +27,8 @@ public class TestingService {
     @Autowired
     private QuestionRepository questionRepository;
 
-
     @Autowired
     private AssignmentService assignmentService;
-
-/*    public UserAnswer saveUserAnswer(Long assignmentId, Long questionId, List<Boolean>selectedAnswers){
-        AssignedTest assignedTest = assignedTestRepository.findById(assignmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Назначение не найдено"));
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new IllegalArgumentException("Вопрос не найден"));
-
-        UserAnswer userAnswer = userAnswerRepository.findByAssignedTestAndQuestion(assignedTest, question).get();
-
-        userAnswer.setAssignedTest(assignedTest);
-        userAnswer.setQuestion(question);
-        userAnswer.setAnsweredAt(LocalDateTime.now());
-
-        return userAnswerRepository.save(userAnswer);
-    }*/
-
-/*    public Double completeTest(Long assignmentId){
-        AssignedTest assignedTest = assignedTestRepository.findById(assignmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Назначение не найдено"));
-
-        Double score = assignmentService.calculateScore(assignmentId);
-
-        assignedTest.setTestScore(score);
-        assignedTest.setCompletedAt(LocalDateTime.now());
-
-        return assignedTestRepository.save(assignedTest).getTestScore();
-    }*/
 
     public void saveUserAnswer (UserAnswer userAnswer){
             userAnswerRepository.save(userAnswer);
