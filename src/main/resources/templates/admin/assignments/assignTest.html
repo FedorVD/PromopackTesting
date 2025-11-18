@@ -30,7 +30,7 @@
             <option value="">Все</option>
             <option th:each="pos : ${positions}"
                     th:value="${pos.id}"
-                    th:text="${pos.title}"
+                    th:text="${pos.positionName}"
                     th:selected="${pos.id == positionId}">
             </option>
         </select>
@@ -73,8 +73,8 @@
             </td>
             <td th:text="${user.employeeId}"></td>
             <td th:text="${user.name}"></td>
-            <td th:text="${user.department}"></td>
-            <td th:text="${user.position}"></td>
+            <td th:text="${user.department.departmentName}"></td>
+            <td th:text="${user.position.positionName}"></td>
         </tr>
     </table>
 </form>
