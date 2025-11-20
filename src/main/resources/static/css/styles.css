@@ -8,6 +8,47 @@ body {
     color: #333;
 }
 
+/* Адаптивная сетка */
+.filter-form .form-row .form-group{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-form label {
+    font-size: 14px;
+}
+
+.filter-form input, .filter-form select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Адаптивная таблица */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 20px;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.user-table th, .user-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+}
+
+.user-table th {
+    background-color: #f5f5f5;
+}
+
 h1, h2, h3 {
     color: #2c3e50;
     font-weight: 600;
@@ -90,6 +131,12 @@ button:hover {
     background-color: #f8d7da;
     color: #721c24;
     border-left: 4px solid #dc3545;
+}
+
+.message.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-left: 4px solid #007bff;
 }
 
 table {
@@ -207,12 +254,30 @@ a:hover {
     align-items: center;
 }
 
+/* Кнопки */
 .btn {
-    padding: 8px 16px;
-    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    border: 1px solid #007bff;
+    color: #007bff;
     border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
 }
 
 .btn-danger {
@@ -247,6 +312,11 @@ a:hover {
 .badge-secondary {
     background-color: #6c757d;
     color: white;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
 }
 
 .table-success {
@@ -325,7 +395,9 @@ input.form-control:focus {
     background-color: #dc3545;
     color: white;
     border: none;
-    padding: 6px 12px;
+    padding: 10px 15px;
+    min-height: 44px;
+    font-size: 16px;
     cursor: pointer;
 }
 
@@ -335,6 +407,36 @@ input.form-control:focus {
 
 .correct { color: green; }
 .incorrect { color: red; }
+
+.login-form {
+    max-width: 400px;
+    margin: 20px auto 0;
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eaeaea;
+}
+
+.login-form .form-group {
+    margin-bottom: 15px;
+}
+
+.login-form .form-control {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.login-form .btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 10px;
+}
 
 .logout-link {
     color: #007bff;
@@ -395,4 +497,58 @@ input.form-control:focus {
     display: block;
     object-fit: contain;
     cursor: pointer;
+}
+
+/* Для экранов >= 768px */
+@media (min-width: 768px) {
+    .filter-form .form-row {
+        flex-direction: row;
+        align-items: end;
+    }
+
+    .filter-form .form-group {
+        flex: 1;
+    }
+
+    .user-table {
+        font-size: 16px;
+    }
+
+    .user-table th, .user-table td {
+        padding: 12px;
+    }
+}
+
+/* Для экранов <= 480px */
+@media (max-width: 480px) {
+    body {
+        margin: 10px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h3 {
+        font-size: 1.1rem;
+    }
+
+    .user-table th:nth-child(4), .user-table td:nth-child(4),
+    .user-table th:nth-child(5), .user-table td:nth-child(5),
+    .user-table th:nth-child(6), .user-table td:nth-child(6) {
+        display: none;
+    }
+
+    .progress {
+        height: 10px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background-color: #007bff;
+        transition: width 0.3s ease;
+    }
 }

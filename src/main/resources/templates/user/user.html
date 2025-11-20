@@ -2,33 +2,34 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Личный кабинет</title>
     <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<div class="container">
-    <h1>Личный кабинет</h1>
-    <p>Вы вошли как: <strong type="text" th:text="${username}">Username</strong></p>
-    <nav class="user-nav">
-        <ul>
-            <li><a href="/user/userAssignedTests">Назначенные тесты</a></li>
-            <li><a href="/user/userStatistics">Моя статистика</a></li>
-        </ul>
-    </nav>
+    <div class="container">
+        <h1>Личный кабинет</h1>
+        <p>Вы вошли как: <strong type="text" th:text="${username}">Username</strong></p>
+        <nav class="user-nav">
+            <ul>
+                <li><a href="/user/userAssignedTests">Назначенные тесты</a></li>
+                <li><a href="/user/userStatistics">Моя статистика</a></li>
+            </ul>
+        </nav>
 
-    <section class="content">
-        <p>Добро пожаловать в ваш личный кабинет. Здесь вы можете просматривать назначенные вам тесты и анализировать свою статистику.</p>
-    </section>
+        <section class="content">
+            <p>Добро пожаловать в ваш личный кабинет. Здесь вы можете просматривать назначенные вам тесты и анализировать свою статистику.</p>
+        </section>
 
-    <form method="post" action="/logout">
-        <input type="hidden"
-               th:name="${_csrf.parameterName}"
-               th:value="${_csrf.token}" />
-        <button type="submit" class="btn btn-danger">Выйти</button>
-    </form>
+        <form method="post" action="/logout" class="logout-form">
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}" />
+            <button type="submit" class="btn btn-danger">Выйти</button>
+        </form>
+    </div>
 
-</div>
-</div>
+    <script src="/js/logout.js" defer></script>
 </body>
 </html>

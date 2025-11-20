@@ -3,65 +3,71 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${assignedTest.test.name}">Тест</title>
     <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<div class="container">
-    <h1 th:text="${assignedTest.test.name}">Тест</h1>
+    <div class="container">
+        <h1 th:text="${assignedTest.test.name}">Тест</h1>
 
-    <!-- Отображение заголовка: "Вопрос номер X из Y" -->
-    <h3 th:text="'Вопрос номер ' + (${currentIndex} + 1) + ' из ' + ${questions.size()}">Вопрос номер ... из ...</h3>
+        <!-- Отображение заголовка: "Вопрос номер X из Y" -->
+        <h3 th:text="'Вопрос номер ' + (${currentIndex} + 1) + ' из ' + ${questions.size()}">Вопрос номер ... из ...</h3>
 
-    <!-- Вывод текущего вопроса -->
-    <div class="question-box">
-        <p th:text="${questions[currentIndex].text}">Вопрос</p>
-
-        <div th:if="${questions[currentIndex].imagePath != null}">
-            <a th:href="@{${questions[currentIndex].imagePath}}" target="_blank" rel="noopener noreferrer">
-                <img
-                        th:src="@{${questions[currentIndex].imagePath}}"
-                        alt="Изображение к вопросу"
-                        class="zoom-on-hover test-image"
-                        style="max-width: 400px; max-height: 300px; cursor: pointer;" />
-            </a>
-        </div>
-
-
-        <form method="post" th:action="@{/user/{testId}/answer(testId=${assignedTest.id})}">
-            <input type="hidden" name="currentIndex" th:value="${currentIndex}">
-            <div class="options">
-                <label th:each="answer, iterStat : ${questions[currentIndex].answers}">
-                    <input type="checkbox"
-                           th:name="'answers[' + ${iterStat.index} + ']'"
-                           th:value="${answer.id}"/>
-                    <span th:text="${answer.answerText}">Ответ</span>
-                </label>
-            </div>
-
-            <div class="buttons">
-                <div class="d-flex flex-column gap-2">
-                    <!-- Кнопка "Подтвердить ответ" -->
-                    <button type="submit"
-                            th:if="${currentIndex + 1 != questions.size()}"
-                            th:text="'Подтвердить ответ'"
-                            class="btn btn-primary w-100">
-                    </button>
-
-                    <!-- Кнопка "Завершить тестирование" -->
-                    <button type="submit"
-                            th:if="${currentIndex + 1 == questions.size()}"
-                            th:text="'Завершить тестирование'"
-                            class="btn btn-success w-100">
-                    </button>
-
-                    <!-- Кнопка "Прервать тестирование" -->
-                    <a href="/user/userAssignedTests" class="btn btn-danger w-100">Прервать тестирование</a>
+        <div class="mb-3">
+            <div class="progress">
+                <div class="progress-bar"
+                     th:style="'width: ' + ${((currentIndex + 1) * 100) / questions.size()} + '%'"
+                     th:aria-valuenow="${(currentIndex + 1)}"
+                     aria-valuemin="0"
+                     th:aria-valuemax="${questions.size()}">
                 </div>
             </div>
-        </form>
+        </div>
+
+        <!-- Вывод текущего вопроса -->
+        <div class="question-box">
+            <p th:text="${questions[currentIndex].text}">Вопрос</p>
+
+            <div th:if="${questions[currentIndex].imagePath != null}" class="image-container">
+                <a th:href="@{${questions[currentIndex].imagePath}}" target="_blank" rel="noopener noreferrer">
+                    <img
+                            th:src="@{${questions[currentIndex].imagePath}}"
+                            alt="Изображение к вопросу"
+                            class="zoom-on-hover test-image"
+                            style="max-width: 100%; max-height: 300px; object-fit: contain;"  />
+                </a>
+            </div>
+
+
+            <form method="post" th:action="@{/user/{testId}/answer(testId=${assignedTest.id})}">
+                <input type="hidden" name="currentIndex" th:value="${currentIndex}">
+
+                <div class="options mt-3">
+                    <label th:each="answer, iterStat : ${questions[currentIndex].answers}" class="d-block mb-2">
+                        <input type="checkbox"
+                               th:name="'answers[' + ${iterStat.index} + ']'"
+                               th:value="${answer.id}"
+                               class="form-check-input me-2"/>
+                        <span th:text="${answer.answerText}">Ответ</span>
+                    </label>
+                </div>
+
+                <div class="buttons mt-4">
+                    <div class="d-flex flex-column gap-2">
+                        <!-- Подтвердить ответ или завершить тест -->
+                        <button type="submit" class="btn btn-primary"
+                                th:text="${currentIndex + 1 == questions.size()} ? 'Завершить тестирование' : 'Подтвердить ответ'"
+                                th:classappend="${currentIndex + 1 == questions.size()} ? 'btn-success' : ''">
+                        </button>
+
+                        <!-- Кнопка "Прервать тестирование" -->
+                        <a href="/user/userAssignedTests" class="btn btn-danger w-100">Прервать тестирование</a>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 </body>
 </html>

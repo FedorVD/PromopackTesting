@@ -2,43 +2,59 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${title}">Назначенные тесты</title>
     <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<div class="container">
-    <a href="/user" class="btn btn-link">Назад к профилю</a>
-    <h1>Назначенные тесты</h1>
-    <table class="assigned-tests-table">
-        <thead>
-        <tr>
-            <th>Название теста</th>
-            <th>Статус</th>
-            <th>Дата назначения</th>
-            <th>Действие</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="assignment : ${assignments}"
-            th:classappend="${assignment.status.name() == 'COMPLETED' ? 'table-completed' : ''}">
-            <td th:text="${assignment.test.name}">Тест</td>
-            <td th:text="${assignment.status.name() == 'ASSIGNED' ? 'Назначен' : (assignment.status.name() == 'IN_PROGRESS' ? 'Начат' : 'Завершен')}">Статус</td>
-            <td th:text="${#temporals.format(assignment.assignedAt, 'dd.MM.yyyy')}">Дата</td>
-            <td>
-                <a th:href="@{/user/{id}/userPathTest(id=${assignment.id})}" th:text="'Начать тест →'"></a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <div class="container">
+        <a href="/user" class="btn btn-secondary mb-3">Назад к профилю</a>
 
-<div th:if="${message}" style="color: green;">
-    <p th:text="${message}">Сообщение</p>
-</div>
+        <h1>Назначенные тесты</h1>
 
-<div th:if="${error}" style="color: red;">
-    <p th:text="${error}">Ошибка</p>
-</div>
+        <div class="table-responsive">
+            <table class="assigned-tests-table">
+                <thead>
+                <tr>
+                    <th>Название теста</th>
+                    <th>Статус</th>
+                    <th>Дата назначения</th>
+                    <th>Действие</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="assignment : ${assignments}"
+                    th:classappend="${assignment.status.name() == 'COMPLETED' ? 'table-completed' : ''}">
+                    <td th:text="${assignment.test.name}">Тест</td>
+                    <td>
+                        <span class = "badge"
+                              th:classappend="${assignment.status.name() == 'ASSIGNED' ? 'badge-secondary' :
+                                                (assignment.status.name() == 'IN_PROGRESS' ? 'badge-warning' : 'bagde-sucsess')}"
+                              th:text="${assignment.status.name() == 'ASSIGNED' ? 'Назначен' :
+                                                (assignment.status.name() == 'IN_PROGRESS' ? 'Начат' : 'Завершен')}">
+                        </span>
+                    <td th:text="${#temporals.format(assignment.assignedAt, 'dd.MM.yyyy')}">Дата</td>
+                    <td>
+                        <a th:href="@{/user/{id}/userPathTest(id=${assignment.id})}"
+                           class="btn btn-primary btn-sm"
+                           th:if="${assignment.status.name() != 'COMPLETED'}">
+                            Начать тест →
+                        </a>
+                        <span th:if="${assignment.status.name() == 'COMPLETED'}" class="test-sucsess">Пройден</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:if="${message}" style="color: green;">
+        <p th:text="${message}">Сообщение</p>
+    </div>
+
+    <div th:if="${error}" style="color: red;">
+        <p th:text="${error}">Ошибка</p>
+    </div>
 </body>
 </html>

@@ -2,41 +2,50 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Личный кабинет</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Статистика прохождения тестов</title>
     <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<div class="container mt-4">
-    <a href="/user" class="btn btn-link mb-3">← Вернуться к профилю</a>
-    <h2>Статистика прохождения тестов</h2>
-    <table class="table table-bordered table-striped">
-        <thead>
-        <tr>
-            <th>Название теста</th>
-            <th>Дата прохождения</th>
-            <th>Результат</th>
-            <th>Проходной балл</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="test : ${completedTests}"
-            th:classappend="${test.testScore != null
-                        && test.test.passingScore != null
-                        && test.testScore >= test.test.passingScore
-                        ? 'table-success'
-                        : 'table-danger'}">
-            <td th:text="${test.test.name}">Тест</td>
-            <td th:text="${#temporals.format(test.completedAt, 'dd.MM.yyyy')}">--.--.----</td>
-            <td th:text="${test.testScore != null ? #numbers.formatDecimal(test.testScore, 1, 1) : '—'}">—</td>
-            <td th:text="${test.test.passingScore}">—</td>
-        </tr>
-        </tbody>
-    </table>
-
-    <div th:if="${completedTests.isEmpty()}" class="alert alert-info">
-        У вас пока нет пройденных тестов.
+    <div class="container">
+        <a href="/user" class="btn btn-link mb-3">← Вернуться к профилю</a>
+        <h2>Статистика прохождения тестов</h2>
+        <div class="table-responsive">
+            <table class="assigned-tests-table">
+                <thead>
+                <tr>
+                    <th>Название теста</th>
+                    <th>Дата прохождения</th>
+                    <th>Результат</th>
+                    <th>Проходной балл</th>
+                    <th>Статус</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="test : ${completedTests}"
+                    th:classappend="${test.testScore != null
+                                && test.test.passingScore != null
+                                && test.testScore >= test.test.passingScore
+                                ? 'table-success'
+                                : 'table-danger'}">
+                    <td th:text="${test.test.name}">Тест</td>
+                    <td th:text="${#temporals.format(test.completedAt, 'dd.MM.yyyy')}">--.--.----</td>
+                    <td th:text="${test.testScore != null ? #numbers.formatDecimal(test.testScore, 1, 1) : '—'}">—</td>
+                    <td th:text="${test.test.passingScore}">—</td>
+                    <td>
+                    <span class="badge"
+                          th:classappend="${test.testScore != null && test.test.passingScore != null && test.testScore >= test.test.passingScore} ? 'badge-success' : 'badge-danger'"
+                          th:text="${test.testScore != null && test.test.passingScore != null && test.testScore >= test.test.passingScore} ? 'Пройден' : 'Не пройден'">
+                    </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${completedTests.isEmpty()}" class="message info mt-3">
+            У вас пока нет пройденных тестов.
+        </div>
     </div>
-</div>
 </body>
 </html>

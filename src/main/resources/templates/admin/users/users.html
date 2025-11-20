@@ -14,7 +14,7 @@
 <a href="/admin/users/addUser">Добавить нового пользователя</a><br /><br />
 
 <!-- Форма фильтра -->
-<form method="get" action="/admin/users/users">
+<form method="get" action="/admin/users/users" class="filter-form">
     <label for="search">Поиск по имени/отделу:</label>
     <input type="text" id="search" name="search" class="form-control mb-3" th:value="${search}" />
 
@@ -47,38 +47,40 @@
 <br />
 
 <!-- Таблица пользователей -->
-<table>
-    <tr>
-        <th>Табельный номер</th>
-        <th>Логин</th>
-        <th>ФИО</th>
-        <th>
-            <a href="?sortField=department&sortDirection=asc"
-               th:classappend="${sortField == 'department' && sortDirection == 'asc' ? 'active' : ''}">
-                Подразделение ▲</a>
-            <a href="?sortField=department&sortDirection=desc">▼</a>
-        </th>
-        <th>
-            <a href="?sortField=position&sortDirection=asc">Должность ▲</a>
-            <a href="?sortField=position&sortDirection=desc">▼</a>
-        </th>
-        <th>Дата приема</th>
-        <th>Роль</th>
-        <th>Действия</th>
-    </tr>
-    <tr th:each="user : ${users}">
-        <td th:text="${user.employeeId}"></td>
-        <td th:text="${user.username}"></td>
-        <td th:text="${user.name}"></td>
-        <td th:text="${user.department.departmentName}"></td>
-        <td th:text="${user.position.positionName}"></td>
-        <td th:text="${#temporals.format(user.hireDate, 'dd.MM.yyyy')}"></td>
-        <td th:text="${user.role.name() == 'ADMIN' ? 'Администратор' : 'Пользователь'}"></td>
-        <td>
-            <a th:href="@{/admin/users/{id}/editUser(id=${user.id}, search=${search}, departmentId=${departmentId}, positionId=${positionId})}">Редактировать</a>
-        </td>
-    </tr>
-</table>
+<div class="table-responsive">
+    <table>
+        <tr>
+            <th>Табельный номер</th>
+            <th>Логин</th>
+            <th>ФИО</th>
+            <th>
+                <a href="?sortField=department&sortDirection=asc"
+                   th:classappend="${sortField == 'department' && sortDirection == 'asc' ? 'active' : ''}">
+                    Подразделение ▲</a>
+                <a href="?sortField=department&sortDirection=desc">▼</a>
+            </th>
+            <th>
+                <a href="?sortField=position&sortDirection=asc">Должность ▲</a>
+                <a href="?sortField=position&sortDirection=desc">▼</a>
+            </th>
+            <th>Дата приема</th>
+            <th>Роль</th>
+            <th>Действия</th>
+        </tr>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.employeeId}"></td>
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.department.departmentName}"></td>
+            <td th:text="${user.position.positionName}"></td>
+            <td th:text="${#temporals.format(user.hireDate, 'dd.MM.yyyy')}"></td>
+            <td th:text="${user.role.name() == 'ADMIN' ? 'Администратор' : 'Пользователь'}"></td>
+            <td>
+                <a th:href="@{/admin/users/{id}/editUser(id=${user.id}, search=${search}, departmentId=${departmentId}, positionId=${positionId})}">Редактировать</a>
+            </td>
+        </tr>
+    </table>
+</div>
 <script src="/js/logout.js" defer></script>
 </body>
 </html>

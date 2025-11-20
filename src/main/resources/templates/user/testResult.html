@@ -2,38 +2,48 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="'Результаты теста: ' + ${assignedTest.test.name}">Результаты</title>
-    <a href="/user" class="btn btn-link">Назад к профилю</a>
     <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<div class="container mt-4">
-    <h1 th:text="'Результаты теста: ' + ${assignedTest.test.name}">Результаты теста</h1>
+    <div class="container">
+        <a href="/user" class="btn btn-link">Назад к профилю</a>
+        <h1 th:text="'Результаты теста: ' + ${assignedTest.test.name}">Результаты теста</h1>
 
-    <p th:if="${score >= assignedTest.test.passingScore}" style="color: green; font-weight: bold;">
-        Тест пройден! Вы набрали <span th:text="${score}">0</span> из 10.
-    </p>
-    <p th:if="${score < assignedTest.test.passingScore}" style="color: red; font-weight: bold;">
-        Тест не пройден! Вы набрали <span th:text="${score}">0</span> из 10.
-    </p>
+        <div class="message"
+             th:classappend="${score >= assignedTest.test.passingScore} ? 'success' : 'error'">
+            <strong th:text="${score >= assignedTest.test.passingScore} ? 'Тест пройден!' : 'Тест не пройден!'"></strong>
+            Вы набрали <span th:text="${score}">0</span> из <span th:text="${totalQuestions}">10</span>.
+        </div>
 
 
-    <h2>Ваши ответы:</h2>
-    <ul>
-        <li th:each="userAnswer : ${userAnswers}">
-            <strong th:text="'Вопрос: ' + ${userAnswer.question.text}">Вопрос</strong><br/>
-            <ul>
-                <li th:each="selectedAnswer : ${userAnswer.selectedAnswers}">
-                    <span th:text="'Ответ: ' + ${selectedAnswer.answer.answerText}">Ответ</span>
-                    <span th:if="${selectedAnswer.isCorrect}" style="color: green;">✅</span>
-                    <span th:if="${not selectedAnswer.isCorrect}" style="color: red;">❌</span>
-                </li>
-            </ul>
-        </li>
-    </ul>
+        <h2 class="mt-4">Ваши ответы:</h2>
+        <div class="question-review">
+            <div th:each="userAnswer : ${userAnswers}" class="question-box mb-3">
+                <p><strong th:text="${userAnswer.question.text}">Вопрос</strong></p>
 
-    <a href="/user/userAssignedTests" class="btn btn-primary">Вернуться к списку тестов</a>
-</div>
+                <div th:if="${userAnswer.question.imagePath != null}" class="mb-2">
+                    <a th:href="@{${userAnswer.question.imagePath}}" target="_blank" rel="noopener noreferrer">
+                        <img th:src="@{${userAnswer.question.imagePath}}"
+                             alt="Изображение к вопросу"
+                             class="test-image zoom-on-hover"
+                             style="max-width: 100%; max-height: 200px; object-fit: contain;" />
+                    </a>
+                </div>
+
+                <ul class="list-unstyled mt-2">
+                    <li th:each="selectedAnswer : ${userAnswer.selectedAnswers}" class="mb-1">
+                        <span th:text="${selectedAnswer.answer.answerText}">Ответ</span>
+                        <span th:if="${selectedAnswer.isCorrect}" class="text-success ms-2">✅ Правильно</span>
+                        <span th:if="${not selectedAnswer.isCorrect}" class="text-danger ms-2">❌ Неверно</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <a href="/user/userAssignedTests" class="btn btn-primary w-100 mt-3">Вернуться к списку тестов</a>
+    </div>
 </body>
 </html>
