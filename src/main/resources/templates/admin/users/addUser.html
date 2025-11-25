@@ -33,10 +33,24 @@
   <input type="text" id="name" name="name" required/><br /><br />
 
   <label for="department">Отдел:</label><br />
-  <input type="text" id="department" name="department" required/><br /><br />
+  <select id="department" name="department" class="form-control mb-3">
+    <option value=""></option>
+    <option th:each="dept : ${departments}"
+            th:value="${dept.id}"
+            th:selected="${dept.id == departmentId}"
+            th:text="${dept.departmentName}">
+    </option>
+  </select><br /><br />
 
   <label for="position">Должность:</label><br />
-  <input type="text" id="position" name="position" required/><br /><br />
+  <select id="position" name="position" class="form-control mb-3">
+    <option value=""></option>
+    <option th:each="pos : ${positions}"
+            th:value="${pos.id}"
+            th:selected="${pos.id == positionId}"
+            th:text="${pos.positionName}">
+    </option>
+  </select><br /><br />
 
   <label for="hireDate">Дата приема на работу:</label><br />
   <input type="datetime-local" id="hireDate" name="hireDate" required/><br /><br />

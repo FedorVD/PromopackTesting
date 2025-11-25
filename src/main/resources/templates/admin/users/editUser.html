@@ -43,10 +43,24 @@
     <input type="text" id="name" name="name" th:value="${user.name}" required/><br /><br />
 
     <label for="departmentEdit">Отдел:</label><br />
-    <input type="text" id="departmentEdit" name="departmentEdit" th:value="${user.department}" required/><br /><br />
+    <select id="departmentEdit" name="departmentEdit" class="form-control mb-3">
+        <option th:value="${user.department.departmentName}"></option>
+        <option th:each="dept : ${departments}"
+                th:value="${dept.id}"
+                th:selected="${dept.id == departmentId}"
+                th:text="${dept.departmentName}">
+        </option>
+    </select><br /><br />
 
     <label for="positionEdit">Должность:</label><br />
-    <input type="text" id="positionEdit" name="positionEdit" th:value="${user.position}" required/><br /><br />
+    <select id="positionEdit" name="positionEdit" class="form-control mb-3">
+        <option th:value="${user.position.positionName}"></option>
+        <option th:each="pos : ${positions}"
+                th:value="${pos.id}"
+                th:selected="${pos.id == positionId}"
+                th:text="${pos.positionName}">
+        </option>
+    </select><br /><br />
 
     <label for="hireDate">Дата приема на работу:</label><br />
     <input type="datetime-local" id="hireDate" name="hireDate"

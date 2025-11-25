@@ -146,8 +146,8 @@ public class UserManagementController {
         model.addAttribute("search", search);
         model.addAttribute("departments", departmentService.findAllDepartments());
         model.addAttribute("positions", positionService.findAllPositions());
-        model.addAttribute("departmentId", departmentId);
-        model.addAttribute("positionId", positionId);
+        model.addAttribute("departmentId", user.getDepartment().getId());
+        model.addAttribute("positionId", user.getPosition().getId());
         model.addAttribute("user", user);
         model.addAttribute("roles", Arrays.asList(User.Role.values()));
         return "admin/users/editUser";
