@@ -21,7 +21,7 @@ public class Position {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private final String defaultPosition = "DEFAULT";
+    //private final String defaultPosition = "DEFAULT";
 
     @Column(name="position_name", nullable=false, unique = true)
     private String positionName;

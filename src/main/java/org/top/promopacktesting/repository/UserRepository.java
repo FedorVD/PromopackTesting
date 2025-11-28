@@ -1,5 +1,6 @@
 package org.top.promopacktesting.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.top.promopacktesting.model.User;
@@ -12,6 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findById(Long id);
 
+    @EntityGraph(attributePaths = {"department", "position"})
     Optional<User> findByEmployeeId(String employeeId);
     Optional<User> findByUsername(String username);
     List<User> findByDismissalDateIsNull();

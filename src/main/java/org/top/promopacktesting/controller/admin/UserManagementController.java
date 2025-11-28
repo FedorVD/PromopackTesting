@@ -50,16 +50,16 @@ public class UserManagementController {
                             @RequestParam(required = false) String sortField,
                             @RequestParam(required = false) String sortDirection) {
         sendCurrentUsername(model);
-        List<User> users;
-        if (search != null && departmentId != null && positionId != null) {
+        List<User> users = new ArrayList<>();
+        if (search != null && !search.isEmpty() && departmentId != null && positionId != null) {
             users = userService.searchUsers(search, departmentId, positionId);
-        } else if (search != null && departmentId != null) {
+        } else if (search != null && !search.isEmpty() && departmentId != null) {
             users = userService.searchUsersByNameAndDepartmentId(search, departmentId);
-        }else if (search != null && positionId != null) {
+        }else if (search != null && !search.isEmpty() && positionId != null) {
             users = userService.searchUsersByNameAndPositionId(search, positionId);
         }else if (departmentId != null && positionId != null) {
             users = userService.searchUsersByDepartmentIdAndPositionId(departmentId, positionId);
-        }else if (search != null) {
+        }else if (search != null && !search.isEmpty()) {
             users = userService.searchUsersByName(search);
         }else if (departmentId != null) {
             users = userService.searchUsersByDepartmentId(departmentId);
@@ -130,11 +130,9 @@ public class UserManagementController {
         return "admin/users/addUser";
     }
 
-    @GetMapping("/{id}/editUser")
-    public String showEditUserForm(@PathVariable Long id,
+    @GetMapping("/editUser")
+    public String showEditUserForm(@RequestParam Long id,
                                    @RequestParam(required = false) String search,
-                                   @RequestParam(required = false) Long departmentId,
-                                   @RequestParam(required = false) Long positionId,
                                    Model model) {
         sendCurrentUsername(model);
         Optional<User> userOpt = userService.getUserById(id);
@@ -153,8 +151,8 @@ public class UserManagementController {
         return "admin/users/editUser";
     }
 
-    @PostMapping("/{id}/editUser")
-    public RedirectView editUser(@PathVariable Long id,
+    @PostMapping("/editUser")
+    public RedirectView editUser(@RequestParam Long id,
                            @RequestParam String username,
                            @RequestParam(required = false) String password,
                            @RequestParam User.Role role,
@@ -168,19 +166,21 @@ public class UserManagementController {
                            @RequestParam(required = false) Long positionId,
                            Model model) {
 
-        User user;
+        //User user;
         try {
             Department departmentEdit = departmentService.findByDepartmentId(departmentEditId).orElse(null);
             Position positionEdit = positionService.findByPositionId(positionEditId).orElse(null);
+/*
             Department department = departmentService.findByDepartmentId(departmentId).orElse(null);
             Position position = positionService.findByPositionId(positionId).orElse(null);
+*/
             Optional<User> userOpt = userService.getUserById(id);
             if (userOpt.isEmpty()) {
                 model.addAttribute("error", "Пользователь не найден.");
                 return new RedirectView("admin/users/editUser");
             }
 
-            user = userOpt.get();
+            User user = userOpt.get();
             user.setUsername(username);
 
             if (password != null && !password.isEmpty()) {
@@ -201,10 +201,10 @@ public class UserManagementController {
             if (search != null && !search.isEmpty()) {
                 params.add("search=" + URLEncoder.encode(search, StandardCharsets.UTF_8));
             }
-            if (department != null) {
+            if (departmentId != null) {
                 params.add("departmentId=" + departmentId);
             }
-            if (position != null) {
+            if (positionId != null) {
                 params.add("positionId=" + positionId);
             }
 
@@ -243,13 +243,13 @@ public class UserManagementController {
                     Optional<User> existingUserOpt = userService.getUserByEmployeeId(user.getEmployeeId());
                     if (existingUserOpt.isPresent()) { // Если пользователь уже существует, обновляем его данные
                         User existingUser = existingUserOpt.get();
-                        existingUser.setUsername(user.getUsername());
+                        //existingUser.setUsername(user.getUsername());
                         existingUser.setName(user.getName());
                         existingUser.setDepartment(user.getDepartment());
                         existingUser.setPosition(user.getPosition());
                         existingUser.setHireDate(user.getHireDate());
-                        existingUser.setUsername(existingUser.getUsername()); // Имя пользователя не меняем
                         existingUser.setPassword(existingUser.getPassword()); // Пароль не меняем
+                        existingUser.setUsername(existingUser.getUsername()); // Имя пользователя не меняем
                         if (user.getDismissalDate() != null) {
                             existingUser.setDismissalDate(user.getDismissalDate());
                         }

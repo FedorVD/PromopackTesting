@@ -19,7 +19,7 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private final String defaultName = "DEFAULT";
+    //private final String defaultName = "DEFAULT";
 
     @Column(name="department_name", nullable=false, unique = true)
     private String departmentName;

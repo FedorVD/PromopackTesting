@@ -59,13 +59,12 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public User registerUser(User user) {
+    public void registerUser(User user) {
         if (userRepository.existsByUsername(user.getUsername()) && user.getUsername() !=null) {
             throw new RuntimeException("Имя пользователя уже занято");
         }
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public void updateUser(User user) {
@@ -195,7 +194,7 @@ public class UserService implements UserDetailsService {
                     if (row.getCell(4) != null) {
                         user.setHireDate(getDateFromExcel(row.getCell(4).getStringCellValue()));
                     }
-                    if (row.getCell(5) != null) {
+                    if (row.getCell(5) != null && !row.getCell(5).toString().trim().isEmpty()) {
                         user.setDismissalDate(getDateFromExcel(row.getCell(5).getStringCellValue()));
                     }
                     users.add(user);
