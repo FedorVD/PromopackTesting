@@ -239,11 +239,11 @@ public class UserManagementController {
         } else {
             try {
                 List<User> uploadedUsers = userService.uploadUsersFromExcel(file.getInputStream());
-                for (User user : uploadedUsers) {
+                userService.updateUsersFromFile(uploadedUsers);
+                /*for (User user : uploadedUsers) {
                     Optional<User> existingUserOpt = userService.getUserByEmployeeId(user.getEmployeeId());
                     if (existingUserOpt.isPresent()) { // Если пользователь уже существует, обновляем его данные
                         User existingUser = existingUserOpt.get();
-                        //existingUser.setUsername(user.getUsername());
                         existingUser.setName(user.getName());
                         existingUser.setDepartment(user.getDepartment());
                         existingUser.setPosition(user.getPosition());
@@ -252,12 +252,13 @@ public class UserManagementController {
                         existingUser.setUsername(existingUser.getUsername()); // Имя пользователя не меняем
                         if (user.getDismissalDate() != null) {
                             existingUser.setDismissalDate(user.getDismissalDate());
+                            existingUser.setUsername(null);
                         }
                         userService.updateUser(existingUser);
                     }else{ // Если пользователя не существует, добавляем его
                         userService.registerUser(user);
                     }
-                }
+                }*/
                 model.addAttribute("message", "Сотрудники успешно загружены и обновлены.");
                 return "redirect:/admin/users/users";
             } catch (IOException e) {

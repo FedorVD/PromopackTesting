@@ -6,6 +6,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,8 +22,13 @@ import org.top.promopacktesting.repository.DepartmentRepository;
 import org.top.promopacktesting.repository.PositionRepository;
 import org.top.promopacktesting.repository.UserRepository;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,6 +40,12 @@ import java.util.Optional;
 @Service
 @Transactional
 public class UserService implements UserDetailsService {
+
+    @Value("${app.user.upload-dir}")
+    private String userUploadDir;
+
+    @Value("${app.user.upload-file}")
+    private String userUploadFileName;
 
     @Autowired
     private UserRepository userRepository;
@@ -111,27 +124,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findByNameContainingIgnoreCase(userName);
     }
 
-/*    List<User> searchUsers(String keyword) {
-        List<User> users = userRepository.findByNameContainingIgnoreCase(keyword);
-        List<User> temp = userRepository.findByDepartmentContainingIgnoreCase(keyword);
-        for (User user : temp) {
-            if (!users.contains(user)) {
-                users.add(user);
-            }
-        }
-        temp = userRepository.findByPositionContainingIgnoreCase(keyword);
-        for (User user : temp) {
-            if (!users.contains(user)) {
-                users.add(user);
-            }
-        }
-        return users;
-    }*/
-
-/*    public List<User>searchUsers(String name, String department, String position) {
-        return userRepository.findByNameContainingIgnoreCaseAndDepartmentContainingIgnoreCaseAndPositionContainingIgnoreCase(name, department, position);
-    }*/
-
     public List<User> searchUsers(String name, Long departmentId, Long positionId) {
         if (departmentId!= null && positionId != null) {
             return userRepository.findByNameContainingIgnoreCaseAndDepartmentIdAndPositionId(name, departmentId, positionId);
@@ -147,26 +139,6 @@ public class UserService implements UserDetailsService {
     void resetPassword(User user, String newPassword) {
         user.setPassword(passwordEncoder.encode(newPassword));
     }
-
-/*    public List<User> searchUsersByNameAndDepartment(String name, String department) {
-        return userRepository.findByNameContainingIgnoreCaseAndDepartmentContainingIgnoreCase(name, department);
-    }*/
-
-/*    public List<User> searchUsersByNameAndPosition(String name, String position) {
-        return userRepository.findByNameContainingIgnoreCaseAndPositionContainingIgnoreCase(name, position);
-    }*/
-
-/*    public List<User> searchUsersByDepartment(String department) {
-        return userRepository.findByDepartmentContainingIgnoreCase(department);
-    }*/
-
-/*    public List<User> searchUsersByPosition(String position) {
-        return userRepository.findByPositionContainingIgnoreCase(position);
-    }*/
-
-/*    public List<User> searchUsersByDepartmentAndPosition(String department, String position) {
-        return userRepository.findByDepartmentContainingIgnoreCaseAndPositionContainingIgnoreCase(department, position);
-    }*/
 
     public List<User> uploadUsersFromExcel(InputStream inputStream) throws IOException {
         List <User> users = new ArrayList<>();
@@ -232,11 +204,48 @@ public class UserService implements UserDetailsService {
         String currentUsername = auth.getName();
         Optional<User> userOpt = getUserByUsername(currentUsername);
         return userOpt.map(User::getUsername).orElse("Пользователь не найден");
-
-/*        if (userOpt.isEmpty()) {
-            return "Пользователь не найден";
-        }
-        User currentUser = userOpt.get();
-        return currentUser.getName();*/
     }
+
+    @Scheduled(fixedDelay = 1000*60*60) // проверяем наличие файла раз в час
+    public void autoUploadUsersFromExcel() throws IOException {
+        Path filePath = Paths.get(userUploadDir, userUploadFileName);
+        if (Files.exists(filePath)){
+            System.out.println("Upload users from file " + filePath.toAbsolutePath() + " started");
+            try (FileInputStream fileInputStream = new FileInputStream(filePath.toFile())) {
+                List<User> uploadedUsers = uploadUsersFromExcel(fileInputStream);
+                updateUsersFromFile(uploadedUsers);
+                Files.delete(filePath);
+                System.out.println("Upload users from file " + filePath.toAbsolutePath() + " successful. File deleted.");
+            }catch (IOException e) {
+                System.err.println("Upload file " + filePath.toAbsolutePath() + " failed! " + e.getMessage());
+            }catch (Exception e) {
+                System.err.println("Upload users from file " + filePath.toAbsolutePath() + " failed " + e.getMessage());
+            }
+        }
+    }
+
+    public void updateUsersFromFile(List<User> uploadedUsers) {
+        if (!uploadedUsers.isEmpty()) {
+            for (User user : uploadedUsers) {
+                Optional<User> existingUserOpt = getUserByEmployeeId(user.getEmployeeId());
+                if (existingUserOpt.isPresent()) { // Если пользователь уже существует, обновляем его данные
+                    User existingUser = existingUserOpt.get();
+                    existingUser.setName(user.getName());
+                    existingUser.setDepartment(user.getDepartment());
+                    existingUser.setPosition(user.getPosition());
+                    existingUser.setHireDate(user.getHireDate());
+                    existingUser.setPassword(existingUser.getPassword()); // Пароль не меняем
+                    existingUser.setUsername(existingUser.getUsername()); // Имя пользователя не меняем
+                    if (user.getDismissalDate() != null) {
+                        existingUser.setDismissalDate(user.getDismissalDate());
+                        existingUser.setUsername(null); // Если пользователь уволен, удаляем имя пользователя
+                    }
+                    updateUser(existingUser);
+                }else{ // Если пользователя не существует, добавляем его
+                    registerUser(user);
+                }
+            }
+        }
+    }
+
 }

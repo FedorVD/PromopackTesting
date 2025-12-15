@@ -40,7 +40,7 @@ public class ImageService {
             extension = originalFilename.substring(originalFilename.lastIndexOf("."));
         }
 
-        String fileName = UUID.randomUUID().toString() + "."
+        String fileName = UUID.randomUUID() + "."
                 + StringUtils.getFilenameExtension(file.getOriginalFilename());
         Path filePath = uploadPath.resolve(fileName);
 
