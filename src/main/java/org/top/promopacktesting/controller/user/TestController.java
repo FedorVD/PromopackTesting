@@ -7,7 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.top.promopacktesting.model.*;
+import org.top.promopacktesting.model.test.*;
 import org.top.promopacktesting.service.*;
+import org.top.promopacktesting.service.test.AnswerService;
+import org.top.promopacktesting.service.test.AssignmentService;
+import org.top.promopacktesting.service.test.QuestionService;
+import org.top.promopacktesting.service.test.TestingService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,7 +61,7 @@ public class TestController {
     public String startTest(@PathVariable Long id, Model model) {
         AssignedTest assignedTest = assignmentService.getAssignedTestById(id).orElseThrow(() -> new RuntimeException("Тест не найден"));
 
-        if (assignedTest.getStatus() == AssignedTest.TestStatus.COMPLETED) {
+        if (assignedTest.getStatus() == AssignStatus.COMPLETED) {
             model.addAttribute("error", "Тест уже пройден");
             return "/user/userAssignedTests";
         }
@@ -71,7 +76,7 @@ public class TestController {
         int currentIndex = 0;
 
         // Если тест в состоянии IN_PROGRESS — найти первый неотвеченный вопрос
-        if (assignedTest.getStatus() == AssignedTest.TestStatus.IN_PROGRESS) {
+        if (assignedTest.getStatus() == AssignStatus.IN_PROGRESS) {
             List<UserAnswer> userAnswers = testingService.getUserAnswersByAssignedTestId(id);
             Set<Long> answeredQuestionIds = userAnswers.stream()
                     .map(UserAnswer::getQuestion)
@@ -85,8 +90,8 @@ public class TestController {
                 }
             }
         }
-        if (assignedTest.getStatus() == AssignedTest.TestStatus.ASSIGNED) {
-            assignedTest.setStatus(AssignedTest.TestStatus.IN_PROGRESS);
+        if (assignedTest.getStatus() == AssignStatus.ASSIGNED) {
+            assignedTest.setStatus(AssignStatus.IN_PROGRESS);
             assignmentService.updateAssignedTest(assignedTest);
         }
         model.addAttribute("assignedTest", assignedTest);
@@ -203,7 +208,7 @@ public class TestController {
             Double formattedScore = Math.round(score * 10.0) / 10.0;
             System.out.println("Рассчитанный балл: " + score);
 
-            assignedTest.setStatus(AssignedTest.TestStatus.COMPLETED);
+            assignedTest.setStatus(AssignStatus.COMPLETED);
             assignmentService.updateAssignedTest(assignedTest);
 
             model.addAttribute("assignedTest", assignedTest);

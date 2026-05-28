@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Добавить тест</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+
+<div th:replace="admin/_fragments :: layout(title='Добавление нового теста', username=${username}, message=${message}, error=${error})">
+</div> <br/>
+
+<a href="/admin/tests/tests">Назад к списку тестов</a><br /><br />
+
+<form action="#" th:action="@{/templates/admin/testing/tests/addTest}" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+
+    <div class="mb-3">
+        <label for="themeId" class="form-label">Выберите тему:</label>
+        <select id="themeId" name="themeId" class="form-control" required>
+            <option value="">-- Выберите тему --</option>
+            <option th:each="theme : ${themeTests}"
+                    th:value="${theme.id}"
+                    th:text="${theme.themeName}"></option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="testName" class="form-label">Название теста:</label>
+        <input type="text" class="form-control" id="testName" name="testName" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="passingScore" class="form-label">Проходной балл:</label>
+        <input type="number" step="0.1" class="form-control" id="passingScore" name="passingScore" required />
+    </div>
+
+    <button type="submit" class="btn btn-success">Создать тест</button>
+    <a href="/admin/tests/tests" class="btn btn-secondary">Отмена</a>
+</form>
+
+<div th:if="${message}" style="color: green;">
+    <p th:text="${message}">Сообщение</p>
+</div>
+
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}">Ошибка</p>
+</div>
+<script src="/js/logout.js" defer></script>
+</body>
+</html>

@@ -7,9 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.top.promopacktesting.model.AssignedTest;
+import org.top.promopacktesting.model.test.AssignedTest;
 import org.top.promopacktesting.model.User;
-import org.top.promopacktesting.service.AssignmentService;
+import org.top.promopacktesting.service.test.AssignmentService;
 import org.top.promopacktesting.service.UserService;
 
 import java.util.List;

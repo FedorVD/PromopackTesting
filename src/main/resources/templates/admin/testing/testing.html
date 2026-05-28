@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title th:inline="text">[[${title}]]</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
+    <div th:replace="~{admin/_fragments :: layout(title='Управление пользователями', username=${username}, message=${message}, error=${error})}">
+    </div><br />
+</head>
+
+<body>
+
+<div th:fragment="content-body">
+    <h3>Раздел: Тестирование</h3>
+    <p>Выберите подраздел для управления:</p>
+
+    <div class="card-grid">
+        <!-- Назначенные тесты -->
+        <div class="card">
+            <h4>Назначенные тесты</h4>
+            <p>Просмотр и управление тестами, назначенными пользователям.</p>
+            <a href="#" th:href="@{/admin/testing/assignments/assignments}" class="btn">Перейти</a>
+        </div>
+
+        <!-- Управление тестами -->
+        <div class="card">
+            <h4>Управление тестами</h4>
+            <p>Создание, редактирование и удаление тестов.</p>
+            <a href="#" th:href="@{/admin/testing/tests/tests}" class="btn">Перейти</a>
+        </div>
+
+        <!-- Управление темами -->
+        <div class="card">
+            <h4>Управление темами</h4>
+            <p>Создание и редактирование тем тестов.</p>
+            <a href="#" th:href="@{/admin/testing/themes/themes}" class="btn">Перейти</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

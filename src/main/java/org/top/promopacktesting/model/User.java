@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.top.promopacktesting.model.onboarding.OnboardingRole;
+import org.top.promopacktesting.model.onboarding.UserRoleInOnboarding;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -47,6 +50,9 @@ public class User {
 
     @Column(name="dismissal_date")
     private LocalDateTime dismissalDate;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserRoleInOnboarding> userOnboardingRoles;
 
     public User(String employeeId, String name, Department department, Position position, LocalDateTime hireDate) {
         this.employeeId = employeeId;

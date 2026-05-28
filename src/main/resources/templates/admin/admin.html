@@ -8,8 +8,8 @@
 </head>
 <body>
 
-<div th:replace="admin/_fragments :: layout(title='Административная панель', username=${username}, message=${message}, error=${error})">
-</div> <br/>
+<div th:replace="~{admin/_fragments :: layout(title='Управление пользователями', username=${username}, message=${message}, error=${error})}">
+</div><br />
 
 <div th:if="${message}" style="color: green;">
     <p th:text="${message}">Сообщение</p>

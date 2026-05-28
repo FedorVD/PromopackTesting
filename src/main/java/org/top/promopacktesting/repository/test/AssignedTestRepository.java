@@ -1,0 +1,50 @@
+package org.top.promopacktesting.repository.test;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import org.top.promopacktesting.model.AssignStatus;
+import org.top.promopacktesting.model.test.AssignedTest;
+
+import java.util.List;
+
+@Repository
+public interface AssignedTestRepository extends JpaRepository<AssignedTest, Long> {
+
+    List<AssignedTest> findByUserId(Long userId);
+    List<AssignedTest> findByUserIdAndStatus(Long userId, AssignStatus status);
+    List<AssignedTest> findByStatus(AssignStatus status);
+    List<AssignedTest> findByTestId(Long testId);
+    List<AssignedTest> findByTestIdAndStatus(Long testId, AssignStatus status);
+    List<AssignedTest> findByUserIdAndTestIdAndStatus(Long userId, Long testId, AssignStatus status);
+    List<AssignedTest> findByTestNameAndUserNameAndStatus(String testName, String userName, AssignStatus status);
+    List<AssignedTest> findByUserIdAndTestId(Long userId, Long testId);
+    List<AssignedTest> findByUserDepartmentId(Long departmentId);
+    List<AssignedTest> findByUserPositionId(Long positionId);
+    List<AssignedTest> findByUserPositionIdAndUserDepartmentId(Long positionId, Long departmentId);
+    List<AssignedTest> findNotCompletedByUserDepartmentId(Long departmentId);
+    List<AssignedTest> findNotCompletedByUserPositionId(Long positionId);
+
+    @Query("SELECT at FROM AssignedTest at WHERE at.user.id = :userId AND at.status != 'COMPLETED'")
+    List<AssignedTest> findNotCompletedByUserId(Long userId);
+
+    @Query("SELECT at FROM AssignedTest at WHERE at.user.id = :userId AND at.test.isActive = true")
+    List<AssignedTest> findActiveAssignedTestsByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT COUNT(at) FROM AssignedTest at WHERE at.test.id = :testId AND at.status = 'COMPLETED'")
+    Long countCompletedTestsByTestId(@Param("testId") Long tstId);
+
+    @Query("SELECT a FROM AssignedTest a WHERE a.status = 'COMPLETED' AND a.testScore <= :score")
+    List<AssignedTest> findCompletedByScoreLessThan(@Param("score") Double score);
+
+    List<AssignedTest> findByTestName(String testName);
+
+    List<AssignedTest> findByUserName(String userName);
+
+    List<AssignedTest> findByTestNameAndStatus(String testName, AssignStatus status);
+
+    List<AssignedTest> findByUserNameAndStatus(String userName, AssignStatus status);
+
+    AssignedTest findByTestNameAndUserName(String testName, String userName);
+}

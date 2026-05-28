@@ -232,7 +232,8 @@ public class UserManagementController {
 
     @PostMapping("/upload")
     public String uploadUsersFromExcel(@RequestParam("file") MultipartFile file, Model model) {
-        System.out.println("Пользователь " + SecurityContextHolder.getContext().getAuthentication().getName() + " пытается загрузить файл" + file.getOriginalFilename());
+        System.out.println("Пользователь " + SecurityContextHolder.getContext()
+                .getAuthentication().getName() + " пытается загрузить файл" + file.getOriginalFilename());
         if (file.isEmpty()) {
             model.addAttribute("error", "Файл не выбран");
             return "admin/users/users";
