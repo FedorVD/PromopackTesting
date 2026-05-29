@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Редактировать оборудование</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Редактировать оборудование', username=${username}, message=${message}, error=${error})}">
+    </div><br/>
+</head>
+<body>
+
+<div th:fragment="content-body">
+    <h3>Редактирование оборудования</h3>
+    <p>Измените данные оборудования и сохраните изменения.</p>
+
+    <!-- Форма редактирования -->
+    <form method="post" th:action="@{'/admin/onboarding/references/' + ${equipment.id} + '/edit-equipment'}" class="form">
+        <input type="hidden" th:value="${equipment.id}" name="equipmentId" />
+
+        <div class="form-group">
+            <label for="name">Наименование оборудования</label>
+            <input type="text"
+                   id="name"
+                   name="name"
+                   class="form-input"
+                   th:value="${equipment.name}"
+                   placeholder="Введите название оборудования"
+                   required
+                   autofocus />
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-save">Сохранить</button>
+            <a href="#" th:href="@{/admin/onboarding/references/equipment}" class="btn btn-cancel">Отмена</a>
+        </div>
+    </form>
+
+    <!-- Ссылка на возврат к списку -->
+    <div class="back-link">
+        <a href="#" th:href="@{/admin/onboarding/references/equipment}">&larr; Вернуться к списку оборудования</a>
+    </div>
+</div>
+
+</body>
+</html>

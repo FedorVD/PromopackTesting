@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Добавить оборудование</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Добавить роль', username=${username}, message=${message}, error=${error})}">
+    </div><br/>
+</head>
+<body>
+
+<div th:fragment="content-body">
+    <h3>Добавление новой роли</h3>
+    <p>Заполните форму для добавления новой роли в справочник.</p>
+
+    <!-- Форма добавления -->
+    <form method="post" th:action="@{/admin/onboarding/references/add-onboardingRole}" class="form">
+        <div class="form-group">
+            <label for="name">Наименование роли</label>
+            <input type="text"
+                   id="name"
+                   name="name"
+                   class="form-input"
+                   placeholder="Введите название роли"
+                   required
+                   autofocus />
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-save">Сохранить</button>
+            <a href="#" th:href="@{/admin/onboarding/references/onboardingRoles}" class="btn btn-cancel">Отмена</a>
+        </div>
+    </form>
+
+    <!-- Ссылка на возврат к списку -->
+    <div class="back-link">
+        <a href="#" th:href="@{/admin/onboarding/references/onboardingRoles}">&larr; Вернуться к списку ролей</a>
+    </div>
+</div>
+
+</body>
+</html>

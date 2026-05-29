@@ -290,6 +290,21 @@ a:hover {
     color: white;
 }
 
+.btn-save {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-save:hover {
+    background-color: #0d47a1;
+}
+
 .text-success {
     color: green;
 }
@@ -551,4 +566,34 @@ input.form-control:focus {
         background-color: #007bff;
         transition: width 0.3s ease;
     }
+}
+
+.reference-list {
+    margin-top: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+.reference-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.reference-item:last-child {
+    border-bottom: none;
+}
+
+.reference-link {
+    display: block;
+    text-decoration: none;
+    color: #1a73e8;
+    font-size: 14px;
+    padding: 8px 0;
+}
+
+.reference-link:hover {
+    text-decoration: underline;
+    color: #0d47a1;
 }

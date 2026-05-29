@@ -34,38 +34,38 @@ public class OnboardingReferenceController {
     // Страница управления справочниками
     @GetMapping
     public String showReferences(Model model) {
-        model.addAttribute("equipments", equipmentService.getAll());
+        model.addAttribute("equipment", equipmentService.getAll());
         model.addAttribute("activities", activityService.getAll());
         model.addAttribute("activityDetails", activityDetailsService.getAll());
         model.addAttribute("onboardingRoles", onboardingRoleService.getAll());
         model.addAttribute("regulatoryDocs", regulatoryDocService.getAll());
-        return "admin/onboarding/references";
+        return "admin/onboarding/references/references";
     }
 
     // Справочник Оборудование (Станки)
 
-    @GetMapping("/equipments")
+    @GetMapping("/equipment")
     public String showAllEquipments(Model model) {
-        List<Equipment> equipments = equipmentService.getAll();
-        model.addAttribute("equipments", equipments);
-        return "admin/onboarding/references/equipments";
+        List<Equipment> equipment = equipmentService.getAll();
+        model.addAttribute("equipment", equipment);
+        return "admin/onboarding/references/equipment";
     }
 
-    @GetMapping("/equipments/add")
+    @GetMapping("/add-equipment")
     public String showEquipmentAddForm(Model model) {
         model.addAttribute("equipment", new Equipment());
-        return "admin/onboarding/references/equipments/add";
+        return "admin/onboarding/references/add-equipment";
     }
 
-    @PostMapping("/equipments/add")
+    @PostMapping("/add-equipment")
     public String addEquipment(@RequestParam String name) {
         Equipment equipment = new Equipment();
         equipment.setName(name);
         equipmentService.save(equipment);
-        return "redirect:/admin/onboarding/references/equipments";
+        return "redirect:/admin/onboarding/references/equipment";
     }
 
-    @GetMapping("/equipments/{equipmentId}/edit")
+    @GetMapping("/{equipmentId}/edit-equipment")
     public String showEquipmentEditForm(@PathVariable Long equipmentId, Model model) {
         Optional<Equipment> equipmentOpt = equipmentService.getById(equipmentId);
         if (equipmentOpt.isEmpty()) {
@@ -73,24 +73,24 @@ public class OnboardingReferenceController {
             return "redirect:/admin/onboarding/equipments";
         } else{
             model.addAttribute("equipment", equipmentOpt.get());
-            return "admin/onboarding/references/equipments/edit";
+            return "admin/onboarding/references/edit-equipment";
         }
     }
 
-    @PostMapping("/equipments/{equipmentId}/edit")
+    @PostMapping("/{equipmentId}/edit-equipment")
     public String editEquipment(@RequestParam Long equipmentId,
                                 @RequestParam String name,
                                 Model model) {
         Optional<Equipment> equipmentOpt = equipmentService.getById(equipmentId);
         if (equipmentOpt.isEmpty()) {
             model.addAttribute("error", "Оборудование не найдено");
-            return "admin/onboarding/references/equipments";
+            return "admin/onboarding/references/equipment";
         } else {
             Equipment equipment = equipmentOpt.get();
             equipment.setName(name);
             equipmentService.save(equipment);
             model.addAttribute("success", "Наименование оборудования успешно изменено");
-            return "redirect:/admin/onboarding/references/equipments";
+            return "redirect:/admin/onboarding/references/equipment";
         }
     }
 
@@ -108,13 +108,13 @@ public class OnboardingReferenceController {
         return "admin/onboarding/references/onboardingRoles";
     }
 
-    @GetMapping("/onboardingRoles/add")
+    @GetMapping("/add-onboardingRoles")
     public String showOnboardingRoleAddForm(Model model) {
         model.addAttribute("onboardingRole", new OnboardingRole());
-        return "admin/onboarding/references/onboardingRoles/add";
+        return "admin/onboarding/references/add-onboardingRoles";
     }
 
-    @PostMapping("/onboardingRole/add")
+    @PostMapping("/add-onboardingRole")
     public String addOnboardingRole(@RequestParam String name) {
         OnboardingRole onboardingRole = new OnboardingRole();
         onboardingRole.setRoleName(name);
@@ -122,7 +122,7 @@ public class OnboardingReferenceController {
         return "redirect:/admin/onboarding/references/onboardingRoles";
     }
 
-    @GetMapping("/onboardingRole/{roleId}/edit")
+    @GetMapping("/{roleId}/edit-onboardingRole")
     public String showOnboardingRoleEditForm(@PathVariable Long roleId,
                                              Model model) {
         Optional<OnboardingRole> onboardingRoleOpt = onboardingRoleService.getByRoleId(roleId);
@@ -131,11 +131,11 @@ public class OnboardingReferenceController {
             return "admin/onboarding/references/onboardingRoles";
         } else {
             model.addAttribute("onboardingRole", onboardingRoleOpt.get());
-            return "admin/onboarding/references/onboardingRoles/edit";
+            return "admin/onboarding/references/edit-onboardingRoles";
         }
     }
 
-    @PostMapping("/onboardingRole/{roleId}/edit")
+    @PostMapping("/{roleId}/edit-onboardingRole")
     public String editOnboardingRole(@RequestParam Long roleId,
                                      @RequestParam String name,
                                      Model model) {
@@ -166,13 +166,13 @@ public class OnboardingReferenceController {
         return "admin/onboarding/references/regulatoryDocs";
     }
 
-    @GetMapping("/regulatoryDocs/add")
+    @GetMapping("/add-regulatoryDocs")
     public String showRegulatoryDocAddForm(Model model) {
         model.addAttribute("regulatoryDoc", new RegulatoryDoc());
-        return "admin/onboarding/references/regulatoryDocs/add";
+        return "admin/onboarding/references/add-regulatoryDocs";
     }
 
-    @PostMapping("/regulatoryDocs/add")
+    @PostMapping("/add-regulatoryDocs")
     public String addRegulatoryDoc(@RequestParam String docName,
                                    @RequestParam String docUrl) {
         RegulatoryDoc regulatoryDoc = new RegulatoryDoc();
@@ -182,7 +182,7 @@ public class OnboardingReferenceController {
         return "redirect:/admin/onboarding/references/regulatoryDocs";
     }
 
-    @GetMapping("/regulatoryDocs/{docId}/edit")
+    @GetMapping("/{docId}/edit-regulatoryDocs")
     public String showRegulatoryDocEditForm(@PathVariable Long docId,
                                             Model model) {
         Optional<RegulatoryDoc> regulatoryDocOpt = regulatoryDocService.getByDocId(docId);
@@ -191,11 +191,11 @@ public class OnboardingReferenceController {
             return "admin/onboarding/references/regulatoryDocs";
         } else {
             model.addAttribute("regulatoryDoc", regulatoryDocOpt.get());
-            return "admin/onboarding/references/regulatoryDocs/edit";
+            return "admin/onboarding/references/edit-regulatoryDocs";
         }
     }
 
-    @PostMapping("/regulatoryDocs/{docId}/edit")
+    @PostMapping("/{docId}/edit-regulatoryDocs")
     public String editRegulatoryDoc(@RequestParam Long docId,
                                     @RequestParam String docName,
                                     @RequestParam String docUrl,
@@ -222,13 +222,13 @@ public class OnboardingReferenceController {
         return "admin/onboarding/references/activities";
     }
 
-    @GetMapping("/activities/add")
+    @GetMapping("/add-activities")
     public String showActivitiesAddForm(Model model) {
         model.addAttribute("activities", new Activity());
-        return "admin/onboarding/references/activities/add";
+        return "admin/onboarding/references/add-activities";
     }
 
-    @PostMapping("/activities/add")
+    @PostMapping("/add-activities")
     public String addActivity(@RequestParam String name) {
         Activity activity = new Activity();
         activity.setActivityName(name);
@@ -236,7 +236,7 @@ public class OnboardingReferenceController {
         return "redirect:/admin/onboarding/references/activities";
     }
 
-    @GetMapping("/activities/{activityId}/edit")
+    @GetMapping("/{activityId}/edit-activities")
     public String showActivityEditForm(@PathVariable Long activityId,
                                        Model model) {
         Optional<Activity> activityOpt = activityService.getByActivityId(activityId);
@@ -245,11 +245,11 @@ public class OnboardingReferenceController {
             return "admin/onboarding/references/activities";
         } else {
             model.addAttribute("activity", activityOpt.get());
-            return "admin/onboarding/references/activities/edit";
+            return "admin/onboarding/references/edit-activities";
         }
     }
 
-    @PostMapping("/activities/{activityId}/edit")
+    @PostMapping("/{activityId}/edit-activities")
     public String editActivity(@RequestParam Long activityId,
                                @RequestParam String name,
                                Model model) {
@@ -274,13 +274,13 @@ public class OnboardingReferenceController {
         return "admin/onboarding/references/activityDetails";
     }
 
-    @GetMapping("/activityDetails/add")
+    @GetMapping("/add-activityDetails")
     public String showActivityDetailsAddForm(Model model) {
         model.addAttribute("activities", new Activity());
-        return "admin/onboarding/references/activityDetails/add";
+        return "admin/onboarding/references/add-activityDetails";
     }
 
-    @PostMapping("/activityDetails/add")
+    @PostMapping("/add-activityDetails")
     public String addActivityDetails(@RequestParam String name,
                                      @RequestParam Long activityId,
                                      @RequestParam Long OnboardingRoleId,
@@ -303,7 +303,7 @@ public class OnboardingReferenceController {
         }
     }
 
-    @GetMapping("/activityDetails/{activityDetailsId}/edit")
+    @GetMapping("/{activityDetailsId}/edit-activityDetails")
     public String showActivityDetailsEditForm(@PathVariable Long activityDetailsId,
                                               Model model) {
         Optional<Activity> activityOpt = activityService.getByActivityId(activityDetailsId);
@@ -312,11 +312,11 @@ public class OnboardingReferenceController {
             return "admin/onboarding/references/activityDetails";
         } else {
             model.addAttribute("activity", activityOpt.get());
-            return "admin/onboarding/references/activityDetails/edit";
+            return "admin/onboarding/references/edit-activityDetails";
         }
     }
 
-    @PostMapping("/activityDetails/{activityDetailsId}/edit")
+    @PostMapping("/{activityDetailsId}/edit-activityDetails")
     public String editActivityDetails(@RequestParam Long activityDetailsId,
                                       @RequestParam String name,
                                       @RequestParam Long activityId,

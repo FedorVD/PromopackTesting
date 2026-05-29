@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Адаптация сотрудников</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Адаптация сотрудников', username=${username}, message=${message}, error=${error})}">
+    </div><br/>
+</head>
+<body>
+    <div th:fragment="content-body">
+        <h3>Панель управления адаптацией</h3>
+        <p>Выберите раздел для настройки:</p>
+
+        <div class="reference-list">
+            <!-- Управление справочниками -->
+            <div class="reference-item">
+                <a href="#"
+                   th:href="@{/admin/onboarding/references}"
+                   class="reference-link">
+                    <span>Справочники</span>
+                </a>
+            </div>
+
+            <!-- Управление назначенными программами -->
+            <div class="reference-item">
+                <a href="#"
+                   th:href="@{/admin/onboarding/assigned-programs}"
+                   class="reference-link">
+                    <span>Управление адаптацией</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

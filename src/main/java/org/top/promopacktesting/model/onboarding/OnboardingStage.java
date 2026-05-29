@@ -9,7 +9,7 @@ import org.top.promopacktesting.model.User;
 
 import java.time.LocalDateTime;
 
-//Сущность однй записи табличной части документа План адаптации
+//Сущность одной записи табличной части документа План адаптации
 @Entity
 @Table(name = "onboarding_stage")
 @NoArgsConstructor

@@ -7,7 +7,7 @@
     <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 
-    <div th:replace="~{admin/_fragments :: layout(title='Управление пользователями', username=${username}, message=${message}, error=${error})}">
+    <div th:replace="~{admin/_fragments :: layout(title='Управление тестами', username=${username}, message=${message}, error=${error})}">
     </div><br />
 </head>
 
@@ -28,7 +28,7 @@
         <!-- Управление тестами -->
         <div class="card">
             <h4>Управление тестами</h4>
-            <p>Создание, редактирование и удаление тестов.</p>
+            <p>Создание и редактирование тестов.</p>
             <a href="#" th:href="@{/admin/testing/tests/tests}" class="btn">Перейти</a>
         </div>
 

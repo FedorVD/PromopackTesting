@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Управление справочниками</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Управление справочниками', username=${username}, message=${message}, error=${error})}">
+    </div><br/>
+</head>
+<body>
+    <div th:fragment="content-body">
+        <h3>Справочники системы</h3>
+        <p>Выберите справочник для редактирования:</p>
+
+        <div class="reference-list">
+
+            <div class="reference-item">
+                <div>
+                    <a href="#"
+                       th:href="@{/admin/onboarding/references/equipment}"
+                       class="reference-link">
+                        <strong>Оборудование</strong>
+                    </a>
+                </div>
+            </div>
+
+            <div class="reference-item">
+                <div>
+                    <a href="#"
+                       th:href="@{/admin/onboarding/references/onboardingRoles}"
+                       class="reference-link">
+                        <strong>Роли ответственных лиц в адаптации</strong>
+                    </a>
+                </div>
+            </div>
+
+            <div class="reference-item">
+                <div>
+                    <a href="#"
+                       th:href="@{/admin/onboarding/references/regulatoryDocs}"
+                       class="reference-link">
+                        <strong>Нормативные докумнты</strong>
+                    </a>
+                </div>
+            </div>
+
+            <div class="reference-item">
+                <div>
+                    <a href="#"
+                       th:href="@{/admin/onboarding/references/actions}"
+                       class="reference-link">
+                        <strong>Действия</strong></a>
+                </div>
+            </div>
+
+            <div class="reference-item">
+                <div>
+                    <a href="#"
+                       th:href="@{/admin/onboarding/references/actionDetails}"
+                       class="reference-link">
+                        <strong>Расшифровки действий</strong>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

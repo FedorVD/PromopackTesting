@@ -2,6 +2,7 @@ package org.top.promopacktesting.service.onboarding;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.top.promopacktesting.model.onboarding.Equipment;
 import org.top.promopacktesting.repository.onboarding.EquipmentRepository;
@@ -25,7 +26,7 @@ public class EquipmentService {
     }
 
     public List<Equipment> getAll() {
-        return equipmentRepository.findAll();
+        return equipmentRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     public void save(Equipment equipment) {

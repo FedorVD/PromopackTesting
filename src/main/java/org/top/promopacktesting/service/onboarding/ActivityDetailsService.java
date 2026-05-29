@@ -1,6 +1,7 @@
 package org.top.promopacktesting.service.onboarding;
 
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.top.promopacktesting.model.onboarding.Activity;
 import org.top.promopacktesting.model.onboarding.ActivityDetails;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @Transactional
 public class ActivityDetailsService {
 
+    @Autowired
     private ActivityDetailsRepository activityDetailsRepository;
 
     public Optional<ActivityDetails> getActivityDetailsById(Long id) {

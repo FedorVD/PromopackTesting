@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Оборудование</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Справочник ролей адаптации', username=${username}, message=${message}, error=${error})}">
+    </div><br/>
+</head>
+<body>
+
+<div th:fragment="content-body">
+    <div class="toolbar">
+        <h3>Оборудование (станки)</h3>
+        <a href="#" th:href="@{/admin/onboarding/references/add-onboardingRole}" class="btn">Добавить роль</a>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>№ п/п</th>
+            <th>Наименование роли</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${onboardingRoles}">
+            <td th:text="${item.id}">№ п/п</td>
+            <td th:text="${item.roleName}">Название</td>
+            <td>
+                <a href="#" th:href="@{'/admin/onboarding/references/' + ${item.id} + '/edit-onboardingRole'}" class="btn btn-sm">Редактировать</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${#lists.size(onboardingRoles)} == 0" class="empty-state">
+        <p>Список ролей пуст. <a href="#" th:href="@{/admin/onboarding/references/add-onboardingRole}">Добавьте первую роль</a>.</p>
+    </div>
+
+    <!-- Ссылка на возврат к списку -->
+    <div class="back-link">
+        <a href="#" th:href="@{/admin/onboarding/references}">&larr; Вернуться к списку справочников</a>
+    </div>
+</div>
+
+</body>
+</html>

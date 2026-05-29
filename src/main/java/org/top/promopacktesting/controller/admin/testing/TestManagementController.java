@@ -1,4 +1,4 @@
-package org.top.promopacktesting.controller.admin.test;
+package org.top.promopacktesting.controller.admin.testing;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;

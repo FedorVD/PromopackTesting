@@ -1,4 +1,4 @@
-package org.top.promopacktesting.controller.admin.test;
+package org.top.promopacktesting.controller.admin.testing;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Редактировать роль</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Редактировать роль', username=${username}, message=${message}, error=${error})}">
+    </div><br/>
+</head>
+<body>
+
+<div th:fragment="content-body">
+    <h3>Редактирование роли</h3>
+    <p>Измените данные роли и сохраните изменения.</p>
+
+    <!-- Форма редактирования -->
+    <form method="post" th:action="@{'/admin/onboarding/references/' + ${onboardingRole.id} + '/edit-onboardingRole'}" class="form">
+        <input type="hidden" th:value="${onboardingRole.id}" name="onboardingRoleId" />
+
+        <div class="form-group">
+            <label for="name">Наименование роли</label>
+            <input type="text"
+                   id="name"
+                   name="name"
+                   class="form-input"
+                   th:value="${onboardingRole.roleName}"
+                   placeholder="Введите название роли"
+                   required
+                   autofocus />
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-save">Сохранить</button>
+            <a href="#" th:href="@{/admin/onboarding/references/onboardingRoles}" class="btn btn-cancel">Отмена</a>
+        </div>
+    </form>
+
+    <!-- Ссылка на возврат к списку -->
+    <div class="back-link">
+        <a href="#" th:href="@{/admin/onboarding/references/onboardingRoles}">&larr; Вернуться к списку ролей</a>
+    </div>
+</div>
+
+</body>
+</html>
