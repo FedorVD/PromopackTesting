@@ -18,9 +18,11 @@ import org.springframework.stereotype.Service;
 import org.top.promopacktesting.model.Department;
 import org.top.promopacktesting.model.Position;
 import org.top.promopacktesting.model.User;
+import org.top.promopacktesting.model.onboarding.OnboardingRole;
 import org.top.promopacktesting.repository.DepartmentRepository;
 import org.top.promopacktesting.repository.PositionRepository;
 import org.top.promopacktesting.repository.UserRepository;
+import org.top.promopacktesting.repository.onboarding.OnboardingRoleRepository;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -58,6 +60,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private OnboardingRoleRepository onboardingRoleRepository;
 
     private final String defaultPassword = "12345678";
 
@@ -134,6 +139,14 @@ public class UserService implements UserDetailsService {
         } else {
             return userRepository.findByNameContainingIgnoreCase(name);
         }
+    }
+
+    public List<User> getAllUsersWithRole(){
+        return userRepository.findAllWithOnboardingRoles();
+    }
+
+    public List<User> getAllUsersByOnboardingRole(Long roleId) {
+        return userRepository.findAllWithOnboardingRole(roleId);
     }
 
     void resetPassword(User user, String newPassword) {

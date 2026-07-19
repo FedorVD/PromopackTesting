@@ -14,7 +14,7 @@
 <p><strong>Пользователь:</strong> <span th:text="${assignedTest.user.name}"></span></p>
 <p><strong>Результат:</strong> <span th:text="${assignedTest.testScore}"></span> баллов</p>
 
-<a th:href="@{/templates/admin/testing/assignments/{id}/exportResults(id=${assignedTest.id})}"
+<a th:href="@{/admin/testing/assignments/{id}/exportResults(id=${assignedTest.id})}"
    class="btn btn-success">
   <i class="fas fa-file-excel"></i> Выгрузить в Excel
 </a>

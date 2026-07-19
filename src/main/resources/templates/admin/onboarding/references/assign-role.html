@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Назначить роль сотруднику</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Назначить роль', username=${username}, message=${message}, error=${error})}">
+    </div>
+</head>
+
+<body>
+
+    <div th:fragment="content-body">
+        <h3>Назначение роли сотруднику</h3>
+        <p>Выберите сотрудника и роль для назначения.</p>
+
+        <!-- Форма назначения -->
+        <form method="post" th:action="@{/admin/onboarding/references/assign-role}" class="form">
+            <input type="hidden" name="userId" id="userIdHidden" />
+
+            <div class="form-group">
+                <label for="userIdSearch">Сотрудник (поиск по имени)</label>
+                <!-- Стилизованный input для datalist -->
+                <div class="input-select-wrapper">
+                    <input list="usersList" id="userIdSearch" class="form-select" placeholder="Начните вводить имя..." required />
+                    <datalist id="usersList">
+                        <th:block th:each="user : ${users}">
+                            <option th:value="${user.name}" th:data-id="${user.id}"></option>
+                        </th:block>
+                    </datalist>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="roleId">Роль в адаптации</label>
+                <select id="roleId" name="roleId" class="form-control" required>
+                    <option value="">-- Выберите роль --</option>
+                    <th:block th:each="role : ${onboardingRoles}">
+                        <option th:value="${role.id}" th:text="${role.roleName}">Наставник</option>
+                    </th:block>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save">Назначить роль</button>
+                <a href="#" th:href="@{/admin/onboarding/references/onboardingRoles}" class="btn btn-cancel">Отмена</a>
+            </div>
+        </form>
+
+        <!-- Ссылка на возврат к списку -->
+        <div class="back-link">
+            <a href="#" th:href="@{/admin/onboarding/references/onboardingRoles}">&larr; Вернуться к списку ролей</a>
+        </div>
+
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const userIdSearch = document.getElementById('userIdSearch');
+        const userIdHidden = document.getElementById('userIdHidden');
+        const usersList = document.getElementById('usersList');
+
+        // Обработка выбора из datalist
+        userIdSearch.addEventListener('change', function() {
+            const selectedText = userIdSearch.value;
+            const option = Array.from(usersList.options).find(opt => opt.value === selectedText);
+            if (option) {
+                userIdHidden.value = option.dataset.id;
+            } else {
+                userIdHidden.value = '';
+            }
+        });
+
+        // Также обновляем при вводе (опционально, для UX)
+        userIdSearch.addEventListener('input', function() {
+            // Необязательно, но можно сбросить ID при удалении текста
+            if (!userIdSearch.value) {
+                userIdHidden.value = '';
+            }
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

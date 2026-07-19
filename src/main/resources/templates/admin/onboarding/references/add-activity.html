@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Добавить действие</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Добавить действие', username=${username}, message=${message}, error=${error})}">
+    </div>
+</head>
+<body>
+
+<div th:fragment="content-body">
+    <h3>Добавление нового действия</h3>
+    <p>Заполните форму для добавления нового действия в справочник.</p>
+
+    <!-- Форма добавления -->
+    <form method="post" th:action="@{/admin/onboarding/references/add-activity}" class="form">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+
+        <div class="form-group">
+            <label for="name">Наименование действия</label>
+            <input type="text"
+                   id="name"
+                   name="name"
+                   class="form-input"
+                   placeholder="Введите наименование действия"
+                   required
+                   autofocus />
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-save">Сохранить</button>
+            <a href="#" th:href="@{/admin/onboarding/references/activities}" class="btn btn-cancel">Отмена</a>
+        </div>
+    </form>
+
+    <!-- Ссылка на возврат -->
+    <div class="back-link">
+        <a href="#" th:href="@{/admin/onboarding/references/activities}">&larr; Вернуться к списку действий</a>
+    </div>
+</div>
+
+</body>
+</html>

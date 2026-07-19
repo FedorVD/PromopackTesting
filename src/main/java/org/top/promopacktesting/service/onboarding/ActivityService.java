@@ -16,7 +16,7 @@ public class ActivityService {
     @Autowired
     private ActivityRepository activityRepository;
 
-    public Optional<Activity> getByActivityId(Long id) {
+    public Optional<Activity> getById(Long id) {
         return activityRepository.findById(id);
     }
     public Optional<Activity> getByActivityName(String name) {

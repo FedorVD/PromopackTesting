@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 //Сущность записи справочника Действия по плану адаптации
 @Entity
 @Table(name = "activity")
@@ -19,4 +21,5 @@ public class Activity {
 
     @Column(name = "activity_name")
     private String activityName;
+
 }

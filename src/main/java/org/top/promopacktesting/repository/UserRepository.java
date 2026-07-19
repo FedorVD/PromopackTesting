@@ -2,8 +2,11 @@ package org.top.promopacktesting.repository;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.top.promopacktesting.model.User;
+import org.top.promopacktesting.model.onboarding.OnboardingRole;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +33,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByNameContainingIgnoreCaseAndDepartmentId(String name, Long departmentId);
     List<User> findByNameContainingIgnoreCaseAndPositionId(String name, Long positionId);
     List<User> findByNameContainingIgnoreCaseAndDepartmentIdAndPositionId(String name, Long departmentId, Long positionId);
+
+    @Query("SELECT DISTINCT u FROM User u " +
+            "JOIN UserRoleInOnboarding uro " +
+            "WHERE uro.onboardingRole IS NOT NULL") // только если роль указана
+    List<User> findAllWithOnboardingRoles();
+
+    @Query("SELECT DISTINCT u FROM User u " +
+            "CROSS JOIN UserRoleInOnboarding uro " +
+            "WHERE uro.user.id = u.id " +
+            "AND uro.onboardingRole.id = :roleId")
+    List<User> findAllWithOnboardingRole(@Param("roleId") Long roleId);
+
 
     boolean existsByEmployeeId(String employeeId);
     boolean existsByUsername(String username);

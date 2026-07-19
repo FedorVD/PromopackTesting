@@ -18,7 +18,7 @@ public class ActivityDetailsService {
     @Autowired
     private ActivityDetailsRepository activityDetailsRepository;
 
-    public Optional<ActivityDetails> getActivityDetailsById(Long id) {
+    public Optional<ActivityDetails> getById(Long id) {
         return activityDetailsRepository.findById(id);
     }
 
@@ -29,6 +29,12 @@ public class ActivityDetailsService {
     public List<ActivityDetails> getAll() {
         return activityDetailsRepository.findAll();
     }
+
+/*    public List<ActivityDetails> getAllWithActivityId() {
+        List<ActivityDetails> allDetails = activityDetailsRepository.findAll();
+        // Возвращаем список с добавленным полем activityId для JS
+        return allDetails;
+    }*/
 
     public List<ActivityDetails> getAllActivityDetailsByOnboardingRole(OnboardingRole onboardingRole) {
         return activityDetailsRepository.findAllByOnboardingRole(onboardingRole);

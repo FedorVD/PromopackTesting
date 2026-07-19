@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Добавить действие в программу адаптации</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Добавление действия', username=${username}, message=${message}, error=${error})}">
+    </div>
+</head>
+<body>
+
+<div th:fragment="content-body">
+    <div class="container">
+        <h3>Добавление действия в программу адаптации</h3>
+        <p>Добавьте новое действие для сотрудника.</p>
+
+        <form method="post" th:action="@{/admin/onboarding/onboardingPlans/{id}/add-stage(id=${plan.id})}" class="form" style="margin-top: 30px;">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+
+            <div style="background-color: #f9f9f9; padding: 20px; border-radius: 6px; border: 1px solid #eaeaea;">
+                <h4 style="margin-top: 0;">Добавить действие</h4>
+
+                <div class="form-row" style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label for="shift">Смена</label>
+                        <select id="shift" name="shift" class="form-control" required>
+                            <option value="">-- Выберите смену --</option>
+                            <option value="MORNING">Первая</option>
+                            <option value="EVENING">Вторая</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label for="deadline">Срок</label>
+                        <input type="date"
+                               id="deadline"
+                               name="deadline"
+                               class="form-control"
+                               required />
+                    </div>
+
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label for="activity">Действие</label>
+                        <select id="activity" name="activityId" class="form-control" required>
+                            <option value="">-- Выберите действие --</option>
+                            <th:block th:each="act : ${activities}">
+                                <option th:value="${act.id}" th:text="${act.activityName}">Действие</option>
+                            </th:block>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Нормативный документ:</label>
+                        <select name="regulatoryDocId" class="form-control">
+                            <option value="">— Не выбран —</option>
+                            <th:block th:each="doc : ${regulatoryDocs}">
+                                <option th:value="${doc?.id}" th:text="${doc.docName}">Нормативный документ</option>
+                            </th:block>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label for="activityDetails">Расшифровка</label>
+                        <select id="activityDetails" name="activityDetailsId" class="form-control" required>
+                            <option value="">-- Сначала выберите действие --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Исполнитель (по роли):</label>
+                    <input type="hidden" name="onboardingRoleId" id="onboardingRoleId" />
+                    <div id="onboardingRoleDisplay" class="form-role-display" style="color: #555; font-style: italic;">
+                        — Не выбрана —
+                    </div>
+                </div>
+
+                <div class="form-group mentor-select-wrapper" id="mentorWrapper" style="display: none;">
+                    <label>Исполнитель (сотрудник):</label>
+                    <select name="mentorId" class="form-control">
+                        <option value="">— Не выбран —</option>
+                        <option th:each="user : ${users}"
+                                th:value="${user.id}"
+                                th:text="${user.name}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-actions" style="margin-top: 20px;">
+                    <button type="submit" class="btn btn-save">Добавить действие</button>
+                    <a href="#" th:href="@{/admin/onboarding/onboardingPlans/{id}/edit(id=${plan.id})}" class="btn btn-cancel">Отмена</a>
+                </div>
+            </div>
+        </form>
+
+        <!-- Ссылка на возврат -->
+        <div class="back-link" style="margin-top: 20px;">
+            <a href="#" th:href="@{/admin/onboarding/onboardingPlans/{id}/edit(id=${plan.id})}">&larr; Вернуться к редактированию</a>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', async function() {
+        const activitySelect = document.getElementById('activity');
+        const activityDetailsSelect = document.getElementById('activityDetails');
+        const onboardingRoleInput = document.querySelector('input[name="onboardingRoleId"]');
+
+        if (!activitySelect || !activityDetailsSelect || !onboardingRoleInput) {
+            console.error("❌ Один из элементов не найден");
+            return;
+        }
+
+        let allActivityDetails = [];
+        const contextPath = /*[[${contextPath}]]*/ '';
+        const apiActivityDetailsUrl = contextPath + '/admin/onboarding/api/activity-details';
+
+        try {
+            const res = await fetch(apiActivityDetailsUrl);
+            if (!res.ok) throw new Error('Network response was not ok: ' + res.status);
+            allActivityDetails = await res.json();
+        } catch (e) {
+            console.error("❌ Failed to load activityDetails:", e);
+        }
+
+        activitySelect.addEventListener('change', function() {
+            const selectedActivityId = parseInt(this.value);
+            activityDetailsSelect.innerHTML = '<option value="">-- Выберите расшифровку --</option>';
+
+            if (!isNaN(selectedActivityId) && selectedActivityId > 0) {
+                const filtered = allActivityDetails.filter(d => d.activity?.id === selectedActivityId);
+                filtered.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d.id;
+                    opt.textContent = d.activityDetailsName;
+                    activityDetailsSelect.appendChild(opt);
+                });
+            }
+        });
+
+        activityDetailsSelect.addEventListener('change', function() {
+            const selectedDetailId = parseInt(this.value);
+            const selectedDetail = allActivityDetails.find(d => d.id === selectedDetailId);
+            const mentorWrapper = document.getElementById('mentorWrapper');
+            const onboardingRoleInput = document.querySelector('input[name="onboardingRoleId"]');
+
+            if (!selectedDetail || !selectedDetail.onboardingRole?.id) {
+                onboardingRoleInput.value = "";
+                document.getElementById('onboardingRoleDisplay').textContent = "— Не выбрана —";
+                if (mentorWrapper) mentorWrapper.style.display = 'none';
+                return;
+            }
+
+            const onboardingRoleId = selectedDetail.onboardingRole.id;
+            const onboardingRoleName = selectedDetail.onboardingRole.roleName?.trim();
+
+            // Записываем ID роли
+            onboardingRoleInput.value = onboardingRoleId.toString();
+            document.getElementById('onboardingRoleDisplay').textContent = onboardingRoleName || `ID ${onboardingRoleId}`;
+
+            // ✅ Логика: показываем поле наставника только если роль — "Наставник"
+            if (onboardingRoleName === "Наставник") {
+                if (mentorWrapper) mentorWrapper.style.display = 'block';
+            } else {
+                if (mentorWrapper) mentorWrapper.style.display = 'none';
+            }
+        });
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>

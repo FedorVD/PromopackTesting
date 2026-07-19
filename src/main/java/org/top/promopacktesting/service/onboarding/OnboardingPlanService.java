@@ -3,6 +3,7 @@ package org.top.promopacktesting.service.onboarding;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.top.promopacktesting.model.AssignStatus;
 import org.top.promopacktesting.model.onboarding.Equipment;
 import org.top.promopacktesting.model.onboarding.OnboardingPlan;
 import org.top.promopacktesting.model.onboarding.OnboardingRole;
@@ -18,7 +19,7 @@ public class OnboardingPlanService {
     @Autowired
     private OnboardingPlanRepository onboardingPlanRepository;
 
-    public Optional<OnboardingPlan> findByOnboardingPlanId(Long id) {
+    public Optional<OnboardingPlan> getById(Long id) {
         return onboardingPlanRepository.findById(id);
     }
 
@@ -32,6 +33,21 @@ public class OnboardingPlanService {
 
     public OnboardingPlan save(OnboardingPlan onboardingPlan) {
         return onboardingPlanRepository.save(onboardingPlan);
+    }
+
+    public List<OnboardingPlan> getOnboardingPlans(boolean showClosed) {
+        if (showClosed) { return findAll();
+        }else {
+            return onboardingPlanRepository.findAllByStatusNot(AssignStatus.COMPLETED);
+        }
+    }
+
+    public Optional<OnboardingPlan> findByOnboardingPlanId(Long id) {
+        return onboardingPlanRepository.findById(id);
+    }
+
+    public Optional<OnboardingPlan> findByOnboardingPlanIdWithStages(Long id) {
+        return onboardingPlanRepository.findByIdWithStages(id);
     }
 
 /*    public void updateOnboardingPlan(Long id, OnboardingPlan onboardingPlan) {

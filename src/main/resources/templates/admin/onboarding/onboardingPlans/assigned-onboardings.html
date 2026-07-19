@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Назначенные программы адаптации</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Назначенные программы адаптации', username=${username}, message=${message}, error=${error})}">
+    </div>
+</head>
+<body>
+
+<div th:fragment="content-body">
+    <h3>Назначенные программы адаптации</h3>
+
+    <!-- Кнопка создания новой программы -->
+    <div class="action-buttons" style="margin-bottom: 20px;">
+        <a href="#" th:href="@{/admin/onboarding/onboardingPlans/add-onboarding}" class="btn btn-primary">Создать программу адаптации</a>
+    </div>
+
+    <!-- Фильтр: показывать закрытые программы -->
+    <div class="filter-form">
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox" id="showClosed" name="showClosed" th:checked="${showClosed}"
+                       onchange="this.form.submit()" />
+                Показывать закрытые программы
+            </label>
+        </div>
+    </div>
+
+    <!-- Таблица программ -->
+    <div class="table-container">
+        <table class="data-table" style="table-layout: fixed;">
+            <thead>
+            <tr>
+                <th style="width: 10%;">№ п/п</th>
+                <th style="width: 20%;">Сотрудник</th>
+                <th style="width: 25%;">Программа адаптации</th>
+                <th style="width: 15%;">Назначена</th>
+                <th style="width: 10%;">Статус</th>
+                <th style="width: 20%;">Действия</th>
+            </tr>
+            </thead>
+        </table>
+        <div class="table-body">
+            <table class="data-table" style="table-layout: fixed;">
+                <tbody>
+                <tr th:each="plan : ${onboardingPlans}">
+                    <td style="width: 10%;" th:text="${plan.id}">1</td>
+                    <td style="width: 20%;" th:text="${plan.employee.name}">Иванов И.И.</td>
+                    <td style="width: 25%;" th:text="${plan.equipment.name}">Станок 1</td>
+                    <td style="width: 15%;" th:text="${#temporals.format(plan.assignedAt, 'dd.MM.yyyy')}">01.06.2026</td>
+                    <td style="width: 10%;">
+                        <span th:if="${plan.status.name() == 'CLOSED'}" class="badge badge-secondary">Закрыта</span>
+                        <span th:unless="${plan.status.name() == 'CLOSED'}" class="badge badge-primary">Активна</span>
+                    </td>
+                    <td style="width: 20%; text-align: left;">
+                        <a href="#" th:if="${plan.status.name() != 'CLOSED'}" th:href="@{'/admin/onboarding/onboardingPlans/' + ${plan.id} + '/edit'}" class="btn btn-sm">Редактировать</a>
+                        <a href="#" th:href="@{'/admin/onboarding/onboardingPlans/' + ${plan.id} + '/view'}" class="btn btn-sm">Просмотр</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Пустое состояние -->
+    <div th:if="${#lists.isEmpty(onboardingPlans)}" class="empty-state">
+        <p>Список программ адаптации пуст.</p>
+    </div>
+
+    <!-- Ссылка на возврат -->
+    <div class="back-link">
+        <a href="#" th:href="@{/admin/onboarding}">&larr; Вернуться в адаптацию</a>
+    </div>
+</div>
+
+</body>
+</html>

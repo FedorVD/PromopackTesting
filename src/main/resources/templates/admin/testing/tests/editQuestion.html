@@ -11,11 +11,11 @@
 <div th:replace="admin/_fragments :: layout(title='Редактирование вопроса', username=${username}, message=${message}, error=${error})">
 </div> <br/>
 
-<a th:href="@{/templates/admin/testing/tests/{id}/viewTest(id=${question.test.id})}">Назад к списку вопросов</a><br /><br />
+<a th:href="@{/admin/testing/tests/{id}/viewTest(id=${question.test.id})}">Назад к списку вопросов</a><br /><br />
 
 <div class="form-question-container" style="display: flex; gap: 30px; width: 100%;">
     <form action="#"
-          th:action="@{/templates/admin/testing/tests/{id}/editQuestion(id=${question.id})}"
+          th:action="@{/admin/testing/tests/{id}/editQuestion(id=${question.id})}"
           method="post"
           enctype="multipart/form-data"
           class="form-left"

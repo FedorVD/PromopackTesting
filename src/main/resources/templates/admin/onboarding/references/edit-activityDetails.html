@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Редактирование расшифровки действия</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Редактирование расшифровки', username=${username}, message=${message}, error=${error})}">
+    </div>
+</head>
+<body>
+
+<div th:fragment="content-body">
+    <h3>Редактирование расшифровки действия</h3>
+    <p>Измените информацию о расшифровке действия.</p>
+
+    <!-- Форма редактирования -->
+    <form method="post" th:action="@{'/admin/onboarding/references/' + ${activityDetails.id} + '/edit-activityDetails'}" class="form">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+        <input type="hidden" name="activityDetailsId" th:value="${activityDetails.id}" />
+
+        <div class="form-group">
+            <label for="name">Наименование расшифровки</label>
+            <input type="text"
+                   id="name"
+                   name="name"
+                   class="form-input"
+                   th:value="${activityDetails.activityDetailsName}"
+                   required
+                   autofocus />
+        </div>
+
+        <div class="form-group">
+            <label for="activityId">Действие</label>
+            <select id="activityId" name="activityId" class="form-select" required>
+                <option value="">Выберите действие</option>
+                <th:block th:each="activity : ${activities}">
+                    <option th:value="${activity.id}"
+                            th:text="${activity.activityName}"
+                            th:selected="${activityDetails.activity != null and activityDetails.activity.id == activity.id}"></option>
+                </th:block>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="onboardingRoleId">Роль в адаптации</label>
+            <select id="onboardingRoleId" name="OnboardingRoleId" class="form-select" required>
+                <option value="">Выберите роль</option>
+                <th:block th:each="role : ${onboardingRoles}">
+                    <option th:value="${role.id}"
+                            th:text="${role.roleName}"
+                            th:selected="${activityDetails.onboardingRole != null and activityDetails.onboardingRole.id == role.id}"></option>
+                </th:block>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-save">Сохранить изменения</button>
+            <a href="#" th:href="@{/admin/onboarding/references/activityDetails}" class="btn btn-cancel">Отмена</a>
+        </div>
+    </form>
+
+    <!-- Ссылка на возврат -->
+    <div class="back-link">
+        <a href="#" th:href="@{/admin/onboarding/references/activityDetails}">&larr; Вернуться к списку расшифровок</a>
+    </div>
+</div>
+
+</body>
+</html>

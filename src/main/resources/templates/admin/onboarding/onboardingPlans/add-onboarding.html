@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Создать программу адаптации</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Создание программы адаптации', username=${username}, message=${message}, error=${error})}">
+    </div>
+</head>
+<body>
+
+<!-- Верхняя часть страницы
+<header>
+    <h1>Административная панель</h1>
+    <p>Вы вошли как: <strong th:text="${username}">Username</strong></p>
+</header>
+
+
+<div class="nav-menu">
+    <a href="/admin/onboarding">Адаптация сотрудников</a>
+    <a href="/admin/testing">Тестирование</a>
+    <a href="/admin/users/users">Управление пользователями</a>
+    <span class="logout-link">Выйти</span>
+</div>
+
+
+<div th:if="${message}" class="message success">
+    <p th:text="${message}">Сообщение</p>
+</div>
+
+<div th:if="${error}" class="message error">
+    <p th:text="${error}">Ошибка</p>
+</div> -->
+
+<div th:fragment="content-body">
+    <div class="container">
+        <h3>Создание новой программы адаптации</h3>
+        <p>Заполните форму для создания новой программы адаптации.</p>
+
+        <!-- Форма добавления -->
+        <form method="post" th:action="@{/admin/onboarding/onboardingPlans/add-onboarding}" class="form">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+
+            <div class="form-group">
+                <label for="employee">Сотрудник</label>
+                <!-- Стилизованный input для datalist -->
+                <div class="input-select-wrapper">
+                    <input list="employeesList" id="employee" name="employee" class="form-select" placeholder="Начните вводить имя сотрудника..." required />
+                    <datalist id="employeesList">
+                        <th:block th:each="user : ${users}">
+                            <option th:value="${user.name}" th:data-id="${user.id}"></option>
+                        </th:block>
+                    </datalist>
+                </div>
+                <input type="hidden" id="employeeId" name="employeeId" />
+            </div>
+
+            <div class="form-group">
+                <label for="equipment">Оборудование (станок)</label>
+                <select id="equipment" name="equipmentId" class="form-control" required>
+                    <option value="">-- Выберите оборудование --</option>
+                    <th:block th:each="equip : ${equipment}">
+                        <option th:value="${equip.id}" th:text="${equip.name}">Станок 1</option>
+                    </th:block>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="assignedAt">Дата назначения</label>
+                <input type="date"
+                       id="assignedAt"
+                       name="assignedAt"
+                       class="form-input"
+                       th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save">Создать программу</button>
+                <a href="#" th:href="@{/admin/onboarding/onboardingPlans/assigned-onboardings}" class="btn btn-cancel">Отмена</a>
+            </div>
+        </form>
+
+        <!-- Ссылка на возврат -->
+        <div class="back-link">
+            <a href="#" th:href="@{/admin/onboarding/onboardingPlans/assigned-onboardings}">&larr; Вернуться к списку программ</a>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+document.addEventListener('DOMContentLoaded', function() {
+    const employeeInput = document.getElementById('employee');
+    const employeeIdHidden = document.getElementById('employeeId');
+    const employeesList = document.getElementById('employeesList');
+
+    // Обработка выбора из datalist
+    employeeInput.addEventListener('change', function() {
+        const selectedText = employeeInput.value;
+        const option = Array.from(employeesList.options).find(opt => opt.value === selectedText);
+        if (option) {
+            employeeIdHidden.value = option.dataset.id;
+        } else {
+            employeeIdHidden.value = '';
+        }
+    });
+
+    // Также обновляем при вводе (опционально, для UX)
+    employeeInput.addEventListener('input', function() {
+        if (!employeeInput.value) {
+            employeeIdHidden.value = '';
+        }
+    });
+});
+/*]]>*/
+</script>
+
+</body>
+</html>

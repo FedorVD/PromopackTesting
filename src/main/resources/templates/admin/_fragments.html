@@ -6,38 +6,17 @@
   <title th:inline="text">[[${title}]]</title>
   <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
-
 </head>
 <body>
 
-<!-- Верхняя часть страницы -->
-<header>
-  <h1>Административная панель</h1>
-  <p>Вы вошли как: <strong th:text="${username}">Username</strong></p>
-</header>
-
-<!-- Навигационное меню -->
-<div class="nav-menu">
-  <a href="/admin/onboarding">Адаптация сотрудников</a>
-  <a href="/admin/testing">Тестирование</a>
-  <a href="/admin/users/users">Управление пользователями</a>
-  <span class="logout-link">Выйти</span>
-</div>
-
-<!-- Сообщения -->
-<div th:if="${message}" style="color: green;">
-  <p th:text="${message}">Сообщение</p>
-</div>
-
-<div th:if="${error}" style="color: red;">
-  <p th:text="${error}">Ошибка</p>
-</div>
-
 <div th:fragment="layout(title, username, message, error)">
+  <!-- Верхняя часть страницы -->
+  <header>
+    <h1>Административная панель</h1>
+    <p>Вы вошли как: <strong th:text="${username}">Username</strong></p>
+  </header>
 
-  <h1 th:text="${title}">Заголовок</h1>
-  <p>Вы вошли как: <strong th:text="${username}">Username</strong></p>
-
+  <!-- Навигационное меню -->
   <div class="nav-menu">
     <a href="/admin/onboarding">Адаптация сотрудников</a>
     <a href="/admin/testing">Тестирование</a>
@@ -45,19 +24,17 @@
     <span class="logout-link">Выйти</span>
   </div>
 
-  <form id="logout-form" method="post" action="/logout" style="display: none;">
-    <input type="hidden"
-           th:name="${_csrf.parameterName}"
-           th:value="${_csrf.token}" />
-  </form>
-
-  <div th:if="${message}" style="color: green;">
+  <!-- Сообщения -->
+  <div th:if="${message}" class="message success">
     <p th:text="${message}">Сообщение</p>
   </div>
 
-  <div th:if="${error}" style="color: red;">
+  <div th:if="${error}" class="message error">
     <p th:text="${error}">Ошибка</p>
   </div>
+
+  <!-- Контент страницы -->
+  <!-- <div th:insert="${contentBody}" /> -->
 </div>
 
 <script src="/js/logout.js" defer></script>

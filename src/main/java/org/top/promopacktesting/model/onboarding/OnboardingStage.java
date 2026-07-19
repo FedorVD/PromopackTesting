@@ -7,7 +7,8 @@ import lombok.Setter;
 import org.top.promopacktesting.model.AssignStatus;
 import org.top.promopacktesting.model.User;
 
-import java.time.LocalDateTime;
+import javax.management.relation.Role;
+import java.time.LocalDate;
 
 //Сущность одной записи табличной части документа План адаптации
 @Entity
@@ -21,39 +22,47 @@ public class OnboardingStage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "shift", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Shift shiftName;
 
-    @Column(name = "start_time")
-    private LocalDateTime startTime;
+    @Column(name = "deadline")
+    private LocalDate deadline;
 
-    @Column(name = "end_time")
-    private LocalDateTime endTime;
-
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "onboarding_id", referencedColumnName = "id")
     private OnboardingPlan onboardingPlan;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @Column(name = "onboarding_id", insertable = false, updatable = false)
+    private Long onboardingPlanId;
+
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "activity_id", referencedColumnName = "id")
     private Activity activity;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "regulatory_doc_id", referencedColumnName = "id")
     private RegulatoryDoc regulatoryDoc;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "activity_details_id", referencedColumnName = "id")
     private ActivityDetails activityDetails;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "mentor_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "onboardingRole_id", referencedColumnName = "id")
+    private OnboardingRole onboardingRole;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "mentor_id", referencedColumnName = "id")
     private User mentor;
 
     @Column(name = "status")
     private AssignStatus status;
 
     @Column(name = "finished_at")
-    private LocalDateTime finishedAt;
+    private LocalDate finishedAt;
 
+    public void setShift(Shift shift) {
+        this.shiftName = shift;
+    }
 }

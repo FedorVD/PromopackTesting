@@ -13,7 +13,7 @@
 
 <a href="/admin/tests/tests">Назад к списку тестов</a><br /><br />
 
-<form action="#" th:action="@{/templates/admin/testing/tests/{id}/edit(id=${test.id})}" method="post">
+<form action="#" th:action="@{/admin/testing/tests/{id}/edit(id=${test.id})}" method="post">
     <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
     <input type="hidden" name="id" th:value="${test.id}" />
 

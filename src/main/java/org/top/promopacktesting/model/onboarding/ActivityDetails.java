@@ -18,14 +18,14 @@ public class ActivityDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "activity_details_name", nullable = false)
+    @Column(name = "activity_details_name", nullable = false, length = 1024)
     private String activityDetailsName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "activity_id", nullable = false)
     private Activity activity;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "onboarding_role_id", nullable = false, unique = true, referencedColumnName = "id")
+    @JoinColumn(name = "onboarding_role_id", nullable = false, referencedColumnName = "id")
     private OnboardingRole onboardingRole;
 }

@@ -84,7 +84,7 @@ public class TestManagementController {
         model.addAttribute("search", search);
         model.addAttribute("selectedThemeId", themeId);
         model.addAttribute("themes", themeTestService.getAllThemeTests());
-        return "/admin/testing/tests/tests";
+        return "admin/testing/tests/tests";
     }
 
     @GetMapping("/addTest")
@@ -93,11 +93,11 @@ public class TestManagementController {
         List<ThemeTest> themeTests = themeTestService.getAllThemeTests();
         if (themeTests.isEmpty()) {
             model.addAttribute("error", "Нет доступных тем для создания теста");
-            return "/admin/testing/tests/tests";
+            return "admin/testing/tests/tests";
         }
         model.addAttribute("test", new Test());
         model.addAttribute("themeTests", themeTests);
-        return "/admin/testing/tests/addTest";
+        return "admin/testing/tests/addTest";
     }
 
     @PostMapping("/addTest")
@@ -114,7 +114,7 @@ public class TestManagementController {
 
             if (userOpt.isEmpty()) {
                 model.addAttribute("error", "Пользователь не найден");
-                return "/admin/testing/tests/addTest";
+                return "admin/testing/tests/addTest";
             }
             User creator = userOpt.get();
             Test newTest = new Test(testName, creator, passingScore);
@@ -185,7 +185,7 @@ public class TestManagementController {
                 .orElseThrow(() -> new RuntimeException("Тест не найден"));
 
         model.addAttribute("test", test);
-        return "/admin/testing/tests/viewTest";
+        return "admin/testing/tests/viewTest";
     }
 
     @GetMapping("/{testId}/addQuestion")
@@ -195,7 +195,7 @@ public class TestManagementController {
                 .orElseThrow(() -> new RuntimeException("Тест не найден"));
         model.addAttribute("question", new Question());
         model.addAttribute("test", test);
-        return "/admin/testing/tests/addQuestion";
+        return "admin/testing/tests/addQuestion";
     }
 
     @PostMapping("/{testId}/addQuestion")

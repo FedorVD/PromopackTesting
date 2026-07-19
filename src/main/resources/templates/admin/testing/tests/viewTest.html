@@ -12,7 +12,7 @@
 </div> <br/>
 
 <h2>
-    <form action="#" th:action="@{/templates/admin/testing/tests/__${test.id}__/editTest}" method="post">
+    <form action="#" th:action="@{/admin/testing/tests/__${test.id}__/editTest}" method="post">
         <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
         <input type="text" name="newName" th:value="${test.name}" required/>
         <button type="submit">Сохранить</button>
@@ -23,11 +23,11 @@
 <ul>
     <li th:each="question : ${test.questions}">
         <!-- Ссылка на редактирование вопроса -->
-        <a th:href="@{/templates/admin/testing/tests/{id}/editQuestion(id=${question.id})}" th:text="'Редактировать ' + ${question.text}"></a>
+        <a th:href="@{/admin/testing/tests/{id}/editQuestion(id=${question.id})}" th:text="'Редактировать ' + ${question.text}"></a>
     </li>
 </ul>
 
-<a th:href="@{/templates/admin/testing/tests/{id}/addQuestion(id=${test.id})}">Добавить вопрос</a><br />
+<a th:href="@{/admin/testing/tests/{id}/addQuestion(id=${test.id})}">Добавить вопрос</a><br />
 
 <a href="/admin/tests/tests">Назад к списку тестов</a><br />
 

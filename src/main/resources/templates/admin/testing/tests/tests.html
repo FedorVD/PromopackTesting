@@ -14,7 +14,7 @@
 <div class="container mt-4">
     <h2>Список тестов</h2>
 
-    <form action="#" th:action="@{/templates/admin/testing/tests/tests}" method="get">
+    <form action="#" th:action="@{/admin/testing/tests/tests}" method="get">
         <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
 
         <div class="form-group">
@@ -74,8 +74,8 @@
                 <span th:unless="${test.isActive}" class="badge bg-danger">Неактивный</span>
             </td>
             <td>
-                <a th:href="@{/templates/admin/testing/tests/{id}/viewTest(id=${test.id})}" class="btn btn-sm btn-info">Вопросы</a>
-                <a th:href="@{/templates/admin/testing/tests/{id}/edit(id=${test.id})}" class="btn btn-sm btn-secondary">Редактировать</a>
+                <a th:href="@{/admin/testing/tests/{id}/viewTest(id=${test.id})}" class="btn btn-sm btn-info">Вопросы</a>
+                <a th:href="@{/admin/testing/tests/{id}/edit(id=${test.id})}" class="btn btn-sm btn-secondary">Редактировать</a>
             </td>
         </tr>
         </tbody>

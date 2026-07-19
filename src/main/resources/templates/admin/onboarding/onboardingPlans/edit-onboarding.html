@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Редактировать программу адаптации</title>
+    <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <div th:replace="~{admin/_fragments :: layout(title='Редактирование программы адаптации', username=${username}, message=${message}, error=${error})}">
+    </div>
+</head>
+
+<body>
+<div th:fragment="content-body">
+    <div class="container">
+        <h3>Редактирование программы адаптации</h3>
+        <p>Измените параметры программы адаптации.</p>
+
+        <!-- Информация о сотруднике (только для чтения) -->
+        <div class="form-group" style="background-color: #f5f5f5; padding: 15px; border-radius: 6px;">
+            <label>Сотрудник</label>
+            <input type="text" class="form-input" th:value="${plan.employee.name}" disabled />
+        </div>
+
+        <!-- Форма редактирования -->
+        <form method="post" th:action="@{/admin/onboarding/onboardingPlans/{id}/edit(id=${plan.id})}" class="form">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+
+            <div class="form-group">
+                <label for="equipment">Оборудование (станок)</label>
+                <select id="equipment" name="equipmentId" class="form-control" required>
+                    <option value="">-- Выберите оборудование --</option>
+                    <th:block th:each="equip : ${equipment}">
+                        <option th:value="${equip.id}" 
+                                th:text="${equip.name}"
+                                th:selected="${equip.id == plan.equipment.id}">Станок 1</option>
+                    </th:block>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="assignedAt">Дата назначения</label>
+                <input type="date"
+                       id="assignedAt"
+                       name="assignedAt"
+                       class="form-control"
+                       th:value="${#temporals.format(plan.assignedAt, 'yyyy-MM-dd')}">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save">Сохранить</button>
+                <a href="#" th:href="@{/admin/onboarding/onboardingPlans/assigned-onboardings}" class="btn btn-cancel">Отмена</a>
+            </div>
+        </form>
+
+        <h4 style="margin-top: 30px;">План адаптации (действия с расшифровками)</h4>
+
+        <div class="form-actions" style="margin-bottom: 20px;">
+            <a href="#" th:href="@{/admin/onboarding/onboardingPlans/{id}/add-stage(id=${plan.id})}"
+               class="btn btn-save">➕ Добавить действие</a>
+        </div>
+
+        <!-- Таблица текущих действий -->
+        <div class="table-container" style="margin-top: 20px;">
+            <table class="data-table" style="table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th style="width: 9%;">Срок</th>
+                    <th style="width: 10%;">Смена</th>
+                    <th style="width: 10%;">Действие</th>
+                    <th style="width: 20%;">Нормативный документ</th>
+                    <th style="width: 30%;">Расшифровка</th>
+                    <th style="width: 10%;">Наставник</th>
+                    <th style="width: 7%;">Выполнить</th>
+                    <th style="width: 7%; text-align: center;">✏️</th>
+                    <th style="width: 7%; text-align: center;">🗑️</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${stagesWithFlag}">
+                    <td style="width: 9%;" th:text="${item.deadlineStr}">2026-06-07</td>
+                    <td style="width: 10%;" th:text="${item.shiftName}">MORNING</td>
+                    <td style="width: 10%; white-space: normal; word-wrap: break-word; overflow-wrap: break-word;"
+                        th:text="${item.stage.activity.activityName}">Ознакомление с предприятием</td>
+                    <td style="width: 20%; white-space: normal; word-wrap: break-word; overflow-wrap: break-word;"
+                        th:text="${item.stage?.regulatoryDoc.docName}">Инструкция</td>
+                    <td style="width: 30%; white-space: normal; word-wrap: break-word; overflow-wrap: break-word;"
+                        th:text="${item.stage.activityDetails.activityDetailsName}">Пройти в кабинет к HR</td>
+                    <td style="width: 10%; white-space: normal; word-wrap: break-word; overflow-wrap: break-word;"
+                        th:text="${item.stage.onboardingRole.roleName}">Ответственный</td>
+                    <td style="width: 7%;" th:if="${item.isOverdue}">
+                        <button type="button"
+                                class="btn btn-success action-done-btn"
+                                th:attr="data-stage-id=${item.stage.id}"
+                                th:text="'✅ Исполнено'">
+                        </button>
+                    </td>
+                    <td style="width: 7%; text-align: center;">
+                        <a href="#" th:href="@{/admin/onboarding/onboardingPlans/{id}/edit-stage(id=${item.stage.id})}"
+                           class="btn btn-sm btn-outline-primary"
+                           title="Редактировать">
+                        </a>
+                    </td>
+                    <td style="width: 5%; text-align: center;">
+                        <form method="post" th:action="@{/admin/onboarding/onboardingPlans/{id}/delete-stage(id=${item.stage.id})}"
+                              style="display: inline;" onsubmit="return confirmDelete(event, this);">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    title="Удалить"
+                                    onclick="preventDefault(); this.closest('form').submit();">
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Ссылка на возврат -->
+        <div class="back-link">
+            <a href="#" th:href="@{/admin/onboarding/onboardingPlans/assigned-onboardings}">&larr; Вернуться к списку программ</a>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', async function() {
+        console.log("⚠️ Script loaded! Starting...");
+
+        const activitySelect = document.getElementById('activity');
+        const activityDetailsSelect = document.getElementById('activityDetails');
+        const onboardingRoleInput = document.querySelector('input[name="onboardingRoleId"]');
+
+        if (!activitySelect) {
+            console.error("❌ ERROR: element with id='activity' not found in DOM");
+            return;
+        }
+        if (!activityDetailsSelect) {
+            console.error("❌ ERROR: element with id='activityDetails' not found in DOM");
+            return;
+        }
+        if (!onboardingRoleInput) {
+            console.error("❌ ERROR: input[name='onboardingRoleId'] not found in DOM");
+            return;
+        }
+
+        console.log("✅ DOM ready, all elements found");
+        console.log("onboardingRoleInput:", onboardingRoleInput);
+
+        let allActivityDetails = [];
+
+        const contextPath = /*[[${contextPath}]]*/ '';
+        if (!contextPath || contextPath === '') {
+            console.warn("⚠️ contextPath is empty or undefined!");
+        }
+
+        const apiActivityDetailsUrl = contextPath + '/admin/onboarding/api/activity-details';
+        console.log("Full API URL:", apiActivityDetailsUrl);
+
+        try {
+            const res = await fetch(apiActivityDetailsUrl);
+            console.log("Fetch response:", res.status, res.ok);
+            if (!res.ok) throw new Error('Network response was not ok: ' + res.status);
+            allActivityDetails = await res.json();
+            console.log("✅ Loaded activity details:", allActivityDetails.length, "items");
+        } catch (e) {
+            console.error("❌ Failed to load activityDetails:", e);
+        }
+
+        // 🔹 activitySelect change listener
+        activitySelect.addEventListener('change', function() {
+            const selectedActivityId = parseInt(this.value);
+            activityDetailsSelect.innerHTML = '<option value="">-- Выберите расшифровку --</option>';
+
+            if (!isNaN(selectedActivityId) && selectedActivityId > 0) {
+                const filtered = allActivityDetails.filter(d => d.activity?.id === selectedActivityId);
+                console.log("Filtered details:", filtered);
+
+                filtered.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d.id;
+                    opt.textContent = d.activityDetailsName;
+                    activityDetailsSelect.appendChild(opt);
+                });
+            }
+        });
+
+        // 🔹 activityDetailsSelect change listener — ВНУТРИ DOMContentLoaded!
+        activityDetailsSelect.addEventListener('change', function() {
+            const selectedDetailId = parseInt(this.value);
+            console.log("🔥 ActivityDetails selected:", selectedDetailId);
+
+            const selectedDetail = allActivityDetails.find(d => d.id === selectedDetailId);
+            if (!selectedDetail) {
+                console.warn("⚠️ Selected detail not found");
+                onboardingRoleInput.value = "";
+                document.getElementById('onboardingRoleDisplay').textContent = "— Не выбрана —";
+                return;
+            }
+
+            console.log("Selected detail:", selectedDetail);
+            console.log("Selected detail.onboardingRole:", selectedDetail.onboardingRole);
+
+            if (selectedDetail.onboardingRole && selectedDetail.onboardingRole.id) {
+                const onboardingRoleId = selectedDetail.onboardingRole.id;
+                onboardingRoleInput.value = onboardingRoleId.toString();
+
+                // ✅ ДОБАВЛЕНО: обновляем отображение
+                const roleDisplay = document.getElementById('onboardingRoleDisplay');
+                roleDisplay.textContent = selectedDetail.onboardingRole.roleName || `ID ${onboardingRoleId}`;
+                console.log("✅ onboardingRoleId set to:", onboardingRoleId, ", Display:", roleDisplay.textContent);
+            } else {
+                console.warn("⚠️ selectedDetail.onboardingRole is null or has no id");
+                onboardingRoleInput.value = "";
+                document.getElementById('onboardingRoleDisplay').textContent = "— Не выбрана —";
+            }
+        });
+
+        // 🔹 Второй скрипт (mentor-select-wrapper) — тоже ВНУТРИ DOMContentLoaded
+        const roleToMentorWrappers = document.querySelectorAll(".form-role-select");
+        const mentorWrappers = document.querySelectorAll(".mentor-select-wrapper");
+
+        roleToMentorWrappers.forEach((select, idx) => {
+            select.addEventListener("change", function () {
+                const selectedText = this.selectedOptions[0]?.innerText.trim() || "";
+                const stageIndex = this.getAttribute("data-role-index");
+
+                mentorWrappers.forEach(wrapper => {
+                    const index = wrapper.getAttribute("data-stage-index");
+                    const expectedRole = wrapper.getAttribute("data-show-if-role-is");
+
+                    if (index === String(idx) && selectedText === expectedRole) {
+                        wrapper.style.display = "block";
+                    } else if (index === String(idx)) {
+                        wrapper.style.display = "none";
+                    }
+                });
+            });
+        });
+    });
+    function confirmDelete(e, form) {
+        if (!confirm("Вы уверены, что хотите удалить это действие?")) {
+            return false;
+        }
+        return true;
+    }
+    /*]]>*/
+</script>
+
+</body>
+</html>
