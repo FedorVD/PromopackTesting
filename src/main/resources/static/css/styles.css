@@ -623,13 +623,7 @@ input.form-control:focus {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-}
-
-.scroll-section .table-container {
-    flex: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    position: relative;
 }
 
 .section-header {
@@ -645,9 +639,11 @@ input.form-control:focus {
 .scroll-section table {
     width: 100%;
     border-collapse: collapse;
+    display: table;
 }
 
 .scroll-section thead {
+    display: table-header-group;
     background-color: #fafafa;
 }
 
@@ -655,25 +651,97 @@ input.form-control:focus {
     padding: 10px;
     text-align: left;
     border-bottom: 1px solid #eee;
+    display: table-cell;
 }
 
 .scroll-section tbody {
-    height: calc(500px - 80px); /* Высота без заголовка */
+    display: table-row-group; /* ← ВАЖНО: не block */
+    max-height: 420px; /* Ограничиваем высоту */
     overflow-y: auto;
-    display: block;
 }
 
 .scroll-section tbody tr {
-    display: table;
+    display: table-row;
     width: 100%;
-    table-layout: fixed;
 }
 
-.table-container {
+/* Обертка для прокрутки */
+.table-scroll-wrapper {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto;
     position: relative;
-    flex: 1;
-    overflow: hidden;
 }
+
+/* Таблица с фиксированным заголовком */
+.table-scroll-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Фиксированный заголовок */
+.table-scroll-wrapper thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #f1f1f1;
+}
+
+/* Ячейки с отступами */
+.table-scroll-wrapper th,
+.table-scroll-wrapper td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    white-space: nowrap;
+}
+
+/* Фиксированная ширина колонок
+.table-scroll-wrapper th:first-child,
+.table-scroll-wrapper td:first-child {
+    width: 9%;
+}
+
+.table-scroll-wrapper th:nth-child(2),
+.table-scroll-wrapper td:nth-child(2) {
+    width: 10%;
+}
+
+.table-scroll-wrapper th:nth-child(3),
+.table-scroll-wrapper td:nth-child(3) {
+    width: 10%;
+}
+
+.table-scroll-wrapper th:nth-child(4),
+.table-scroll-wrapper td:nth-child(4) {
+    width: 20%;
+}
+
+.table-scroll-wrapper th:nth-child(5),
+.table-scroll-wrapper td:nth-child(5) {
+    width: 27%;
+}
+
+.table-scroll-wrapper th:nth-child(6),
+.table-scroll-wrapper td:nth-child(6) {
+    width: 10%;
+}
+
+
+.table-scroll-wrapper th:nth-child(7),
+.table-scroll-wrapper td:nth-child(7) {
+    width: 10%;
+}
+
+.table-scroll-wrapper th:nth-child(8),
+.table-scroll-wrapper td:nth-child(8) {
+    width: 7%;
+}
+
+.table-scroll-wrapper th:nth-child(9),
+.table-scroll-wrapper td:nth-child(9) {
+    width: 7%;
+} */
 
 .data-table {
     width: 100%;
@@ -694,8 +762,8 @@ input.form-control:focus {
 .table-body {
     flex: 1;
     overflow-y: auto;
-    max-height: 420px;
-    display: block;
+    max-height: 500px;
+    /*display: block;*/
 }
 
 .table-body table {

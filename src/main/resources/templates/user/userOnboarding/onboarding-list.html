@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Мои программы адаптации</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+<div class="container">
+  <h2>Мои активные программы адаптации</h2>
+
+  <p th:if="${message}" th:text="${message}"
+     style="color: #666; font-style: italic; margin-bottom: 20px;"></p>
+
+  <div th:if="${!#lists.isEmpty(plans)}">
+    <div th:each="entry : ${planToStages}" style="margin-bottom: 20px;">
+      <!-- Карточка плана -->
+      <div style="border: 1px solid #ddd; padding: 16px; border-radius: 8px; background-color: #fafafa;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h4 th:text="'Программа адаптации #' + ${entry.key.id} + ' — ' + ${entry.key.employee.name}">
+            Программа #123 — Иванов Иван
+          </h4>
+          <a th:href="@{/user/onboarding/{id}(id=${entry.key.id})}"
+             class="btn btn-primary"
+             style="padding: 8px 16px; text-decoration: none; border-radius: 4px; background-color: #007bff; color: white;">
+            Открыть план
+          </a>
+        </div>
+
+        <p>
+          <strong>Оборудование:</strong>
+          <span th:text="${entry.key.equipment?.name ?: 'Не указано'}">Станок #5</span>
+        </p>
+        <p>
+          <strong>Назначено:</strong>
+          <span th:text="${#temporals.format(entry.key.assignedAt, 'dd.MM.yyyy')}">15.03.2026</span>
+        </p>
+
+        <!-- Список незавершённых этапов (только по ролям пользователя) -->
+        <div style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 10px;">
+          <h5 style="margin: 0 0 8px 0; font-size: 1.05rem;">Незавершённые этапы:</h5>
+          <ul th:if="${!#lists.isEmpty(entry.value)}" style="margin: 0; padding-left: 20px;">
+            <li th:each="stage : ${entry.value}" style="margin-bottom: 4px;">
+              <span th:text="${stage.activity.activityName}">Ознакомление с предприятием</span>
+              <small th:if="${stage.deadline}" style="color: #666;">
+                (до: <span th:text="${#temporals.format(stage.deadline, 'dd.MM.yyyy')}">20.06.2026</span>)
+              </small>
+              <small th:if="${stage.onboardingRole}" style="color: #666; margin-left: 8px;">
+                | Роль: <span th:text="${stage.onboardingRole.roleName}">Ментор</span>
+              </small>
+            </li>
+          </ul>
+          <p th:if="${#lists.isEmpty(entry.value)}" style="color: #888; font-style: italic; margin: 0;">
+            Нет активных этапов (все выполнены)
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div th:if="${#lists.isEmpty(plans) and !message}">
+    <p style="color: #666;">У вас пока нет назначений в программах адаптации.</p>
+  </div>
+</div>
+</body>
+</html>

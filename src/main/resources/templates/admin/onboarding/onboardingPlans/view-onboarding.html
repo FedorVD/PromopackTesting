@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Программа адаптации — Просмотр</title>
+  <link rel="icon" href="/promopack_logo.ico" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <div th:replace="~{admin/_fragments :: layout(title='Программа адаптации', username=${username}, message=${message}, error=${error})}">
+  </div>
+</head>
+
+<body>
+<div th:fragment="content-body">
+  <div class="container">
+    <h3>Программа адаптации</h3>
+
+    <!-- Информация о сотруднике -->
+    <div class="form-group" style="background-color: #f5f5f5; padding: 15px; border-radius: 6px;">
+      <label>Сотрудник</label>
+      <div class="form-input" th:text="${plan.employee.name}"></div>
+    </div>
+
+    <!-- Информация об оборудовании -->
+    <div class="form-group" style="background-color: #f5f5f5; padding: 15px; border-radius: 6px; margin-top: 10px;">
+      <label>Оборудование (станок)</label>
+      <div class="form-input" th:text="${plan.equipment.name ?: 'Не указано'}"></div>
+    </div>
+
+    <!-- Информация о дате назначения -->
+    <div class="form-group" style="background-color: #f5f5f5; padding: 15px; border-radius: 6px; margin-top: 10px;">
+      <label>Дата назначения</label>
+      <div class="form-input" th:text="${#temporals.format(plan.assignedAt, 'yyyy-MM-dd')}"></div>
+    </div>
+
+    <h4 style="margin-top: 30px;">План адаптации (действия)</h4>
+
+    <!-- Таблица текущих действий -->
+    <div class="table-container" style="margin-top: 20px;">
+      <div class="table-scroll-wrapper">
+        <table class="data-table" style="table-layout: fixed;">
+          <thead>
+          <tr>
+            <th style="width: 9%;">Срок</th>
+            <th style="width: 11%;">Смена</th>
+            <th style="width: 11%;">Действие</th>
+            <th style="width: 22%;">Нормативный документ</th>
+            <th style="width: 30%;">Расшифровка</th>
+            <th style="width: 12%;">Наставник</th>
+            <th style="width: 12%;">Дата выполнения</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="item : ${stagesWithFlag}">
+            <td style="width: 9%;" th:text="${item.deadlineStr}">2026-06-07</td>
+            <td style="width: 11%;" th:text="${item.shiftName}">MORNING</td>
+            <td style="width: 11%; white-space: normal; word-wrap: break-word; overflow-wrap: break-word;"
+                th:text="${item.stage.activity.activityName}">Ознакомление с предприятием</td>
+            <td style="width: 22%; white-space: normal; word-wrap: break-word; overflow-wrap: break-word;"
+                th:text="${item.stage?.regulatoryDoc?.docName} ?: 'Не указан'">Инструкция</td>
+            <td style="width: 30%; white-space: normal; word-wrap: break-word; overflow-wrap: break-word;"
+                th:text="${item.stage.activityDetails.activityDetailsName}">Пройти в кабинет к HR</td>
+            <td style="width: 12%; white-space: normal; word-wrap: break-word; overflow-wrap: break-word;"
+                th:text="${item.stage.onboardingRole.roleName}">Ответственный</td>
+            <td style="width: 12%;" th:text="${item.finished_at}">2026-06-07</td>
+          </tr>
+          <!-- Если нет этапов -->
+          <tr th:if="${#lists.isEmpty(stagesWithFlag)}">
+            <td colspan="7" style="text-align: center; padding: 15px; color: #777;">План адаптации пока пуст</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Ссылка на возврат -->
+    <div class="back-link" style="margin-top: 30px;">
+      <a href="#" th:href="@{/admin/onboarding/onboardingPlans/assigned-onboardings}">&larr; Вернуться к списку программ</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

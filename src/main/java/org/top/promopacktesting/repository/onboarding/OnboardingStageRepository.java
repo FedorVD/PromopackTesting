@@ -2,6 +2,7 @@ package org.top.promopacktesting.repository.onboarding;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.top.promopacktesting.model.onboarding.OnboardingRole;
 import org.top.promopacktesting.model.onboarding.OnboardingStage;
 
 import java.util.List;
@@ -12,6 +13,8 @@ public interface OnboardingStageRepository extends JpaRepository<OnboardingStage
 
     Optional<OnboardingStage> findById(Long id);
     List<OnboardingStage> findByOnboardingPlanId(Long onboardingPlanId);
+
+    List<OnboardingStage> findByOnboardingRoleAndFinishedAtIsNull(OnboardingRole userRole);
 
 /*
     OnboardingStage create (OnboardingStage onboardingStage);

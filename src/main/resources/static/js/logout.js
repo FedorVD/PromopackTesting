@@ -6,9 +6,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const logoutLink = document.querySelector('.logout-link');
     if (logoutLink) {
         console.log('Найден .logout-link'); // Проверка наличия элемента
-        logoutLink.addEventListener('click', function () {
+        logoutLink.addEventListener('click', function (e) {
+            e.preventDefault(); // ← добавить
             console.log('Функция logout() вызвана');
-            document.getElementById('logout-form').submit();
+            const form = document.getElementById('logout-form');
+            if (form) {
+                form.submit();
+            } else {
+                console.error('Form #logout-form not found');
+            }
         });
     } else {
         console.warn('Элемент .logout-link не найден');

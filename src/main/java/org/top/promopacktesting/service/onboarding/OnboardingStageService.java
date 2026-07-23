@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.top.promopacktesting.model.AssignStatus;
+import org.top.promopacktesting.model.onboarding.OnboardingRole;
 import org.top.promopacktesting.model.onboarding.OnboardingStage;
 import org.top.promopacktesting.repository.onboarding.OnboardingStageRepository;
 
@@ -26,9 +27,7 @@ public class OnboardingStageService {
         return onboardingStageRepository.findByOnboardingPlanId(onboardingPlanId);
     }
 
-    public List<OnboardingStage> getByOnboardingPlanId(Long onboardingPlanId) {
-        return onboardingStageRepository.findByOnboardingPlanId(onboardingPlanId);
-    }
+
 
     public OnboardingStage save(OnboardingStage stage) {
 /*
@@ -73,5 +72,9 @@ public class OnboardingStageService {
 
     public void delete(Long stageId) {
         onboardingStageRepository.deleteById(stageId);
+    }
+
+    public List<OnboardingStage> findByOnboardingRoleAndFinishedAtIsNull(OnboardingRole userRole) {
+        return onboardingStageRepository.findByOnboardingRoleAndFinishedAtIsNull(userRole);
     }
 }

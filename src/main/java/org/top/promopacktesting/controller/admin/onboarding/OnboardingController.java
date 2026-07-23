@@ -60,8 +60,10 @@ public class OnboardingController {
     public String assignedOnboardings(
             @RequestParam(value = "showClosed", defaultValue = "false") boolean showClosed,
             Model model) {
+
         List<OnboardingPlan> onboardingPlans = onboardingPlanService.getOnboardingPlans(showClosed);
 
+        model.addAttribute("username", userService.getCurrentUsername());
         model.addAttribute("onboardingPlans", onboardingPlans);
         model.addAttribute("showClosed", showClosed);
         return "admin/onboarding/onboardingPlans/assigned-onboardings";
@@ -69,6 +71,7 @@ public class OnboardingController {
 
     @GetMapping("/onboardingPlans/add-onboarding")
     public String showCreatePlanForm(Model model) {
+        model.addAttribute("username", userService.getCurrentUsername());
         model.addAttribute("plan", new OnboardingPlan());
         model.addAttribute("users", userService.getAllActiveUsers());
         model.addAttribute("equipment", equipmentService.getAll());
@@ -156,43 +159,11 @@ public class OnboardingController {
         }
 
         OnboardingPlan plan = planOpt.get();
-        LocalDate now = LocalDate.now();
 
-        List<Map<String, Object>> stageList = new ArrayList<>();
-        for (OnboardingStage stage : plan.getStages()) {
-            Map<String, Object> stageMap = new HashMap<>();
-            stageMap.put("stage", stage);
-
-            String deadlineStr = (stage.getDeadline() != null)
-                    ? DateTimeFormatter.ofPattern("yyyy-MM-dd").format(stage.getDeadline())
-                    : "";
-            stageMap.put("deadlineStr", deadlineStr);
-            String shiftName = "Первая смена";
-            if (stage.getShiftName().name() == "EVENING") {
-                shiftName = "Вторая смена";
-            }
-            stageMap.put("shiftName", shiftName);
-            boolean isOverdue = stage.getDeadline() != null && !stage.getDeadline().isAfter(now);
-            stageMap.put("isOverdue", isOverdue);
-            stageList.add(stageMap);
-        }
-
-
-
+        model.addAttribute("username", userService.getCurrentUsername());
         model.addAttribute("plan", plan);
         model.addAttribute("equipment", equipmentService.getAll());
-        model.addAttribute("stagesWithFlag", stageList);
-/*
-        model.addAttribute("user", userService.getAllActiveUsers());
-        model.addAttribute("equipment", equipmentService.getAll());
-        model.addAttribute("activities", activityService.getAll());
-        model.addAttribute("regulatoryDocs", regulatoryDocService.getAll());
-        model.addAttribute("activityDetails", activityDetailsService.getAll());
-        model.addAttribute("onboardingRoles", onboardingRoleService.getAll());
-        model.addAttribute("now", LocalDate.now());
-        model.addAttribute("contextPath", request.getContextPath());
-        model.addAttribute("now", LocalDate.now());
-*/
+        model.addAttribute("stagesWithFlag", getStagesByPlan(id));
         return "admin/onboarding/onboardingPlans/edit-onboarding";
     }
 
@@ -204,6 +175,7 @@ public class OnboardingController {
             return "admin/onboarding/onboardingPlans/assigned-onboardings";
         }
 
+        model.addAttribute("username", userService.getCurrentUsername());
         model.addAttribute("plan", planOpt.get());
         model.addAttribute("users", userService.getAllActiveUsers());
         model.addAttribute("equipment", equipmentService.getAll());
@@ -216,6 +188,24 @@ public class OnboardingController {
 
         model.addAttribute("now", LocalDate.now());
         return "admin/onboarding/onboardingPlans/add-stage";
+    }
+
+    @GetMapping("/onboardingPlans/{id}/view")
+    public String showViewPlanForm(@PathVariable Long id, Model model) {
+        Optional<OnboardingPlan> planOpt = onboardingPlanService.findByOnboardingPlanIdWithStages(id);
+
+        if (planOpt.isEmpty()) {
+            model.addAttribute("error", "Программа адаптации не найдена");
+            return "admin/onboarding/onboardingPlans/assigned-onboardings";
+        }
+
+        OnboardingPlan plan = planOpt.get();
+
+        model.addAttribute("username", userService.getCurrentUsername());
+        model.addAttribute("plan", plan);
+        model.addAttribute("equipment", equipmentService.getAll());
+        model.addAttribute("stagesWithFlag", getStagesByPlan(id));
+        return "admin/onboarding/onboardingPlans/view-onboarding";
     }
 
     @PostMapping("/onboardingPlans/{id}/add-stage")
@@ -303,5 +293,36 @@ public class OnboardingController {
     public ResponseEntity<Void> completeStage(@PathVariable Long stageId) {
         onboardingStageService.complete(stageId);
         return ResponseEntity.ok().build();
+    }
+
+    private List<Map<String, Object>> getStagesByPlan(Long id){
+
+        OnboardingPlan plan = onboardingPlanService.findByOnboardingPlanId(id).
+                orElseThrow(() -> new IllegalArgumentException("Plan not found"));
+
+        LocalDate now = LocalDate.now();
+        List<Map<String, Object>> stageList = new ArrayList<>();
+        for (OnboardingStage stage : plan.getStages()) {
+            Map<String, Object> stageMap = new HashMap<>();
+            stageMap.put("stage", stage);
+
+            String deadlineStr = (stage.getDeadline() != null)
+                    ? DateTimeFormatter.ofPattern("yyyy-MM-dd").format(stage.getDeadline())
+                    : "";
+            stageMap.put("deadlineStr", deadlineStr);
+            String shiftName = "Первая смена";
+            if (stage.getShiftName().name().equals("EVENING")) {
+                shiftName = "Вторая смена";
+            }
+            stageMap.put("shiftName", shiftName);
+            boolean isOverdue = stage.getDeadline() != null && !stage.getDeadline().isAfter(now);
+            stageMap.put("isOverdue", isOverdue);
+            stageList.add(stageMap);
+
+            String finished_at = (stage.getFinishedAt() != null)
+                    ? DateTimeFormatter.ofPattern("yyyy-MM-dd").format(stage.getFinishedAt()) : "Не выполнено";
+            stageMap.put("finished_at", finished_at);
+        }
+        return stageList;
     }
 }
